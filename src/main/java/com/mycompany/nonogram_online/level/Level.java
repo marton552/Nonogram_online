@@ -40,10 +40,10 @@ public class Level {
     protected int matrixMostLeftNumbers;
     protected int matrixMostTopNumbers;
     protected int matrixMostMostNumbers;
-    
+
     private boolean isEditing = false;
 
-    public Level(ArrayList<String> allData,String creator_name, String created_date, boolean approved) {
+    public Level(ArrayList<String> allData, String creator_name, String created_date, boolean approved) {
         name = allData.get(0);
         this.creator_name = creator_name;
         this.created_date = created_date;
@@ -92,8 +92,8 @@ public class Level {
     public ArrayList<Color> getColors() {
         return colors;
     }
-    
-    public void addColor(Color c){
+
+    public void addColor(Color c) {
         colors.add(c);
     }
 
@@ -108,13 +108,13 @@ public class Level {
     public boolean isApproved() {
         return approved;
     }
-    
-    
-    
-    public void removeColor(Color c){
+
+    public void removeColor(Color c) {
         int pos = 0;
-        for(int i = 0; i < colors.size(); i++){
-            if(colors.get(i).equals(c)) pos = i;
+        for (int i = 0; i < colors.size(); i++) {
+            if (colors.get(i).equals(c)) {
+                pos = i;
+            }
         }
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < hanyszorhany; j++) {
@@ -127,29 +127,29 @@ public class Level {
         }
         colors.remove(c);
     }
-    
-    public int getHeight(){
-        int r =  matrixMostMostNumbers > matrixMostTopNumbers ? matrixMostMostNumbers : matrixMostTopNumbers;
-        return r+hanyszorhany;
+
+    public int getHeight() {
+        int r = matrixMostMostNumbers > matrixMostTopNumbers ? matrixMostMostNumbers : matrixMostTopNumbers;
+        return r + hanyszorhany;
     }
 
     public void setSquareSize(int width, int height) {
         matrixMostMostNumbers = matrixMostLeftNumbers > matrixMostTopNumbers ? matrixMostLeftNumbers : matrixMostTopNumbers;
         newSquareSize = width / (matrixMostMostNumbers * 2 + hanyszorhany);
     }
-    
-    public boolean isSquareSizeChanged(){
+
+    public boolean isSquareSizeChanged() {
         return newSquareSize != squareSize;
     }
-    
-    public void setTrueSquareSize(int size){
+
+    public void setTrueSquareSize(int size) {
         squareSize = size;
     }
 
     public int getSquareSize() {
         return squareSize;
     }
-    
+
     public int getNewSquareSize() {
         return newSquareSize;
     }
@@ -224,9 +224,16 @@ public class Level {
                 }
                 if (matrix.get(layer).getTileByIsFailed(i, k) && !isFinished()) {
                     g.setColor(Color.RED);
-                    g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize*1.3)));
-                    g.drawChars("X".toCharArray(), 0, 1, matrixStartPosX + (k * squareSize)+(squareSize/10), matrixStartPosY + ((i+1) * squareSize));
+                    g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize * 1.3)));
+                    g.drawChars("X".toCharArray(), 0, 1, matrixStartPosX + (k * squareSize) + (squareSize / 10), matrixStartPosY + ((i + 1) * squareSize));
                 }
+            }
+        }
+        if (isInGame) {
+            for (int i = 0; i < hanyszorhany / 5 - 1; i++) {
+                g.setColor(Color.BLACK);
+                g.fillRect(matrixStartPosX + (((i + 1) * 5) * squareSize) - 1, matrixStartPosY, 3, (hanyszorhany * squareSize));
+                g.fillRect(matrixStartPosX, matrixStartPosY + (((i + 1) * 5) * squareSize) - 1, (hanyszorhany * squareSize), 3);
             }
         }
     }
@@ -236,8 +243,10 @@ public class Level {
             for (int k = 0; k < matrix.get(layer).getLeftNumbers().get(i).size(); k++) {
                 int shiftLeft = (matrixMostMostNumbers - matrix.get(layer).getLeftNumbers().get(i).size()) * squareSize;
                 Color color = colors.get(matrix.get(layer).getLeftNumbers().get(i).get(k).getColor());
-                float alpha = matrix.get(layer).getLeftNumbers().get(i).get(k).isSolved() ? 0.2f : 1;
-                if(isEditing) alpha = 1;
+                float alpha = matrix.get(layer).getLeftNumbers().get(i).get(k).isSolved() ? 0.4f : 1;
+                if (isEditing) {
+                    alpha = 1;
+                }
                 Color invertColor = new Color((255 - color.getRed()) / 255.0f, (255 - color.getGreen()) / 255.0f, (255 - color.getBlue()) / 255.0f, alpha);
                 g.setColor(color);
                 g.fillRect(shiftLeft + numbersStartPosX + (k * squareSize), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize), squareSize, squareSize);
@@ -250,8 +259,10 @@ public class Level {
             for (int k = 0; k < matrix.get(layer).getTopNumbers().get(i).size(); k++) {
                 int shiftTop = (matrixMostMostNumbers - matrix.get(layer).getTopNumbers().get(i).size()) * squareSize;
                 Color color = colors.get(matrix.get(layer).getTopNumbers().get(i).get(k).getColor());
-                float alpha = matrix.get(layer).getTopNumbers().get(i).get(k).isSolved() ? 0.2f : 1;
-                if(isEditing) alpha = 1;
+                float alpha = matrix.get(layer).getTopNumbers().get(i).get(k).isSolved() ? 0.4f : 1;
+                if (isEditing) {
+                    alpha = 1;
+                }
                 Color invertColor = new Color((255 - color.getRed()) / 255.0f, (255 - color.getGreen()) / 255.0f, (255 - color.getBlue()) / 255.0f, alpha);
                 g.setColor(color);
                 g.fillRect(numbersStartPosX + (i * squareSize) + matrixMostMostNumbers * squareSize, shiftTop + numbersStartPosY + (k * squareSize), squareSize, squareSize);
@@ -322,9 +333,13 @@ public class Level {
     public int getLayerCount() {
         return matrix.size();
     }
-    
-    public void addLayer(){
+
+    public void addLayer() {
     }
-    public void setSelectedColor(int c){}
-    public void save(User user){}
+
+    public void setSelectedColor(int c) {
+    }
+
+    public void save(User user) {
+    }
 }

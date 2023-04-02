@@ -89,7 +89,7 @@ public class LevelIcon extends JPanel {
     }
 
     public boolean isTrashVisible() {
-        return lvl.getCreator_name().equals(m.getUser().getFullUsername()) || (m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000"));
+        return lvl.getCreator_name() != "" && (lvl.getCreator_name().equals(m.getUser().getFullUsername()) || (m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000")));
     }
 
     public boolean isApproveVisible() {
@@ -97,7 +97,7 @@ public class LevelIcon extends JPanel {
     }
     
     public boolean isAdminVisible(){
-        return m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000") && show_admin;
+        return lvl.getCreator_name() != "" && m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000") && show_admin;
     }
     
     public void showLevelToAdmin(){
