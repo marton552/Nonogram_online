@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -313,9 +314,9 @@ public class Menu extends JFrame {
                     String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
                     lvl = new Level(new ArrayList<String>(Arrays.asList(result.split(";"))), "", "", true);
                     
-                    InputStream is2 = Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/saved_data.txt");
-                    String result2 = new BufferedReader(new InputStreamReader(is2)).lines().collect(Collectors.joining("\n"));
-                    ArrayList<String> completed_levels = new ArrayList<String>(Arrays.asList(result2.split("\n")));
+                    BufferedReader input = new BufferedReader(new FileReader("src/main/resources/levels/saved_data.txt"));
+                    String data1 = input.lines().collect(Collectors.joining("\n"));
+                    ArrayList<String> completed_levels = new ArrayList<String>(Arrays.asList(data1.split("\n")));
                     boolean completed = false;
                     for (int j = 0; j < completed_levels.size(); j++) {
                         if(completed_levels.get(j).equals(user.getFullUsername()+";"+lvl.getName())) completed = true;

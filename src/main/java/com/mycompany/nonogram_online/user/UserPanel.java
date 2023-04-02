@@ -22,10 +22,16 @@ import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -133,13 +139,25 @@ public class UserPanel extends JPanel {
     }
 
     private int collectOfflineLevels() {
-        InputStream is2 = Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/saved_data.txt");
-        String result2 = new BufferedReader(new InputStreamReader(is2)).lines().collect(Collectors.joining("\n"));
-        ArrayList<String> completed_levels = new ArrayList<String>(Arrays.asList(result2.split("\n")));
+        BufferedReader input = null;
         int completed = 0;
-        for (int j = 0; j < completed_levels.size(); j++) {
-            if (completed_levels.get(j).split(";")[0].equals(m.getUser().getFullUsername() )) {
-                completed++;
+        try {
+            input = new BufferedReader(new FileReader("src/main/resources/levels/saved_data.txt"));
+            String data = input.lines().collect(Collectors.joining("\n"));
+            ArrayList<String> completed_levels = new ArrayList<String>(Arrays.asList(data.split("\n")));
+            
+            for (int j = 0; j < completed_levels.size(); j++) {
+                if (completed_levels.get(j).split(";")[0].equals(m.getUser().getFullUsername() )) {
+                    completed++;
+                }
+            }   
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                input.close();
+            } catch (IOException ex) {
+                Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return completed;

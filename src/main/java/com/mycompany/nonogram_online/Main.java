@@ -5,9 +5,6 @@
  */
 package com.mycompany.nonogram_online;
 
-import com.mycompany.nonogram_online.server.Response;
-import com.mycompany.nonogram_online.server.Server;
-
 /**
  *
  * @author marton552
@@ -15,8 +12,6 @@ import com.mycompany.nonogram_online.server.Server;
 public class Main {
     public static void main(String[] args) {
         String title = "Nonogram online";
-        Server server = new Server();
-        Response res = server.isRealUserExist("proba");
         Menu game = new Menu(title);
     }
 }
