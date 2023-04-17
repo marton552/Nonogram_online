@@ -9,9 +9,6 @@ import com.mycompany.nonogram_online.level.Level;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.Timer;
 
 /**
  *
@@ -62,6 +59,10 @@ public class Game {
         return actualLayer;
     }
 
+    public void setActualLayer(int actualLayer) {
+        this.actualLayer = actualLayer;
+    }
+
     public void setLayer(int change) {
         actualLayer += change;
     }
@@ -81,9 +82,13 @@ public class Game {
             winGame(g);
         } else {
             lvl.drawNumbers(g, getActualLayer());
+            if(lvl.isIsMultisized()){
+                lvl.drawMatrix(g, actualLayer, true, true);
+            }
+            else{
             for (int i = 0; i < getLayerCount(); i++) {
                 lvl.drawMatrix(g, i, true, (i == actualLayer));
-            }
+            }}
         }
         if (!isEditing) {
             g.setColor(Color.BLACK);

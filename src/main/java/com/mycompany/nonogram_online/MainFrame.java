@@ -15,6 +15,14 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
@@ -33,6 +41,7 @@ public class MainFrame extends JPanel {
     private GamePanel gamePanel;
     private JPanel topPanel;
     private JPanel bottomPanel;
+    private JPanel thisPanel;
     private Level lvl;
     private int width = 465;
     private int height = 690;
@@ -65,9 +74,27 @@ public class MainFrame extends JPanel {
 
     private Server server;
 
+    private boolean isEditing = false;
+    private boolean isLayered = false;
+    private boolean isColored = false;
+
+    private boolean isMultisized = false;
+    private boolean isChoosing = false;
+    private Level placeholder;
+    private boolean zeroLayer = false;
+
     public MainFrame(String title, Menu m, Level lvl, boolean isEditing, boolean isLayered, boolean isColored, int isGrided) {
+        //thisPanel = this;
         this.lvl = lvl;
         this.m = m;
+        placeholder = new Level(lvl.getAllData(), lvl.getCreator_name(), lvl.getCreated_date(), lvl.isApproved());
+
+        this.isEditing = isEditing;
+        this.isLayered = isLayered;
+        this.isColored = isColored;
+
+        isMultisized = lvl.isIsMultisized();
+        isChoosing = isMultisized;
 
         game = new Game(lvl, isEditing);
         server = new Server();
@@ -78,7 +105,9 @@ public class MainFrame extends JPanel {
         solvableLabel = new JLabel("", SwingConstants.CENTER);
 
         titleEdit = new JTextField("");
+
         titleEdit.getDocument().addDocumentListener(new DocumentListener() {
+
             public void changedUpdate(DocumentEvent e) {
                 checkSave();
             }
@@ -90,7 +119,8 @@ public class MainFrame extends JPanel {
             public void insertUpdate(DocumentEvent e) {
                 checkSave();
             }
-        });
+        }
+        );
 
         if (isEditing) {
             giveUpButton = new JButton("Vissza");
@@ -101,7 +131,7 @@ public class MainFrame extends JPanel {
         giveUpButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if (giveUpButton.getText() != "Feladás") {
+                if (giveUpButton.getText() == "Befejezés") {
                     Response res;
                     if (lvl.getCreator_name() != "") {
                         res = server.finishLevel(lvl.getName(), lvl.getCreator_name(), m.getUser().getFullUsername());
@@ -114,7 +144,13 @@ public class MainFrame extends JPanel {
                     }
 
                 }
-                m.backToMenu(false);
+                if (giveUpButton.getText() == " Vissza " || giveUpButton.getText() == " Befejezés ") {
+                    isChoosing = true;
+                    giveUpButton.setText("Feladás");
+                    setup();
+                } else if (giveUpButton.getText() == "Vissza" || giveUpButton.getText() == "Feladás") {
+                    m.backToMenu(false);
+                }
             }
         });
 
@@ -212,9 +248,47 @@ public class MainFrame extends JPanel {
             }
         });
 
+        this.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (isMultisized) {
+                    chooseMulti(e.getX(), e.getY());
+                    repaint();
+                }
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
+        setup();
+
+    }
+
+    private void setup() {
+        this.removeAll();
         this.setLayout(new BorderLayout());
+        if(!isChoosing){
         gamePanel = new GamePanel(this, game, width, height);
-        this.add(gamePanel, BorderLayout.CENTER);
+        this.add(gamePanel, BorderLayout.CENTER);}
 
         topPanel = new JPanel(new GridLayout(3, 2));
         bottomPanel = new JPanel(new GridLayout(2, 3));
@@ -263,7 +337,60 @@ public class MainFrame extends JPanel {
         repaint();
 
         setVisible(true);
+    }
 
+    private void chooseMulti(int x, int y) {
+        int size = (int) Math.sqrt(placeholder.getMatrix().size());
+        int pWidth = width / size;
+        x = x / pWidth;
+        y = y - (height / 2 - width / 2);
+        y = y / pWidth;
+        System.out.println(x + ", " + y);
+        isChoosing = false;
+        game.setActualLayer(x * y + x);
+        if (x * y + x == 0) {
+            game.setActualLayer(1);
+            zeroLayer = true;
+        }
+        System.out.println(x * y + x);
+        gamePanel = new GamePanel(this, game, width, height);
+        this.add(gamePanel, BorderLayout.CENTER);
+        setPrevNextVisible();
+        giveUpButton.setText(" Vissza ");
+    }
+
+    private void paintMultisizedMatrix(Graphics g) {
+        if(isEditing){
+            String data = lvl.export();
+            placeholder = new Level(new ArrayList<String>(Arrays.asList(data.split(";"))), lvl.getCreator_name(), lvl.getCreated_date(), lvl.isApproved());
+        }
+        if (isChoosing) {
+            int size = (int) Math.sqrt(placeholder.getMatrix().size());
+            int pWidth = width / size;
+            int x = 0;
+            int y = 0;
+            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/questionmark.txt");
+            String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
+            Level questionmark = new Level(new ArrayList<String>(Arrays.asList(result.split(";"))), "", "", true);
+            for (int i = 0; i < placeholder.getMatrix().size(); i++) {
+                if (placeholder.isThisPartCompleted(i) || isEditing) {
+                    placeholder.setMatrixStartPos(x * pWidth, height / 2 - width / 2 + (y * pWidth));
+                    placeholder.setMenuSquareSize(pWidth);
+                    placeholder.finishGame();
+                    placeholder.drawMatrix(g, i, false, true);
+                } else {
+                    questionmark.setMatrixStartPos(x * pWidth, height / 2 - width / 2 + (y * pWidth));
+                    questionmark.setMenuSquareSize(pWidth);
+                    questionmark.finishGame();
+                    questionmark.drawMatrix(g, 0, false, true);
+                }
+                x++;
+                if (x == size) {
+                    x = 0;
+                    y++;
+                }
+            }
+        }
     }
 
     private void checkSave() {
@@ -350,6 +477,7 @@ public class MainFrame extends JPanel {
     }
 
     private void setPrevNextVisible() {
+
         if (game.getActualLayer() > 0) {
             prevLayerButton.setVisible(true);
         } else {
@@ -360,11 +488,36 @@ public class MainFrame extends JPanel {
         } else {
             nextLayerButton.setVisible(false);
         }
-        gamePanel.repaint();
+        if (isMultisized) {
+            prevLayerButton.setVisible(false);
+            nextLayerButton.setVisible(false);
+        }
+        if (!isChoosing) {
+            gamePanel.repaint();
+        }
     }
 
     public void finishLevel() {
         giveUpButton.setText("Befejezés");
+        this.repaint();
+    }
+
+    public void finishLayer() {
+        if (isMultisized) {
+            System.out.println(game.getActualLayer());
+            giveUpButton.setText(" Befejezés ");
+            placeholder.addCompletedPart((Integer)game.getActualLayer());
+            boolean finish = true;
+            for (int i = 0; i < placeholder.getMatrix().size(); i++) {
+                if(!placeholder.isThisPartCompleted(i)) finish = false;
+            }
+            if(finish){
+                placeholder.finishGame();
+                isChoosing = true;
+                giveUpButton.setText("Befejezés");
+                setup();
+            }
+        }
         this.repaint();
     }
 
@@ -373,6 +526,14 @@ public class MainFrame extends JPanel {
         super.paintComponent(g);
         this.repaint();
         this.setVisible(true);
+        if (isChoosing) {
+            paintMultisizedMatrix(g);
+        }
+        if (zeroLayer) {
+            game.setLayer(-1);
+            setPrevNextVisible();
+            zeroLayer = false;
+        }
     }
 
 }

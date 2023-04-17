@@ -17,7 +17,7 @@ import java.util.Arrays;
  */
 public class LevelEditor extends Level {
 
-    public static String[] templateData = {"new_level;",";1;2;rgb(255,255,255);rgb(0,0,0)"};
+    public static String[] templateData = {"new_level;",";2;rgb(255,255,255);rgb(0,0,0)"};
     
     private int selectedColor = 1;
     private Server server;
@@ -61,7 +61,8 @@ public class LevelEditor extends Level {
     public void save(User user){
         String saveData = getName();
         saveData+=";"+hanyszorhany;
-        saveData+=";"+matrix.size();
+        if(isIsMultisized())saveData+=";"+matrix.size()*-1;
+        else saveData+=";"+matrix.size();
         saveData+=";"+colors.size();
         for (int i = 0; i < colors.size(); i++) {
             saveData+=";rgb("+colors.get(i).getRed()+","+colors.get(i).getGreen()+","+colors.get(i).getBlue()+")";

@@ -21,6 +21,7 @@ public class Level {
 
     public static java.util.logging.Level SEVERE;
 
+    private ArrayList<String> allData;
     protected ArrayList<LevelMatrix> matrix;
     protected ArrayList<Color> colors;
     protected String name;
@@ -42,8 +43,12 @@ public class Level {
     protected int matrixMostMostNumbers;
 
     private boolean isEditing = false;
+    private boolean isMultisized = false;
+    private ArrayList<Integer> completedParts;
 
     public Level(ArrayList<String> allData, String creator_name, String created_date, boolean approved) {
+        this.allData = allData;
+        completedParts = new ArrayList<>();
         name = allData.get(0);
         this.creator_name = creator_name;
         this.created_date = created_date;
@@ -52,6 +57,10 @@ public class Level {
         colors = new ArrayList<>();
         this.hanyszorhany = parseInt(allData.get(1));
         int layerNum = parseInt(allData.get(2));
+        if (layerNum < 0) {
+            isMultisized = true;
+            layerNum = layerNum * -1;
+        }
         int colorNum = parseInt(allData.get(3));
         for (int i = 4; i < 4 + colorNum; i++) {
             String[] c = (allData.get(i).replace("rgb(", "").replace(")", "")).split(",");
@@ -71,6 +80,18 @@ public class Level {
         }
         setMatrixMostLeftNumbers();
         setMatrixMostTopNumbers();
+    }
+    public ArrayList<String> getAllData(){
+        return allData;
+    }
+    
+    public boolean isThisPartCompleted(Integer n){
+        return completedParts.contains(n);
+    }
+    
+    public void addCompletedPart(Integer n){
+        completedParts.add(n);
+        System.out.println(completedParts);
     }
 
     public ArrayList<LevelMatrix> getMatrix() {
@@ -107,6 +128,10 @@ public class Level {
 
     public boolean isApproved() {
         return approved;
+    }
+
+    public boolean isIsMultisized() {
+        return isMultisized;
     }
 
     public void removeColor(Color c) {
@@ -273,6 +298,17 @@ public class Level {
         }
     }
 
+    public boolean isLayerFinished(int layer) {
+            for (int j = 0; j < matrix.get(layer).getLeftNumbers().size(); j++) {
+                for (int k = 0; k < matrix.get(layer).getLeftNumbers().get(j).size(); k++) {
+                    if (!matrix.get(layer).getLeftNumbers().get(j).get(k).isSolved()) {
+                        return false;
+                    }
+                }
+            }
+        return true;
+    }
+    
     public boolean isFinished() {
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < matrix.get(i).getLeftNumbers().size(); j++) {
@@ -328,6 +364,24 @@ public class Level {
                 }
             }
         }
+    }
+    
+    public String export(){
+        String saveData = getName();
+        saveData+=";"+hanyszorhany;
+        saveData+=";"+matrix.size();
+        saveData+=";"+colors.size();
+        for (int i = 0; i < colors.size(); i++) {
+            saveData+=";rgb("+colors.get(i).getRed()+","+colors.get(i).getGreen()+","+colors.get(i).getBlue()+")";
+        }
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < hanyszorhany; j++) {
+                for (int k = 0; k < hanyszorhany; k++) {
+                    saveData+=";"+matrix.get(i).getTileBy(j, k);
+                }
+            }
+        }
+        return saveData;
     }
 
     public int getLayerCount() {

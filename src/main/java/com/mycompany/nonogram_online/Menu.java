@@ -10,12 +10,10 @@ import com.mycompany.nonogram_online.buttons.BasicButton;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.level.LevelEditor;
 import com.mycompany.nonogram_online.level.LevelIcon;
-import com.mycompany.nonogram_online.server.NonogramFileWriter;
 import com.mycompany.nonogram_online.server.Server;
 import com.mycompany.nonogram_online.user.User;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -463,14 +460,14 @@ public class Menu extends JFrame {
         grid2x2 = new JButton("2x2");
         grid2x2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                gridEnable = 2;
+                gridEnable = -4;
                 changeEditorMenu("grid", 1);
             }
         });
         grid3x3 = new JButton("3x3");
         grid3x3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                gridEnable = 3;
+                gridEnable = -9;
                 changeEditorMenu("grid", 2);
             }
         });
@@ -488,8 +485,9 @@ public class Menu extends JFrame {
                 menupanel.revalidate();
                 menupanel.repaint();
                 menupanel.setLayout(new BorderLayout());
-                String data = LevelEditor.templateData[0] + sizeSlider.getValue() + LevelEditor.templateData[1];
-                for (int i = 0; i < ((Integer) sizeSlider.getValue() * (Integer) sizeSlider.getValue()); i++) {
+                String data = LevelEditor.templateData[0] + sizeSlider.getValue()+";"+ gridEnable+ LevelEditor.templateData[1];
+                if(gridEnable < 0) gridEnable*=-1;
+                for (int i = 0; i < (gridEnable) * ((Integer) sizeSlider.getValue() * (Integer) sizeSlider.getValue()); i++) {
                     data += ";0";
                 }
                 game = new MainFrame("Új pálya", menuMe, new LevelEditor(new ArrayList<String>(Arrays.asList(data.split(";"))), (Integer) sizeSlider.getValue(), "", "", true), true, layerEnable, colorEnable, gridEnable);
