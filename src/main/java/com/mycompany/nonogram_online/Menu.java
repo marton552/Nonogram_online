@@ -7,6 +7,7 @@ package com.mycompany.nonogram_online;
 
 import com.mycompany.nonogram_online.user.UserPanel;
 import com.mycompany.nonogram_online.buttons.BasicButton;
+import com.mycompany.nonogram_online.buttons.BasicRate;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.level.LevelEditor;
 import com.mycompany.nonogram_online.level.LevelIcon;

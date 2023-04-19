@@ -42,18 +42,18 @@ public class Server {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void lvlUpUser(String username, String usercode,int rank){
+
+    public void lvlUpUser(String username, String usercode, int rank) {
         getUsers();
         for (int i = 0; i < data.size(); i++) {
-            if(data.get(i).get(0).equals(username) && data.get(i).get(2).equals(usercode)){
-                runQueryNoResponse("UPDATE users SET username = '" + username + "', password = '" + data.get(i).get(1) + "', usercode = '"+usercode+"', rank='"+rank+"' WHERE username ='" + username + "' and usercode = '" + usercode + "' ;");
+            if (data.get(i).get(0).equals(username) && data.get(i).get(2).equals(usercode)) {
+                runQueryNoResponse("UPDATE users SET username = '" + username + "', password = '" + data.get(i).get(1) + "', usercode = '" + usercode + "', rank='" + rank + "' WHERE username ='" + username + "' and usercode = '" + usercode + "' ;");
             }
         }
         closeRequest();
     }
-    
-    public ArrayList<MissionIcon> getMissionList(int level){
+
+    public ArrayList<MissionIcon> getMissionList(int level) {
         getMissions(level);
         ArrayList<MissionIcon> res = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
@@ -63,24 +63,48 @@ public class Server {
         closeRequest();
         return res;
     }
+    
+    public double getAvgRateOfLevel(String lvlName, String fullUsername){
+        getCompletedLevels();
+        double sum = 0;
+        double db = 0;
+        for (int i = 0; i < data.size(); i++) {
+            if(data.get(i).get(0).equals(lvlName) && data.get(i).get(1).equals(fullUsername)){
+                double val = Double.parseDouble(data.get(i).get(3).toString());
+                sum += val;
+                if(val != 0)db++;
+            }
+        }
+        closeRequest();
+        if(sum == 0) return 0;
+        else return sum/db;
+    }
+
+    public void rateLevel(String lvlName, String fullUsername, String actualUsername, double rate) {
+        getCompletedLevels();
+        runQueryNoResponse("UPDATE completed_maps SET level_name='" + lvlName + "',creator_name='" + fullUsername + "',player_name='" + actualUsername + "',rate='" + rate + "' WHERE level_name='" + lvlName + "' and creator_name='" + fullUsername + "' and player_name='" + actualUsername + "'");
+        closeRequest();
+    }
 
     public Response finishLevel(String lvlName, String fullUsername, String actualUsername) {
-        if (isLevelFinishedByUser(lvlName,fullUsername,actualUsername).getStatusCode() == 200) {
+        if (isLevelFinishedByUser(lvlName, fullUsername, actualUsername).getStatusCode() == 200) {
             return new Response(409, "This user already completed this map!");
         } else {
-            runQueryNoResponse("INSERT INTO completed_maps (level_name, creator_name, player_name, rate) VALUES ('" + lvlName + "','" + fullUsername + "','" + actualUsername + "','1')");
+            runQueryNoResponse("INSERT INTO completed_maps (level_name, creator_name, player_name, rate) VALUES ('" + lvlName + "','" + fullUsername + "','" + actualUsername + "','0')");
             return new Response(200, "Level complete");
         }
     }
-    
-    public Response getUserCompletedOnlineMaps(String fullUsername){
+
+    public Response getUserCompletedOnlineMaps(String fullUsername) {
         getCompletedLevels();
         int counter = 0;
         for (int i = 0; i < data.size(); i++) {
-            if(data.get(i).get(2).equals(fullUsername)) counter++;
+            if (data.get(i).get(2).equals(fullUsername)) {
+                counter++;
+            }
         }
         closeRequest();
-        return new Response(200, counter+"");
+        return new Response(200, counter + "");
     }
 
     public Response isLevelFinishedByUser(String lvlName, String fullUsername, String actualUsername) {
@@ -153,8 +177,8 @@ public class Server {
         closeRequest();
         return response;
     }
-    
-    public Response getUserRank(String name, String usercode){
+
+    public Response getUserRank(String name, String usercode) {
         getUsers();
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).get(0).equals(name) && data.get(i).get(2).equals(usercode)) {
@@ -264,9 +288,9 @@ public class Server {
     }
 
     private void getMissions(int level) {
-        runQuery("select * from missions where level='"+level+"'");
+        runQuery("select * from missions where level='" + level + "'");
     }
-    
+
     private void getUsers() {
         runQuery("select * from users");
     }

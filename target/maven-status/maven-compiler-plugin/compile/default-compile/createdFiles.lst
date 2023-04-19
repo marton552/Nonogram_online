@@ -20,12 +20,14 @@ com\mycompany\nonogram_online\server\Response.class
 com\mycompany\nonogram_online\Game.class
 com\mycompany\nonogram_online\user\UserPanel$2.class
 com\mycompany\nonogram_online\MainFrame$11.class
+com\mycompany\nonogram_online\buttons\BasicRate$2.class
 com\mycompany\nonogram_online\LoginPanel$4.class
 com\mycompany\nonogram_online\Menu$8.class
 com\mycompany\nonogram_online\MainFrame$5.class
 com\mycompany\nonogram_online\MainFrame$10.class
 com\mycompany\nonogram_online\Menu$2.class
 com\mycompany\nonogram_online\Menu$9.class
+com\mycompany\nonogram_online\buttons\BasicRate.class
 com\mycompany\nonogram_online\LoginPanel$3.class
 com\mycompany\nonogram_online\GamePanel.class
 com\mycompany\nonogram_online\Menu$6.class
@@ -35,6 +37,7 @@ com\mycompany\nonogram_online\MainFrame$13.class
 com\mycompany\nonogram_online\MainFrame$8.class
 com\mycompany\nonogram_online\server\Server.class
 com\mycompany\nonogram_online\user\UserPanel$1.class
+com\mycompany\nonogram_online\buttons\BasicRate$1.class
 com\mycompany\nonogram_online\Menu$1.class
 com\mycompany\nonogram_online\level\LevelEditor.class
 com\mycompany\nonogram_online\MainFrame.class

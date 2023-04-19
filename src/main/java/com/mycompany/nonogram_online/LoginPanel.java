@@ -396,6 +396,7 @@ public class LoginPanel extends JPanel {
         this.add(buttonsPanel);
         errorUsername = true;
         errorPassword = false;
+        randomUserNumber();
     }
 
     private void setupRegistryGuest() {

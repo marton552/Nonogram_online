@@ -6,6 +6,7 @@
 package com.mycompany.nonogram_online.level;
 
 import com.mycompany.nonogram_online.Menu;
+import com.mycompany.nonogram_online.server.Server;
 import com.mycompany.nonogram_online.user.User;
 import java.awt.Color;
 import java.awt.Font;
@@ -47,6 +48,8 @@ public class LevelIcon extends JPanel {
     private Level placeholder;
     private boolean show_admin = false;
     private int rankSize;
+    private double stars;
+    private Server server;
 
     public LevelIcon(Menu m, Level lvl, int count, int nth, boolean isCompleted) {
         this.m = m;
@@ -62,6 +65,8 @@ public class LevelIcon extends JPanel {
             String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
             placeholder = new Level(new ArrayList<String>(Arrays.asList(result.split(";"))), "", "", true);
         }
+        server = new Server();
+        stars = server.getAvgRateOfLevel(lvl.getName(), lvl.getCreator_name());
         thisPanel = this;
         setVisible(true);
 
@@ -103,6 +108,20 @@ public class LevelIcon extends JPanel {
     public void showLevelToAdmin(){
         show_admin = false;
         repaint();
+    }
+    
+    public void drawStars(Graphics g) {
+                int width = screenWidth;
+        int height = screenHeight / count;
+        for (int i = 0; i < 5; i++) {
+            if (stars >= i+0.5 && stars < i+1) {
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/halfstar.png")).getImage(), (int)(height*2.3)+(height / 5) * i, (int)(height / 1.6), (height / 5), (height / 5), null);
+            } else if(stars > i) {
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/fullstar.png")).getImage(), (int)(height*2.3)+(height / 5) * i, (int)(height / 1.6), (height / 5), (height / 5), null);
+            } else {
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/emptystar.png")).getImage(), (int)(height*2.3)+(height / 5) * i, (int)(height / 1.6), (height / 5), (height / 5), null);
+            }
+        }
     }
 
     @Override
@@ -163,6 +182,7 @@ public class LevelIcon extends JPanel {
         if(isAdminVisible() && !completed){
             g.drawImage(new ImageIcon(this.getClass().getResource("/images/show_button.png")).getImage(), (height / 3), (height/2)-offset, (int) (height / 2), (int) (height / 2), null);
         }
+        if (lvl.getCreator_name() != "")drawStars(g);
     }
 
     public Level getLvl() {

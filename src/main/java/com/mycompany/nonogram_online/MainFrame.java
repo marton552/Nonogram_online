@@ -5,6 +5,7 @@
  */
 package com.mycompany.nonogram_online;
 
+import com.mycompany.nonogram_online.buttons.BasicRate;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.server.NonogramFileWriter;
 import com.mycompany.nonogram_online.server.Response;
@@ -67,6 +68,7 @@ public class MainFrame extends JPanel {
     private JButton deleteColor;
     private int currentColor = 0;
     private JPanel colorPanel;
+    private BasicRate ratePopUp;
 
     private JButton isSolvableButton;
     private JLabel solvableLabel;
@@ -78,13 +80,14 @@ public class MainFrame extends JPanel {
     private boolean isLayered = false;
     private boolean isColored = false;
 
+    private boolean isRating = false;
     private boolean isMultisized = false;
     private boolean isChoosing = false;
     private Level placeholder;
     private boolean zeroLayer = false;
 
     public MainFrame(String title, Menu m, Level lvl, boolean isEditing, boolean isLayered, boolean isColored, int isGrided) {
-        //thisPanel = this;
+        thisPanel = this;
         this.lvl = lvl;
         this.m = m;
         placeholder = new Level(lvl.getAllData(), lvl.getCreator_name(), lvl.getCreated_date(), lvl.isApproved());
@@ -128,6 +131,8 @@ public class MainFrame extends JPanel {
             giveUpButton = new JButton("Feladás");
         }
 
+        ratePopUp = new BasicRate(m,lvl, 0, 1, 4);
+
         giveUpButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -136,7 +141,10 @@ public class MainFrame extends JPanel {
                     if (lvl.getCreator_name() != "") {
                         res = server.finishLevel(lvl.getName(), lvl.getCreator_name(), m.getUser().getFullUsername());
                         if (res.getStatusCode() == 200) {
-                            //do rate level implementation
+                            isRating = true;
+                            setup();
+                        } else {
+                            m.backToMenu(true);
                         }
                     } else {
                         NonogramFileWriter fw = new NonogramFileWriter("");
@@ -285,11 +293,17 @@ public class MainFrame extends JPanel {
 
     private void setup() {
         this.removeAll();
+        this.revalidate();
+        this.repaint();
         this.setLayout(new BorderLayout());
-        if(!isChoosing){
-        gamePanel = new GamePanel(this, game, width, height);
-        this.add(gamePanel, BorderLayout.CENTER);}
-
+        if (!isChoosing) {
+            gamePanel = new GamePanel(this, game, width, height);
+            if (isRating) {
+                this.add(ratePopUp, BorderLayout.CENTER);
+            } else {
+                this.add(gamePanel, BorderLayout.CENTER);
+            }
+        }
         topPanel = new JPanel(new GridLayout(3, 2));
         bottomPanel = new JPanel(new GridLayout(2, 3));
         colorPanel = new JPanel(new GridLayout(1, 10));
@@ -334,7 +348,7 @@ public class MainFrame extends JPanel {
         }
 
         setPrevNextVisible();
-        repaint();
+        this.repaint();
 
         setVisible(true);
     }
@@ -360,7 +374,7 @@ public class MainFrame extends JPanel {
     }
 
     private void paintMultisizedMatrix(Graphics g) {
-        if(isEditing){
+        if (isEditing) {
             String data = lvl.export();
             placeholder = new Level(new ArrayList<String>(Arrays.asList(data.split(";"))), lvl.getCreator_name(), lvl.getCreated_date(), lvl.isApproved());
         }
@@ -506,12 +520,14 @@ public class MainFrame extends JPanel {
         if (isMultisized) {
             System.out.println(game.getActualLayer());
             giveUpButton.setText(" Befejezés ");
-            placeholder.addCompletedPart((Integer)game.getActualLayer());
+            placeholder.addCompletedPart((Integer) game.getActualLayer());
             boolean finish = true;
             for (int i = 0; i < placeholder.getMatrix().size(); i++) {
-                if(!placeholder.isThisPartCompleted(i)) finish = false;
+                if (!placeholder.isThisPartCompleted(i)) {
+                    finish = false;
+                }
             }
-            if(finish){
+            if (finish) {
                 placeholder.finishGame();
                 isChoosing = true;
                 giveUpButton.setText("Befejezés");
@@ -526,6 +542,10 @@ public class MainFrame extends JPanel {
         super.paintComponent(g);
         this.repaint();
         this.setVisible(true);
+        if(isRating){
+            gamePanel.repaint();
+            ratePopUp.repaint();
+        }
         if (isChoosing) {
             paintMultisizedMatrix(g);
         }
