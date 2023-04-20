@@ -7,17 +7,23 @@ package com.mycompany.nonogram_online;
 
 import com.mycompany.nonogram_online.user.UserPanel;
 import com.mycompany.nonogram_online.buttons.BasicButton;
-import com.mycompany.nonogram_online.buttons.BasicRate;
+import com.mycompany.nonogram_online.buttons.SearchButton;
+import com.mycompany.nonogram_online.buttons.SortButton;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.level.LevelEditor;
 import com.mycompany.nonogram_online.level.LevelIcon;
+import com.mycompany.nonogram_online.server.SearchResponse;
 import com.mycompany.nonogram_online.server.Server;
+import com.mycompany.nonogram_online.server.SortResponse;
 import com.mycompany.nonogram_online.user.User;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedReader;
@@ -33,6 +39,7 @@ import javax.swing.JPanel;
 import java.util.*;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 
 /**
  *
@@ -55,6 +62,19 @@ public class Menu extends JFrame {
     private BasicButton hardLevel;
     private BasicButton backButton;
     private BasicButton userButton;
+
+    private JPanel prevNextPanel;
+    private BasicButton prevButton;
+    private BasicButton nextButton;
+    private JPanel sortSearchPanel;
+    private SortButton sortByDateButton;
+    private SortButton sortByNameButton;
+    private SortButton sortByRateButton;
+    private JTextField searchTextField;
+    private SearchButton searchByLevel;
+    private SearchButton searchByUser;
+    private SortResponse sortState;
+    private SearchResponse searchState;
 
     private JPanel sizePanel;
     private JLabel sizeLabel;
@@ -81,7 +101,8 @@ public class Menu extends JFrame {
     private LoginPanel loginPanel;
     private UserPanel userPanel;
     private Menu menuMe;
-    private int levelPerPage = 7;
+    private int levelStartNum = 0;
+    private int levelPerPage = 6;
 
     //user specific
     private User user;
@@ -94,6 +115,7 @@ public class Menu extends JFrame {
 
     private ArrayList<String> history;
     private Server server;
+
 
     public Menu(String title) {
         super(title + " menü");
@@ -113,6 +135,8 @@ public class Menu extends JFrame {
         menupanel.setLayout(new GridLayout(4, 1));
 
         menuMe = this;
+        sortState = new SortResponse();
+        searchState = new SearchResponse("");
 
         login = new BasicButton(menuMe, "Bejelentkezés", 1, 4);
         signin = new BasicButton(menuMe, "Regisztráció", 1, 4);
@@ -125,6 +149,34 @@ public class Menu extends JFrame {
         hardLevel = new BasicButton(menuMe, "Nehéz", 1, 4);
         backButton = new BasicButton(menuMe, "Vissza", 1, 4);
         userButton = new BasicButton(menuMe, "Saját profil", 1, 4);
+        prevButton = new BasicButton(menuMe, "Előző", 2, 4);
+        nextButton = new BasicButton(menuMe, "Következő", 2, 4);
+
+        sortByDateButton = new SortButton(menuMe, "Dátum", 2, 4);
+        sortByNameButton = new SortButton(menuMe, "Név", 2, 4);
+        sortByRateButton = new SortButton(menuMe, "Értékelés", 2, 4);
+        searchTextField = new JTextField("");
+        searchTextField = new JTextField("Keresés");
+        searchTextField.setForeground(Color.GRAY);
+        searchTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (searchTextField.getText().equals("Keresés")) {
+                    searchTextField.setText("");
+                    searchTextField.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (searchTextField.getText().isEmpty()) {
+                    searchTextField.setForeground(Color.GRAY);
+                    searchTextField.setText("Keresés");
+                }
+            }
+        });
+        searchByLevel = new SearchButton(menuMe, "Pálya keresés", 2, 4);
+        searchByUser = new SearchButton(menuMe, "Felhasználó keresés", 2, 4);
 
         exitGameButton = new BasicButton(menuMe, "Exit", 1, 4);
 
@@ -183,32 +235,71 @@ public class Menu extends JFrame {
             setupDifficultyMenu();
         } else if (text == "Online pályák") {
             history.add("online");
+            levelStartNum = 0;
             setupOnlineLevelsMenu();
         } else if (text == "Saját pálya készítése") {
             setupLevelEditorMenu();
         } else if (text == "Könnyű") {
             filePath += "easy/";
+            levelStartNum = 0;
             history.add("offline");
             setupOfflineLevelsMenu();
         } else if (text == "Közepes") {
             filePath += "medium/";
+            levelStartNum = 0;
             history.add("offline");
             setupOfflineLevelsMenu();
         } else if (text == "Nehéz") {
             filePath += "hard/";
+            levelStartNum = 0;
             history.add("offline");
             setupOfflineLevelsMenu();
         } else if (text == "Vissza") {
             backToMenu(true);
         } else if (text == " Vissza") {
             backToMenu(false);
-        } else {
+        } else if (text == "Előző") {
+            if (history.contains("offline")) {
+                levelStartNum -= levelPerPage;
+                setupOfflineLevelsMenu();
+            } else if (history.contains("online")) {
+                levelStartNum -= levelPerPage;
+                setupOnlineLevelsMenu();
+            }
+        } else if (text == "Következő") {
+            if (history.contains("offline")) {
+                levelStartNum += levelPerPage;
+                setupOfflineLevelsMenu();
+            } else if (history.contains("online")) {
+                levelStartNum += levelPerPage;
+                setupOnlineLevelsMenu();
+            }
+        } else if(text.contains("Dátum")){
+            sortState.setDate();
+            setupOnlineLevelsMenu();
+        } else if(text.contains("Név")){
+            sortState.setName();
+            setupOnlineLevelsMenu();
+        }else if(text.contains("Értékelés")){
+            sortState.setRate();
+            setupOnlineLevelsMenu();
+        }
+        else if(text.contains("Pálya keresés")){
+            searchState.setSearch(searchTextField.getText());
+            searchState.setLevelName();
+            setupOnlineLevelsMenu();
+        }
+        else if(text.contains("Felhasználó keresés")){
+            searchState.setSearch(searchTextField.getText());
+            searchState.setUserName();
+            setupOnlineLevelsMenu();
+        }else {
             loginPanel.menuActions(text);
         }
     }
 
-    public void setUser(String name, String usercode,int rank) {
-        user = new User(name, usercode,rank);
+    public void setUser(String name, String usercode, int rank) {
+        user = new User(name, usercode, rank);
     }
 
     public User getUser() {
@@ -278,8 +369,9 @@ public class Menu extends JFrame {
         if (user.isGuest()) {
             signin.setText("Megkezdett fiók regisztrálása");
             menupanel.add(signin);
+        } else {
+            menupanel.add(userButton);
         }
-        else menupanel.add(userButton);
         menupanel.add(exitGameButton);
     }
 
@@ -303,36 +395,53 @@ public class Menu extends JFrame {
         menupanel.removeAll();
         menupanel.revalidate();
         menupanel.repaint();
-        menupanel.setLayout(new GridLayout((levelPerPage + 1), 1));
+        menupanel.setLayout(new GridLayout((levelPerPage + 2), 1));
         try {
             ArrayList<String> filenames = getResourceFiles(filePath);
-            for (int i = 0; i < levelPerPage; i++) {
+            for (int i = levelStartNum; i < levelStartNum + levelPerPage; i++) {
                 if (filenames.size() > i) {
                     InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath + filenames.get(i));
                     String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
                     lvl = new Level(new ArrayList<String>(Arrays.asList(result.split(";"))), "", "", true);
-                    
+
                     BufferedReader input = new BufferedReader(new FileReader("src/main/resources/levels/saved_data.txt"));
                     String data1 = input.lines().collect(Collectors.joining("\n"));
                     ArrayList<String> completed_levels = new ArrayList<String>(Arrays.asList(data1.split("\n")));
                     boolean completed = false;
                     for (int j = 0; j < completed_levels.size(); j++) {
-                        if(completed_levels.get(j).equals(user.getFullUsername()+";"+lvl.getName())) completed = true;
+                        if (completed_levels.get(j).equals(user.getFullUsername() + ";" + lvl.getName())) {
+                            completed = true;
+                        }
                     }
-                    System.out.println(completed);
-                    LevelIcon icon = new LevelIcon(menuMe, lvl, levelPerPage + 1, 0,completed);
+                    LevelIcon icon = new LevelIcon(menuMe, lvl, levelPerPage + 2, 0, completed);
                     setupIcon(icon);
                     menupanel.add(icon);
                     icon.repaint();
                 }
             }
+            prevNextPanel = new JPanel(new GridLayout(1, 2));
+            prevButton.setOrientation(2, (levelPerPage + 2));
+            if (levelStartNum == 0) {
+                prevButton.setEnabled(false);
+            } else {
+                prevButton.setEnabled(true);
+            }
+            prevNextPanel.add(prevButton);
+            nextButton.setOrientation(2, (levelPerPage + 2));
+            if (levelStartNum + levelPerPage > filenames.size()) {
+                nextButton.setEnabled(false);
+            } else {
+                nextButton.setEnabled(true);
+            }
+            prevNextPanel.add(nextButton);
+            menupanel.add(prevNextPanel);
         } catch (IOException ex) {
             System.out.println(ex);;
         }
         menupanel.add(backButton);
-        backButton.setOrientation(1, (levelPerPage + 1));
+        backButton.setOrientation(1, (levelPerPage + 2));
     }
-    
+
     public ArrayList<String> getResourceFiles(String path) throws IOException {
         ArrayList<String> filenames = new ArrayList<>();
 
@@ -361,23 +470,54 @@ public class Menu extends JFrame {
         menupanel.removeAll();
         menupanel.revalidate();
         menupanel.repaint();
-        menupanel.setLayout(new GridLayout((levelPerPage + 1), 1));
+        menupanel.setLayout(new GridLayout((levelPerPage + 2 + 1), 1));
+        sortSearchPanel = new JPanel(new GridLayout(2, 3));
+        sortByDateButton.setOrientation(3, (levelPerPage + 2 + 1) * 2);
+        sortSearchPanel.add(sortByDateButton);
+        sortByNameButton.setOrientation(3, (levelPerPage + 2 + 1) * 2);
+        sortSearchPanel.add(sortByNameButton);
+        sortByRateButton.setOrientation(3, (levelPerPage + 2 + 1) * 2);
+        sortSearchPanel.add(sortByRateButton);
+        sortSearchPanel.add(searchTextField);
+        searchByLevel.setOrientation(3, (levelPerPage + 2 + 1) * 2);
+        sortSearchPanel.add(searchByLevel);
+        searchByUser.setOrientation(3, (levelPerPage + 2 + 1) * 2);
+        sortSearchPanel.add(searchByUser);
+        menupanel.add(sortSearchPanel);
+
         ArrayList<Level> levels = new ArrayList<>();
-        levels = server.getXLevels("id", 0, levelPerPage + 1);
-        for (int i = 0; i < levels.size(); i++) {
+        levels = server.getXLevels(sortState,searchState, levelStartNum, levelStartNum + levelPerPage+1);
+        boolean fullFilled = (levels.size() > levelPerPage);
+        int size = (fullFilled) ? levelPerPage : levels.size();
+        for (int i = 0; i < size; i++) {
             LevelIcon icon;
-            if(server.isLevelFinishedByUser(levels.get(i).getName(), levels.get(i).getCreator_name(), user.getFullUsername()).getStatusCode() == 200){
-                icon = new LevelIcon(menuMe, levels.get(i), levelPerPage + 1, 0,true);
-            }
-            else {
-                icon = new LevelIcon(menuMe, levels.get(i), levelPerPage + 1, 0,false);
+            if (server.isLevelFinishedByUser(levels.get(i).getName(), levels.get(i).getCreator_name(), user.getFullUsername()).getStatusCode() == 200) {
+                icon = new LevelIcon(menuMe, levels.get(i), levelPerPage + 3, 0, true);
+            } else {
+                icon = new LevelIcon(menuMe, levels.get(i), levelPerPage + 3, 0, false);
             }
             setupIcon(icon);
             menupanel.add(icon);
             icon.repaint();
         }
+        prevNextPanel = new JPanel(new GridLayout(1, 2));
+        prevButton.setOrientation(2, (levelPerPage + 3));
+        if (levelStartNum == 0) {
+            prevButton.setEnabled(false);
+        } else {
+            prevButton.setEnabled(true);
+        }
+        prevNextPanel.add(prevButton);
+        nextButton.setOrientation(2, (levelPerPage + 3));
+        if (fullFilled) {
+            nextButton.setEnabled(true);
+        } else {
+            nextButton.setEnabled(false);
+        }
+        prevNextPanel.add(nextButton);
+        menupanel.add(prevNextPanel);
         menupanel.add(backButton);
-        backButton.setOrientation(1, (levelPerPage + 1));
+        backButton.setOrientation(1, (levelPerPage + 3));
     }
 
     private void setupLevelEditorMenu() {
@@ -486,8 +626,10 @@ public class Menu extends JFrame {
                 menupanel.revalidate();
                 menupanel.repaint();
                 menupanel.setLayout(new BorderLayout());
-                String data = LevelEditor.templateData[0] + sizeSlider.getValue()+";"+ gridEnable+ LevelEditor.templateData[1];
-                if(gridEnable < 0) gridEnable*=-1;
+                String data = LevelEditor.templateData[0] + sizeSlider.getValue() + ";" + gridEnable + LevelEditor.templateData[1];
+                if (gridEnable < 0) {
+                    gridEnable *= -1;
+                }
                 for (int i = 0; i < (gridEnable) * ((Integer) sizeSlider.getValue() * (Integer) sizeSlider.getValue()); i++) {
                     data += ";0";
                 }
@@ -540,14 +682,13 @@ public class Menu extends JFrame {
                 boolean showLevel = false;
                 System.out.println(e.getX() + ", " + e.getY());
                 //300-360 ig kuka  395-445 approve height 20-70ig
-                if(icon.isAdminVisible()){
-                    if (e.getX() < 70){
+                if (icon.isAdminVisible()) {
+                    if (e.getX() < 70) {
                         showLevel = true;
-                    }
-                    else {
+                    } else {
                         playLevel = true;
                     }
-                    
+
                 }
                 if (icon.isApproveVisible()) {
                     if (e.getX() < 300) {
@@ -567,10 +708,9 @@ public class Menu extends JFrame {
                     playLevel = true;
                 }
 
-                if(showLevel){
+                if (showLevel) {
                     icon.showLevelToAdmin();
-                }
-                else if (playLevel) {
+                } else if (playLevel) {
                     menupanel.removeAll();
                     menupanel.revalidate();
                     menupanel.repaint();
@@ -578,13 +718,11 @@ public class Menu extends JFrame {
                     game = new MainFrame(icon.getLvl().getName(), menuMe, icon.getLvl(), false, false, false, 0);
                     menupanel.add(game, BorderLayout.CENTER);
                     menupanel.repaint();
-                }
-                else if(deleteLevel){
-                    server.deleteLevel(icon.getLvl().getName(),icon.getLvl().getCreator_name());
+                } else if (deleteLevel) {
+                    server.deleteLevel(icon.getLvl().getName(), icon.getLvl().getCreator_name());
                     setupOnlineLevelsMenu();
-                }
-                else if(approveLevel){
-                    server.approveLevel(icon.getLvl().getName(),icon.getLvl().getCreator_name());
+                } else if (approveLevel) {
+                    server.approveLevel(icon.getLvl().getName(), icon.getLvl().getCreator_name());
                     setupOnlineLevelsMenu();
                 }
             }

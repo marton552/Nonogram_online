@@ -141,8 +141,8 @@ public class Server {
         closeRequest();
     }
 
-    public ArrayList<Level> getXLevels(String order, int start, int end) {
-        getLevels(order);
+    public ArrayList<Level> getXLevels(SortResponse order, SearchResponse search, int start, int end) {
+        getLevels(order,search);
         ArrayList<Level> levels = new ArrayList<>();
         for (int i = start; i < end && i < data.size(); i++) {
             levels.add(new Level(new ArrayList<String>(Arrays.asList(data.get(i).get(4).split(";"))), data.get(i).get(2), data.get(i).get(3), data.get(i).get(5).equals("-1") ? false : true));
@@ -297,6 +297,10 @@ public class Server {
 
     private void getLevels(String order) {
         runQuery("select * from levels order by " + order);
+    }
+    
+    private void getLevels(SortResponse order, SearchResponse search){
+        runQuery("SELECT levels.id, levels.level_name, levels.creator_name, levels.created_date, levels.data, levels.approved, SUM(completed_maps.rate)/COUNT(NULLIF(completed_maps.rate,0)) AS 'rate' FROM levels INNER JOIN completed_maps ON levels.level_name = completed_maps.level_name and levels.creator_name = completed_maps.creator_name "+search.toString()+" GROUP BY levels.level_name, levels.creator_name, levels.created_date order by "+order.toString());
     }
 
     private void getLevelCount() {
