@@ -72,8 +72,10 @@ public class Game {
     }
 
     public void useRemainingHelp() {
-        this.remainingHelp--;
-        lvl.randomHint();
+        if (hp > 0) {
+            this.remainingHelp--;
+            lvl.randomHint();
+        }
     }
 
     public void draw(Graphics g, int width, int height) {
@@ -82,13 +84,13 @@ public class Game {
             winGame(g);
         } else {
             lvl.drawNumbers(g, getActualLayer());
-            if(lvl.isIsMultisized()){
+            if (lvl.isIsMultisized()) {
                 lvl.drawMatrix(g, actualLayer, true, true);
+            } else {
+                for (int i = 0; i < getLayerCount(); i++) {
+                    lvl.drawMatrix(g, i, true, (i == actualLayer));
+                }
             }
-            else{
-            for (int i = 0; i < getLayerCount(); i++) {
-                lvl.drawMatrix(g, i, true, (i == actualLayer));
-            }}
         }
         if (!isEditing) {
             g.setColor(Color.BLACK);
@@ -98,8 +100,7 @@ public class Game {
         }
     }
 
-    
-    public void addLayer(){
+    public void addLayer() {
         lvl.addLayer();
     }
 }

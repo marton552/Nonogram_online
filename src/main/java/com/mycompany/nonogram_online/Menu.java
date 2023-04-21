@@ -9,6 +9,7 @@ import com.mycompany.nonogram_online.user.UserPanel;
 import com.mycompany.nonogram_online.buttons.BasicButton;
 import com.mycompany.nonogram_online.buttons.SearchButton;
 import com.mycompany.nonogram_online.buttons.SortButton;
+import com.mycompany.nonogram_online.buttons.SwitchButton;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.level.LevelEditor;
 import com.mycompany.nonogram_online.level.LevelIcon;
@@ -20,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -37,9 +39,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.util.*;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 /**
  *
@@ -81,13 +85,11 @@ public class Menu extends JFrame {
     private JSlider sizeSlider;
     private JPanel layerPanel;
     private JLabel layerLabel;
-    private JButton layerYES;
-    private JButton layerNO;
+    private SwitchButton layerButton;
     boolean layerEnable = false;
     private JPanel colorPanel;
     private JLabel colorLabel;
-    private JButton colorYES;
-    private JButton colorNO;
+    private SwitchButton colorButton;
     boolean colorEnable = false;
     private JPanel gridPanel;
     private JLabel gridLabel;
@@ -115,7 +117,6 @@ public class Menu extends JFrame {
 
     private ArrayList<String> history;
     private Server server;
-
 
     public Menu(String title) {
         super(title + " menü");
@@ -274,26 +275,24 @@ public class Menu extends JFrame {
                 levelStartNum += levelPerPage;
                 setupOnlineLevelsMenu();
             }
-        } else if(text.contains("Dátum")){
+        } else if (text.contains("Dátum")) {
             sortState.setDate();
             setupOnlineLevelsMenu();
-        } else if(text.contains("Név")){
+        } else if (text.contains("Név")) {
             sortState.setName();
             setupOnlineLevelsMenu();
-        }else if(text.contains("Értékelés")){
+        } else if (text.contains("Értékelés")) {
             sortState.setRate();
             setupOnlineLevelsMenu();
-        }
-        else if(text.contains("Pálya keresés")){
+        } else if (text.contains("Pálya keresés")) {
             searchState.setSearch(searchTextField.getText());
             searchState.setLevelName();
             setupOnlineLevelsMenu();
-        }
-        else if(text.contains("Felhasználó keresés")){
+        } else if (text.contains("Felhasználó keresés")) {
             searchState.setSearch(searchTextField.getText());
             searchState.setUserName();
             setupOnlineLevelsMenu();
-        }else {
+        } else {
             loginPanel.menuActions(text);
         }
     }
@@ -486,7 +485,7 @@ public class Menu extends JFrame {
         menupanel.add(sortSearchPanel);
 
         ArrayList<Level> levels = new ArrayList<>();
-        levels = server.getXLevels(sortState,searchState, levelStartNum, levelStartNum + levelPerPage+1);
+        levels = server.getXLevels(sortState, searchState, levelStartNum, levelStartNum + levelPerPage + 1);
         boolean fullFilled = (levels.size() > levelPerPage);
         int size = (fullFilled) ? levelPerPage : levels.size();
         for (int i = 0; i < size; i++) {
@@ -531,7 +530,7 @@ public class Menu extends JFrame {
         GridLayout size = new GridLayout(1, 2);
         size.setHgap(10);
         sizePanel.setLayout(size);
-        sizeLabel = new JLabel(" Pálya mérete:");
+        sizeLabel = new JLabel(" Pálya mérete:", SwingConstants.CENTER);
         sizeSlider = new JSlider(5, 20);
         sizeSlider.setMajorTickSpacing(5);
         sizeSlider.setSnapToTicks(true);
@@ -543,69 +542,39 @@ public class Menu extends JFrame {
         menupanel.add(sizePanel);
 
         layerPanel = new JPanel();
-        layerPanel.setLayout(new GridLayout(1, 3));
-        layerLabel = new JLabel(" Többrétegűség:");
-        layerYES = new JButton("Igen");
-        layerYES.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                layerEnable = true;
-                changeEditorMenu("layer", 1);
-            }
-        });
-        layerNO = new JButton("Nem");
-        layerNO.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                layerEnable = false;
-                changeEditorMenu("layer", 0);
-            }
-        });
+        layerPanel.setLayout(new GridLayout(1, 2));
+        layerLabel = new JLabel(" Többrétegűség:", SwingConstants.CENTER);
+        layerButton = new SwitchButton(menuMe, "layer", 3, 6);
         layerPanel.add(layerLabel);
-        layerPanel.add(layerNO);
-        layerPanel.add(layerYES);
-        changeEditorMenu("layer", 0);
+        layerPanel.add(layerButton);
         menupanel.add(layerPanel);
 
         colorPanel = new JPanel();
-        colorPanel.setLayout(new GridLayout(1, 3));
-        colorLabel = new JLabel(" Többszínűség:");
-        colorYES = new JButton("Igen");
-        colorYES.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                colorEnable = true;
-                changeEditorMenu("color", 1);
-            }
-        });
-        colorNO = new JButton("Nem");
-        colorNO.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                changeEditorMenu("color", 0);
-                colorEnable = false;
-            }
-        });
+        colorPanel.setLayout(new GridLayout(1, 2));
+        colorLabel = new JLabel(" Többszínűség:", SwingConstants.CENTER);
+        colorButton = new SwitchButton(menuMe, "color", 3, 6);
         colorPanel.add(colorLabel);
-        colorPanel.add(colorNO);
-        colorPanel.add(colorYES);
-        changeEditorMenu("color", 0);
+        colorPanel.add(colorButton);
         menupanel.add(colorPanel);
 
         gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(1, 4));
-        gridLabel = new JLabel(" Felosztás:");
-        grid1x1 = new JButton("1x1");
+        gridLabel = new JLabel(" Felosztás:", SwingConstants.CENTER);
+        grid1x1 = new JButton(new ImageIcon((new ImageIcon(this.getClass().getResource("/images/1x1.png")).getImage()).getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
         grid1x1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 gridEnable = 1;
                 changeEditorMenu("grid", 0);
             }
         });
-        grid2x2 = new JButton("2x2");
+        grid2x2 = new JButton(new ImageIcon((new ImageIcon(this.getClass().getResource("/images/2x2.png")).getImage()).getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
         grid2x2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 gridEnable = -4;
                 changeEditorMenu("grid", 1);
             }
         });
-        grid3x3 = new JButton("3x3");
+        grid3x3 = new JButton(new ImageIcon((new ImageIcon(this.getClass().getResource("/images/3x3.png")).getImage()).getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
         grid3x3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 gridEnable = -9;
@@ -633,7 +602,7 @@ public class Menu extends JFrame {
                 for (int i = 0; i < (gridEnable) * ((Integer) sizeSlider.getValue() * (Integer) sizeSlider.getValue()); i++) {
                     data += ";0";
                 }
-                game = new MainFrame("Új pálya", menuMe, new LevelEditor(new ArrayList<String>(Arrays.asList(data.split(";"))), (Integer) sizeSlider.getValue(), "", "", true), true, layerEnable, colorEnable, gridEnable);
+                game = new MainFrame("Új pálya", menuMe, new LevelEditor(new ArrayList<String>(Arrays.asList(data.split(";"))), (Integer) sizeSlider.getValue(), "", "", true), true, layerButton.isState(), colorButton.isState(), gridEnable);
                 menupanel.add(game, BorderLayout.CENTER);
                 menupanel.repaint();
             }
@@ -641,24 +610,8 @@ public class Menu extends JFrame {
         menupanel.add(startEdit);
     }
 
-    private void changeEditorMenu(String option, int button) {
-        if (option == "layer") {
-            if (button == 0) {
-                layerNO.setEnabled(false);
-                layerYES.setEnabled(true);
-            } else {
-                layerNO.setEnabled(true);
-                layerYES.setEnabled(false);
-            }
-        } else if (option == "color") {
-            if (button == 0) {
-                colorNO.setEnabled(false);
-                colorYES.setEnabled(true);
-            } else {
-                colorNO.setEnabled(true);
-                colorYES.setEnabled(false);
-            }
-        } else if (option == "grid") {
+    public void changeEditorMenu(String option, int button) {
+        if (option == "grid") {
             grid1x1.setEnabled(true);
             grid2x2.setEnabled(true);
             grid3x3.setEnabled(true);
@@ -668,6 +621,12 @@ public class Menu extends JFrame {
                 grid2x2.setEnabled(false);
             } else {
                 grid3x3.setEnabled(false);
+            }
+        } else if (option == "layer") {
+            if (layerButton.isState()) {
+                gridPanel.setVisible(true);
+            } else {
+                gridPanel.setVisible(false);
             }
         }
     }

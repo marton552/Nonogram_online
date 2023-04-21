@@ -42,6 +42,7 @@ public class BasicButton extends JPanel {
     protected boolean enabled = true;
     protected int clicked = 0;
     protected int fontSize = 0;
+    protected boolean draw = true;
 
     public BasicButton(Menu m, String text, int width, int height) {
         this.m = m;
@@ -144,46 +145,46 @@ public class BasicButton extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.gray);
-        g.drawRect(0, 0, width, height);
-        if (enabled) {
-            if (clicked == 0) {
-                g.drawImage(new ImageIcon(this.getClass().getResource("/images/button.png")).getImage(), 0, 0, width, height, null);
-            } else if (clicked == 10) {
-                g.drawImage(new ImageIcon(this.getClass().getResource("/images/button_filter.png")).getImage(), 0, 0, width, height, null);
-            }  else {
-                g.drawImage(new ImageIcon(this.getClass().getResource("/images/button_clicked.png")).getImage(), 0, 0, width, height, null);
+        if (draw) {
+            g.setColor(Color.gray);
+            g.drawRect(0, 0, width, height);
+            if (enabled) {
+                if (clicked == 0) {
+                    g.drawImage(new ImageIcon(this.getClass().getResource("/images/button.png")).getImage(), 0, 0, width, height, null);
+                } else if (clicked == 10) {
+                    g.drawImage(new ImageIcon(this.getClass().getResource("/images/button_filter.png")).getImage(), 0, 0, width, height, null);
+                } else {
+                    g.drawImage(new ImageIcon(this.getClass().getResource("/images/button_clicked.png")).getImage(), 0, 0, width, height, null);
+                }
+            } else {
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/button_disabled.png")).getImage(), 0, 0, width, height, null);
             }
-        } else {
-            g.drawImage(new ImageIcon(this.getClass().getResource("/images/button_disabled.png")).getImage(), 0, 0, width, height, null);
-        }
-        if (animationTimer > 0) {
-            g.drawImage(new ImageIcon(this.getClass().getResource("/images/flash.png")).getImage(), screenWidth - animationTimer, height / 20, height, height - (height / 10), null);
-        }
-        FontRenderContext frc = new FontRenderContext(null, true, true);
+            if (animationTimer > 0) {
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/flash.png")).getImage(), screenWidth - animationTimer, height / 20, height, height - (height / 10), null);
+            }
+            FontRenderContext frc = new FontRenderContext(null, true, true);
 
-        setFontSize();
-        String newText = text;
-        if (clicked == 1) {
-            newText += " ▼";
-        } else if (clicked == 2) {
-            newText += " ▲";
-        }
-        else if(clicked == 10){
-            newText +=" ☇";
-        }
-        Font font = new Font("TimesRoman", Font.PLAIN, fontSize);
-        Rectangle2D r2D = font.getStringBounds(newText, frc);
-        int rWidth = (int) Math.round(r2D.getWidth());
-        int rHeight = (int) Math.round(r2D.getHeight());
-        int rX = (int) Math.round(r2D.getX());
-        int rY = (int) Math.round(r2D.getY());
+            setFontSize();
+            String newText = text;
+            if (clicked == 1) {
+                newText += " ▼";
+            } else if (clicked == 2) {
+                newText += " ▲";
+            } else if (clicked == 10) {
+                newText += " ☇";
+            }
+            Font font = new Font("TimesRoman", Font.PLAIN, fontSize);
+            Rectangle2D r2D = font.getStringBounds(newText, frc);
+            int rWidth = (int) Math.round(r2D.getWidth());
+            int rHeight = (int) Math.round(r2D.getHeight());
+            int rX = (int) Math.round(r2D.getX());
+            int rY = (int) Math.round(r2D.getY());
 
-        int a = (width / 2) - (rWidth / 2) - rX;
-        int b = (height / 2) - (rHeight / 2) - rY;
+            int a = (width / 2) - (rWidth / 2) - rX;
+            int b = (height / 2) - (rHeight / 2) - rY;
 
-        g.setFont(font);
-        g.drawString(newText, a, b);
+            g.setFont(font);
+            g.drawString(newText, a, b);
+        }
     }
-
 }

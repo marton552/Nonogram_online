@@ -1,3 +1,4 @@
+com\mycompany\nonogram_online\buttons\SwitchButton.class
 com\mycompany\nonogram_online\Main.class
 com\mycompany\nonogram_online\MainFrame$1.class
 com\mycompany\nonogram_online\level\Level.class
@@ -10,7 +11,6 @@ com\mycompany\nonogram_online\MainFrame$7.class
 com\mycompany\nonogram_online\LoginPanel$2.class
 com\mycompany\nonogram_online\MainFrame$15.class
 com\mycompany\nonogram_online\MainFrame$12.class
-com\mycompany\nonogram_online\Menu$7.class
 com\mycompany\nonogram_online\buttons\BasicButton$2.class
 com\mycompany\nonogram_online\Menu$4.class
 com\mycompany\nonogram_online\MainFrame$4.class
@@ -22,12 +22,10 @@ com\mycompany\nonogram_online\user\UserPanel$2.class
 com\mycompany\nonogram_online\MainFrame$11.class
 com\mycompany\nonogram_online\buttons\BasicRate$2.class
 com\mycompany\nonogram_online\LoginPanel$4.class
-com\mycompany\nonogram_online\Menu$8.class
 com\mycompany\nonogram_online\MainFrame$5.class
 com\mycompany\nonogram_online\MainFrame$10.class
 com\mycompany\nonogram_online\server\SearchResponse.class
 com\mycompany\nonogram_online\Menu$2.class
-com\mycompany\nonogram_online\Menu$9.class
 com\mycompany\nonogram_online\buttons\BasicRate.class
 com\mycompany\nonogram_online\LoginPanel$3.class
 com\mycompany\nonogram_online\GamePanel.class
@@ -50,10 +48,10 @@ com\mycompany\nonogram_online\LoginPanel$1.class
 com\mycompany\nonogram_online\buttons\BasicButton.class
 com\mycompany\nonogram_online\server\SortResponse.class
 com\mycompany\nonogram_online\MainFrame$3.class
-com\mycompany\nonogram_online\Menu$10.class
 com\mycompany\nonogram_online\GamePanel$2.class
 com\mycompany\nonogram_online\buttons\SearchButton.class
 com\mycompany\nonogram_online\user\User.class
+com\mycompany\nonogram_online\buttons\SwitchButton$1.class
 com\mycompany\nonogram_online\Menu.class
 com\mycompany\nonogram_online\Menu$5.class
 com\mycompany\nonogram_online\MainFrame$2.class
