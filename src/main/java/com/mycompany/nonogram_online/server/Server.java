@@ -42,6 +42,13 @@ public class Server {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void refreshMissions(ArrayList<String> missions){
+        runQueryNoResponse("DELETE FROM missions");
+        for (int i = 0; i < missions.size(); i++) {
+            runQueryNoResponse("INSERT INTO missions (level, title, icon, need) VALUES ('"+missions.get(i).split(";")[0]+"','"+missions.get(i).split(";")[1]+"','"+missions.get(i).split(";")[2]+"','"+missions.get(i).split(";")[3]+"')");
+        }
+    }
 
     public void lvlUpUser(String username, String usercode, int rank) {
         getUsers();
@@ -190,6 +197,10 @@ public class Server {
         response = new Response(404, "User not exist");
         closeRequest();
         return response;
+    }
+    
+    public void deleteGuestUsers(){
+        runQueryNoResponse("DELETE FROM users WHERE rank='0'");
     }
 
     public Response registerGuestUser(String oldName, String newName, String pass, String usercode) {

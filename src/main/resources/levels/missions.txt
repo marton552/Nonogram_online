@@ -1,0 +1,26 @@
+1;Teljesits 3 online palyat;onlineX;3
+1;Teljesits 3 offline palyat;offlineX;3
+2;Teljesits 5 online palyat;onlineX;5
+2;Keszits 1 sajat palyat;createX;1
+3;Teljesits 10 online palyat;onlineX;10
+3;Teljesits 10 offline palyat;offlineX;10
+3;Keszits 2 sajat palyat;createX;2
+4;Keszits 5 sajat palyat;createX;5
+4;Legyen legalabb 3 ertekelt sajat palyad;getratedX;3
+5;Teljesits 30 online palyat;onlineX;30
+6;Teljesits 50 online palyat;onlineX;50
+6;Keszits 10 sajat palyat;createX;10
+6;Legyen legalabb 5 ertekelt sajat palyad;getratedX;5
+7;Legyen legalabb 10 ertekelt sajat palyad;getratedX;10
+8;Keszits 20 sajat palyat;createX;20
+9;Teljesits 30 offline palyat;offlineX;30
+10;Teljesits 80 online palyat;onlineX;80
+11;Teljesits 100 online palyat;onlineX;100
+11;Keszits 30 sajat palyat;createX;30
+12;Legyen legalabb 20 ertekelt sajat palyad;getratedX;20
+13;Teljesits 150 online palyat;onlineX;150
+14;Teljesits 200 online palyat;onlineX;200
+14;Keszits 40 sajat palyat;createX;40
+15;Legyen legalabb 30 ertekelt sajat palyad;getratedX;30
+16;Teljesits 40 offline palyat;offlineX;40
+17;Teljesits 500 online palyat;onlineX;500

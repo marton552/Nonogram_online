@@ -51,6 +51,8 @@ public class UserPanel extends JPanel {
     private String buttonTitle;
     Timer timer;
     private int animationTimer = 1;
+    private boolean deletedUsers = false;
+    private boolean uploadedMissions = false;
 
     public UserPanel(Menu m) {
         this.setLayout(new BorderLayout());
@@ -80,14 +82,34 @@ public class UserPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println(e.getX() + ", " + e.getY());
-                if (e.getY() >= screenHeight - screenHeight / 6 - 30) {
-                    if (buttonTitle.equals("Vissza")) {
+                if (m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000")) {
+                    if (e.getY() > 290 && e.getY() < 380) {
+                        if (!deletedUsers) {
+                            deletedUsers = true;
+                            server.deleteGuestUsers();
+                        }
+                    } else if (e.getY() > 380 && e.getY() < 470) {
+                        //felhasználókezelés
+                    } else if (e.getY() > 470 && e.getY() < 560) {
+                        if (!uploadedMissions) {
+                            uploadedMissions = true;
+                            server.refreshMissions(collectMissions());
+                        }
+                    } else if (e.getY() > 560 && e.getY() < 650) {
                         timer.stop();
                         m.backToMenu(false);
-                    } else {
-                        m.getUser().lvlUp();
-                        server.lvlUpUser(m.getUser().getUsername(), m.getUser().getUsercode(), m.getUser().getRank());
-                        refreshMissions();
+                    }
+                    repaint();
+                } else {
+                    if (e.getY() >= screenHeight - screenHeight / 6 - 30) {
+                        if (buttonTitle.equals("Vissza")) {
+                            timer.stop();
+                            m.backToMenu(false);
+                        } else {
+                            m.getUser().lvlUp();
+                            server.lvlUpUser(m.getUser().getUsername(), m.getUser().getUsercode(), m.getUser().getRank());
+                            refreshMissions();
+                        }
                     }
                 }
             }
@@ -122,15 +144,36 @@ public class UserPanel extends JPanel {
             } else if (missions.get(i).getIcon().equals("onlineX")) {
                 int done = collectOnlineLevels();
                 missions.get(i).setCurrentCount(done);
-            } else if (missions.get(i).getIcon().equals("makeX")) {
-                //todo offline map implementation
-            } else if (missions.get(i).getIcon().equals("getplayedX")) {
+            } else if (missions.get(i).getIcon().equals("createX")) {
                 //todo offline map implementation
             } else if (missions.get(i).getIcon().equals("getratedX")) {
                 //todo offline map implementation
             }
         }
         repaint();
+    }
+    
+    private ArrayList<String> collectMissions() {
+        BufferedReader input = null;
+        ArrayList<String> res = new ArrayList<>();
+        try {
+            input = new BufferedReader(new FileReader("src/main/resources/levels/missions.txt"));
+            String data = input.lines().collect(Collectors.joining("\n"));
+            ArrayList<String> missions = new ArrayList<String>(Arrays.asList(data.split("\n")));
+
+            for (int j = 0; j < missions.size(); j++) {
+                res.add(missions.get(j));
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                input.close();
+            } catch (IOException ex) {
+                Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return res;
     }
 
     private int collectOnlineLevels() {
@@ -145,12 +188,12 @@ public class UserPanel extends JPanel {
             input = new BufferedReader(new FileReader("src/main/resources/levels/saved_data.txt"));
             String data = input.lines().collect(Collectors.joining("\n"));
             ArrayList<String> completed_levels = new ArrayList<String>(Arrays.asList(data.split("\n")));
-            
+
             for (int j = 0; j < completed_levels.size(); j++) {
-                if (completed_levels.get(j).split(";")[0].equals(m.getUser().getFullUsername() )) {
+                if (completed_levels.get(j).split(";")[0].equals(m.getUser().getFullUsername())) {
                     completed++;
                 }
-            }   
+            }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -206,43 +249,62 @@ public class UserPanel extends JPanel {
         g.setFont(font);
         g.drawString(m.getUser().getUsername(), a, (int) (profpicSize * 1.7));
 
-        g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 20)));
-        g.drawString("A következő szint eléréséhez:", 10, (int) (profpicSize * 2));
+        int buttonNum = 1;
 
-        for (int i = 0; i < missions.size(); i++) {
-            g.setColor(Color.green);
-            g.fillRect(0, (int) (screenWidth / 2 + ((i + 1.5) * (screenHeight / 8))), (int) (screenWidth * (missions.get(i).getCurrentCount() / (double) missions.get(i).getNeedCount())), screenHeight / 16);
-            g.setColor(Color.black);
-            g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + (isCompleted(i) ? "completed_border" : "border") + ".png")).getImage(), 0, screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenWidth, screenHeight / 8, null);
-            g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 25)));
-            g.drawString(missions.get(i).getTitle(), 10, screenWidth / 2 + 30 + ((i + 1) * (screenHeight / 8)));
-            g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 30)));
-            g.drawString("Ebből kész: " + missions.get(i).getCurrentCount(), 10, screenWidth / 2 + 50 + ((i + 1) * (screenHeight / 8)));
-            g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + missions.get(i).getIcon() + ".png")).getImage(), screenWidth - (screenHeight / 7), screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenHeight / 8, screenHeight / 8, null);
-
-        }
-
-        if (isAllMissionsCompleted()) {
-            buttonTitle = "Szintlépés";
-        } else {
+        if (m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000")) {
             buttonTitle = "Vissza";
+            buttonNum = 4;
+        } else {
+            g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 20)));
+            g.drawString("A következő szint eléréséhez:", 10, (int) (profpicSize * 2));
+            for (int i = 0; i < missions.size(); i++) {
+                g.setColor(Color.green);
+                g.fillRect(0, (int) (screenWidth / 2 + ((i + 1.5) * (screenHeight / 8))), (int) (screenWidth * (missions.get(i).getCurrentCount() / (double) missions.get(i).getNeedCount())), screenHeight / 16);
+                g.setColor(Color.black);
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + (isCompleted(i) ? "completed_border" : "border") + ".png")).getImage(), 0, screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenWidth, screenHeight / 8, null);
+                g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 25)));
+                g.drawString(missions.get(i).getTitle(), 10, screenWidth / 2 + 30 + ((i + 1) * (screenHeight / 8)));
+                g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 30)));
+                g.drawString("Ebből kész: " + missions.get(i).getCurrentCount(), 10, screenWidth / 2 + 50 + ((i + 1) * (screenHeight / 8)));
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + missions.get(i).getIcon() + ".png")).getImage(), screenWidth - (screenHeight / 7), screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenHeight / 8, screenHeight / 8, null);
+
+            }
+
+            if (isAllMissionsCompleted()) {
+                buttonTitle = "Szintlépés";
+            } else {
+                buttonTitle = "Vissza";
+            }
         }
 
-        g.setColor(Color.gray);
-        g.drawImage(new ImageIcon(this.getClass().getResource("/images/button.png")).getImage(), 0, screenHeight - screenHeight / 6 - 30, screenWidth, screenHeight / 6, null);
-        frc = new FontRenderContext(null, true, true);
+        for (int i = 0; i < buttonNum; i++) {
+            if (i == 1) {
+                buttonTitle = "Küldetések frissítése";
+            } else if (i == 2) {
+                buttonTitle = "Felhasználók kezelése";
+            } else if (i == 3) {
+                buttonTitle = "Vendég profilok törlése";
+            }
+            g.setColor(Color.gray);
+            if ((i == 1 && uploadedMissions) || (i == 3 && deletedUsers)) {
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/button_filter.png")).getImage(), 0, screenWidth / 2 + (((4 - i)) * (screenHeight / 8)) - 30, screenWidth, screenHeight / 8, null);
+            } else {
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/button.png")).getImage(), 0, screenWidth / 2 + (((4 - i)) * (screenHeight / 8)) - 30, screenWidth, screenHeight / 8, null);
+            }
+            frc = new FontRenderContext(null, true, true);
 
-        font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 10));
-        r2D = font.getStringBounds(buttonTitle, frc);
-        rWidth = (int) Math.round(r2D.getWidth());
-        int rHeight = (int) Math.round(r2D.getHeight());
-        rX = (int) Math.round(r2D.getX());
-        int rY = (int) Math.round(r2D.getY());
+            font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 12));
+            r2D = font.getStringBounds(buttonTitle, frc);
+            rWidth = (int) Math.round(r2D.getWidth());
+            int rHeight = (int) Math.round(r2D.getHeight());
+            rX = (int) Math.round(r2D.getX());
+            int rY = (int) Math.round(r2D.getY());
 
-        a = (screenWidth / 2) - (rWidth / 2) - rX;
+            a = (screenWidth / 2) - (rWidth / 2) - rX;
 
-        g.setFont(font);
-        g.drawString(buttonTitle, a, screenHeight - screenHeight / 10);
+            g.setFont(font);
+            g.drawString(buttonTitle, a, screenWidth / 2 + (((4 - i)) * (screenHeight / 8)) + 30);
+        }
 
     }
 
