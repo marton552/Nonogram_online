@@ -15,15 +15,6 @@ public class MissionIcon {
     private int needCount;
     private int currentCount;
 
-    /*
-    Küldetés fajták:
-    - teljesíts X offline pályát //offlineX
-    - teljesíts X online pályát //onlineX
-    - készíts X pályát //makeX
-    - Játszanak legalább X pályáddal //getplayedX
-    - Kapj legalább X értékelést Y minimum rate-el //getratedX
-    - ect
-    */
     public MissionIcon(String title, String icon, int needCount, int currentCount) {
         this.title = title;
         this.icon = icon;

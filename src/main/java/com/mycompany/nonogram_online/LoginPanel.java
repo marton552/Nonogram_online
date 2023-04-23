@@ -173,7 +173,8 @@ public class LoginPanel extends JPanel {
                     time--;
                     timer.stop();
                     Response rank = server.getUserRank(usernameInput.getText(), User.fullCode(userCode));
-                    m.setUser(usernameInput.getText(), User.fullCode(userCode),(rank.getStatusCode() == 200 ? Integer.parseInt(rank.getMessage()) : 0));
+                    Response role = server.getUserRole(usernameInput.getText(), User.fullCode(userCode));
+                    m.setUser(usernameInput.getText(), User.fullCode(userCode),(rank.getStatusCode() == 200 ? Integer.parseInt(rank.getMessage()) : 0),(role.getStatusCode() == 200 ? role.getMessage() : "user"));
                     m.login();
                 }
             }

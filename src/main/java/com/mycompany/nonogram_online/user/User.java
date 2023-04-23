@@ -16,15 +16,17 @@ public class User {
     private String username;
     private String usercode;
     private int rank;
+    private String role;
 
-    public User(String username, String usercode,int rank) {
+    public User(String username, String usercode, int rank, String role) {
         this.username = username;
         this.usercode = usercode;
         this.rank = rank;
+        this.role = role;
     }
-    
+
     public String getFullUsername() {
-        return username+"#"+usercode;
+        return username + "#" + usercode;
     }
 
     public String getUsername() {
@@ -39,21 +41,32 @@ public class User {
         return rank;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public boolean isAdmin() {
+        return role.equals("admin");
+    }
+
+    public boolean isMod() {
+        return role.equals("mod");
+    }
+
     public void lvlUp() {
         this.rank++;
     }
 
-    public boolean isGuest(){
-        if(usercode.startsWith("0")) return false;
-        return true;
+    public boolean isGuest() {
+        return role.equals("guest");
     }
-    
-    public static String fullCode(int code){
-        String scode = code+"";
+
+    public static String fullCode(int code) {
+        String scode = code + "";
         String res = "";
-        for (int i = 0; i < 4-scode.length(); i++) {
-            res+="0";
+        for (int i = 0; i < 4 - scode.length(); i++) {
+            res += "0";
         }
-        return (res+scode);
+        return (res + scode);
     }
 }

@@ -59,7 +59,7 @@ public class LevelIcon extends JPanel {
         this.count = count;
         this.nth = nth;
         this.completed = isCompleted;
-        this.show_admin = m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000");
+        this.show_admin = m.getUser().isAdmin();
         if (!completed) {
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/questionmark.txt");
             String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
@@ -94,15 +94,15 @@ public class LevelIcon extends JPanel {
     }
 
     public boolean isTrashVisible() {
-        return lvl.getCreator_name() != "" && (lvl.getCreator_name().equals(m.getUser().getFullUsername()) || (m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000")));
+        return lvl.getCreator_name() != "" && (lvl.getCreator_name().equals(m.getUser().getFullUsername()) || (m.getUser().isAdmin()));
     }
 
     public boolean isApproveVisible() {
-        return lvl.getCreator_name() != "" && m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000") && !lvl.isApproved();
+        return lvl.getCreator_name() != "" && (m.getUser().isAdmin() || m.getUser().isMod()) && !lvl.isApproved();
     }
     
     public boolean isAdminVisible(){
-        return lvl.getCreator_name() != "" && m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000") && show_admin;
+        return lvl.getCreator_name() != "" && (m.getUser().isAdmin() || m.getUser().isMod()) && show_admin;
     }
     
     public void showLevelToAdmin(){
@@ -137,7 +137,7 @@ public class LevelIcon extends JPanel {
         if (animationTimer > 0) {
             g.drawImage(new ImageIcon(this.getClass().getResource("/images/flash.png")).getImage(), screenWidth - animationTimer, 0, height, height, null);
         }
-        if (completed || (!show_admin && m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000"))) {
+        if (completed || (!show_admin && m.getUser().isAdmin())) {
             lvl.setMatrixStartPos(offset, offset);
             for (int i = 0; i < lvl.getMatrix().size(); i++) {
                 lvl.setMenuSquareSize(height - 20);

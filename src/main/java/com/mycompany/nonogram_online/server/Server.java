@@ -7,6 +7,7 @@ package com.mycompany.nonogram_online.server;
 
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.user.MissionIcon;
+import com.mycompany.nonogram_online.user.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -42,11 +43,11 @@ public class Server {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void refreshMissions(ArrayList<String> missions){
+
+    public void refreshMissions(ArrayList<String> missions) {
         runQueryNoResponse("DELETE FROM missions");
         for (int i = 0; i < missions.size(); i++) {
-            runQueryNoResponse("INSERT INTO missions (level, title, icon, need) VALUES ('"+missions.get(i).split(";")[0]+"','"+missions.get(i).split(";")[1]+"','"+missions.get(i).split(";")[2]+"','"+missions.get(i).split(";")[3]+"')");
+            runQueryNoResponse("INSERT INTO missions (level, title, icon, need) VALUES ('" + missions.get(i).split(";")[0] + "','" + missions.get(i).split(";")[1] + "','" + missions.get(i).split(";")[2] + "','" + missions.get(i).split(";")[3] + "')");
         }
     }
 
@@ -54,7 +55,7 @@ public class Server {
         getUsers();
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).get(0).equals(username) && data.get(i).get(2).equals(usercode)) {
-                runQueryNoResponse("UPDATE users SET username = '" + username + "', password = '" + data.get(i).get(1) + "', usercode = '" + usercode + "', rank='" + rank + "' WHERE username ='" + username + "' and usercode = '" + usercode + "' ;");
+                runQueryNoResponse("UPDATE users SET username = '" + username + "', password = '" + data.get(i).get(1) + "', usercode = '" + usercode + "', rank='" + rank + "', role='" + data.get(i).get(4) + "' WHERE username ='" + username + "' and usercode = '" + usercode + "' ;");
             }
         }
         closeRequest();
@@ -70,21 +71,26 @@ public class Server {
         closeRequest();
         return res;
     }
-    
-    public double getAvgRateOfLevel(String lvlName, String fullUsername){
+
+    public double getAvgRateOfLevel(String lvlName, String fullUsername) {
         getCompletedLevels();
         double sum = 0;
         double db = 0;
         for (int i = 0; i < data.size(); i++) {
-            if(data.get(i).get(0).equals(lvlName) && data.get(i).get(1).equals(fullUsername)){
+            if (data.get(i).get(0).equals(lvlName) && data.get(i).get(1).equals(fullUsername)) {
                 double val = Double.parseDouble(data.get(i).get(3).toString());
                 sum += val;
-                if(val != 0)db++;
+                if (val != 0) {
+                    db++;
+                }
             }
         }
         closeRequest();
-        if(sum == 0) return 0;
-        else return sum/db;
+        if (sum == 0) {
+            return 0;
+        } else {
+            return sum / db;
+        }
     }
 
     public void rateLevel(String lvlName, String fullUsername, String actualUsername, double rate) {
@@ -113,6 +119,18 @@ public class Server {
         closeRequest();
         return new Response(200, counter + "");
     }
+
+    public Response getUserApprovedOnlineMaps(String fullUsername) {
+        getLevels("id");
+        int counter = 0;
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).get(2).equals(fullUsername) && data.get(i).get(5).equals("1")) {
+                counter++;
+            }
+        }
+        closeRequest();
+        return new Response(200, counter + "");
+    }
     
     public Response getUserCreatedOnlineMaps(String fullUsername) {
         getLevels("id");
@@ -125,7 +143,7 @@ public class Server {
         closeRequest();
         return new Response(200, counter + "");
     }
-    
+
     public Response getUserCompletedOnlineMaps(String fullUsername) {
         getCompletedLevels();
         int counter = 0;
@@ -173,7 +191,7 @@ public class Server {
     }
 
     public ArrayList<Level> getXLevels(SortResponse order, SearchResponse search, int start, int end) {
-        getLevels(order,search);
+        getLevels(order, search);
         ArrayList<Level> levels = new ArrayList<>();
         for (int i = start; i < end && i < data.size(); i++) {
             levels.add(new Level(new ArrayList<String>(Arrays.asList(data.get(i).get(4).split(";"))), data.get(i).get(2), data.get(i).get(3), data.get(i).get(5).equals("-1") ? false : true));
@@ -208,6 +226,16 @@ public class Server {
         closeRequest();
         return response;
     }
+    
+    public ArrayList<User> getXUser(SortResponse order, SearchResponse search, int start, int end) {
+        getUsers();
+        ArrayList<User> users = new ArrayList<>();
+        for (int i = start; i < end && i < data.size(); i++) {
+            users.add(new User(data.get(i).get(0),data.get(i).get(2), Integer.parseInt(data.get(i).get(3)), data.get(i).get(4)));
+        }
+        closeRequest();
+        return users;
+    }
 
     public Response getUserRank(String name, String usercode) {
         getUsers();
@@ -222,9 +250,22 @@ public class Server {
         closeRequest();
         return response;
     }
-    
-    public void deleteGuestUsers(){
+
+    public void deleteGuestUsers() {
         runQueryNoResponse("DELETE FROM users WHERE rank='0'");
+    }
+
+    public Response getUserRole(String username, String usercode) {
+        getUsers();
+        for (int i = 0; i < data.size(); i++) {
+            if(data.get(i).get(0).equals(username) && data.get(i).get(2).equals(usercode)){
+                Response res = new Response(200, data.get(i).get(4)+"");
+                closeRequest();
+                return res;
+            }
+        }
+        closeRequest();
+        return new Response(404, "User not found");
     }
 
     public Response registerGuestUser(String oldName, String newName, String pass, String usercode) {
@@ -232,7 +273,7 @@ public class Server {
             return new Response(409, "This username already taken!");
         } else {
             //todo: implement in other tables
-            runQueryNoResponse("UPDATE users SET username = '" + newName + "', password = '" + pass + "', usercode = '0000', rank='1' WHERE username ='" + oldName + "' and usercode = '" + usercode + "' ;");
+            runQueryNoResponse("UPDATE users SET username = '" + newName + "', password = '" + pass + "', usercode = '0000', rank='1', role='user' WHERE username ='" + oldName + "' and usercode = '" + usercode + "' ;");
             return new Response(200, "User added succesfully");
         }
     }
@@ -241,7 +282,7 @@ public class Server {
         if (isRealUserExist(name).getStatusCode() == 200) {
             return new Response(409, "This username already taken!");
         } else {
-            runQueryNoResponse("INSERT INTO users (username, password, usercode,rank) VALUES ('" + name + "', '0', '" + usercode + "', '0')");
+            runQueryNoResponse("INSERT INTO users (username, password, usercode,rank,role) VALUES ('" + name + "', '0', '" + usercode + "', '0','guest')");
             return new Response(200, "User added succesfully");
         }
     }
@@ -250,7 +291,7 @@ public class Server {
         if (isRealUserExist(name).getStatusCode() == 200) {
             return new Response(409, "This username already taken!");
         } else {
-            runQueryNoResponse("INSERT INTO users (username, password, usercode,rank) VALUES ('" + name + "', '" + pass + "', '0000','1')");
+            runQueryNoResponse("INSERT INTO users (username, password, usercode,rank,role) VALUES ('" + name + "', '" + pass + "', '0000','1','user')");
             return new Response(200, "User added succesfully");
         }
     }
@@ -333,9 +374,9 @@ public class Server {
     private void getLevels(String order) {
         runQuery("select * from levels order by " + order);
     }
-    
-    private void getLevels(SortResponse order, SearchResponse search){
-        runQuery("SELECT levels.id, levels.level_name, levels.creator_name, levels.created_date, levels.data, levels.approved, SUM(completed_maps.rate)/COUNT(NULLIF(completed_maps.rate,0)) AS 'rate' FROM levels INNER JOIN completed_maps ON levels.level_name = completed_maps.level_name and levels.creator_name = completed_maps.creator_name "+search.toString()+" GROUP BY levels.level_name, levels.creator_name, levels.created_date order by "+order.toString());
+
+    private void getLevels(SortResponse order, SearchResponse search) {
+        runQuery("SELECT levels.id, levels.level_name, levels.creator_name, levels.created_date, levels.data, levels.approved, SUM(completed_maps.rate)/COUNT(NULLIF(completed_maps.rate,0)) AS 'rate' FROM levels INNER JOIN completed_maps ON levels.level_name = completed_maps.level_name and levels.creator_name = completed_maps.creator_name " + search.toString() + " GROUP BY levels.level_name, levels.creator_name, levels.created_date order by " + order.toString());
     }
 
     private void getLevelCount() {

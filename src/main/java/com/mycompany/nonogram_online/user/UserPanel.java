@@ -8,8 +8,13 @@ package com.mycompany.nonogram_online.user;
 import com.mycompany.nonogram_online.MainFrame;
 import com.mycompany.nonogram_online.Menu;
 import com.mycompany.nonogram_online.buttons.BasicButton;
+import com.mycompany.nonogram_online.buttons.SearchButton;
+import com.mycompany.nonogram_online.buttons.SortButton;
+import com.mycompany.nonogram_online.level.LevelIcon;
 import com.mycompany.nonogram_online.server.Response;
+import com.mycompany.nonogram_online.server.SearchResponse;
 import com.mycompany.nonogram_online.server.Server;
+import com.mycompany.nonogram_online.server.SortResponse;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -17,6 +22,8 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
@@ -25,9 +32,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -35,6 +39,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 
 /**
@@ -42,6 +47,20 @@ import javax.swing.Timer;
  * @author marton552
  */
 public class UserPanel extends JPanel {
+
+    private JPanel prevNextPanel;
+    private BasicButton prevButton;
+    private BasicButton nextButton;
+    private JPanel sortSearchPanel;
+    private SortButton sortByRankButton;
+    private SortButton sortByNameButton;
+    private JTextField searchTextField;
+    private SearchButton searchByUser;
+    private SortResponse sortState;
+    private SearchResponse searchState;
+    private int userPerPage = 6;
+    private int userStartNum = 0;
+    private BasicButton backButton;
 
     private Menu m;
     private Server server;
@@ -53,8 +72,11 @@ public class UserPanel extends JPanel {
     private int animationTimer = 1;
     private boolean deletedUsers = false;
     private boolean uploadedMissions = false;
+    private JPanel thisPanel;
+    private boolean isSeeingUsers = false;
 
     public UserPanel(Menu m) {
+        thisPanel = this;
         this.setLayout(new BorderLayout());
         this.m = m;
         server = new Server();
@@ -62,6 +84,7 @@ public class UserPanel extends JPanel {
         this.screenHeight = m.getHeight() - 15;
         missions = server.getMissionList(m.getUser().getRank());
         refreshMissions();
+        backButton = new BasicButton(m, "Vissza", 1, 4);
         setVisible(true);
         repaint();
         timer = new Timer(200, new ActionListener() {
@@ -78,18 +101,45 @@ public class UserPanel extends JPanel {
         });
         timer.start();
 
+        prevButton = new BasicButton(m, "Előző", 2, 4);
+        nextButton = new BasicButton(m, "Következő", 2, 4);
+
+        sortByNameButton = new SortButton(m, "Név", 2, 4);
+        sortByRankButton = new SortButton(m, "Szint", 2, 4);
+        searchTextField = new JTextField("");
+        searchTextField = new JTextField("Keresés");
+        searchTextField.setForeground(Color.GRAY);
+        searchTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (searchTextField.getText().equals("Keresés")) {
+                    searchTextField.setText("");
+                    searchTextField.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (searchTextField.getText().isEmpty()) {
+                    searchTextField.setForeground(Color.GRAY);
+                    searchTextField.setText("Keresés");
+                }
+            }
+        });
+        searchByUser = new SearchButton(m, "Felhasználó keresés", 2, 4);
+
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println(e.getX() + ", " + e.getY());
-                if (m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000")) {
+                if (m.getUser().isAdmin()) {
                     if (e.getY() > 290 && e.getY() < 380) {
                         if (!deletedUsers) {
                             deletedUsers = true;
                             server.deleteGuestUsers();
                         }
                     } else if (e.getY() > 380 && e.getY() < 470) {
-                        //felhasználókezelés
+                        setupUsers();
                     } else if (e.getY() > 470 && e.getY() < 560) {
                         if (!uploadedMissions) {
                             uploadedMissions = true;
@@ -154,7 +204,7 @@ public class UserPanel extends JPanel {
         }
         repaint();
     }
-    
+
     private ArrayList<String> collectMissions() {
         BufferedReader input = null;
         ArrayList<String> res = new ArrayList<>();
@@ -177,7 +227,7 @@ public class UserPanel extends JPanel {
         }
         return res;
     }
-        
+
     private int collectRatedLevels() {
         Response res = server.getUserRatedOnlineMaps(m.getUser().getFullUsername());
         return Integer.parseInt(res.getMessage());
@@ -218,6 +268,53 @@ public class UserPanel extends JPanel {
         return completed;
     }
 
+    private void setupUsers() {
+        isSeeingUsers = true;
+        thisPanel.removeAll();
+        thisPanel.revalidate();
+        thisPanel.repaint();
+        thisPanel.setLayout(new GridLayout((userPerPage + 2 + 1), 1));
+        sortSearchPanel = new JPanel(new GridLayout(2, 2));
+        sortByNameButton.setOrientation(2, (userPerPage + 2 + 1) * 2);
+        sortSearchPanel.add(sortByNameButton);
+        sortByRankButton.setOrientation(2, (userPerPage + 2 + 1) * 2);
+        sortSearchPanel.add(sortByRankButton);
+        sortSearchPanel.add(searchTextField);
+        searchByUser.setOrientation(2, (userPerPage + 2 + 1) * 2);
+        sortSearchPanel.add(searchByUser);
+        thisPanel.add(sortSearchPanel);
+
+        ArrayList<User> users = new ArrayList<>();
+        users = server.getXUser(sortState, searchState, userStartNum, userStartNum + userPerPage + 1);
+        boolean fullFilled = (users.size() > userPerPage);
+        int size = (fullFilled) ? userPerPage : users.size();
+        for (int i = 0; i < size; i++) {
+            UserIcon icon;
+            icon = new UserIcon(m, users.get(i), 1, userPerPage + 3);
+            icon.setOrientation(1, userPerPage + 3);
+            thisPanel.add(icon);
+            icon.repaint();
+        }
+        prevNextPanel = new JPanel(new GridLayout(1, 2));
+        prevButton.setOrientation(2, (userPerPage + 3));
+        if (userStartNum == 0) {
+            prevButton.setEnabled(false);
+        } else {
+            prevButton.setEnabled(true);
+        }
+        prevNextPanel.add(prevButton);
+        nextButton.setOrientation(2, (userPerPage + 3));
+        if (fullFilled) {
+            nextButton.setEnabled(true);
+        } else {
+            nextButton.setEnabled(false);
+        }
+        prevNextPanel.add(nextButton);
+        thisPanel.add(prevNextPanel);
+        thisPanel.add(backButton);
+        backButton.setOrientation(1, (userPerPage + 3));
+    }
+
     private boolean isAllMissionsCompleted() {
         for (int i = 0; i < missions.size(); i++) {
             if (missions.get(i).getCurrentCount() < missions.get(i).getNeedCount()) {
@@ -234,88 +331,90 @@ public class UserPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int profpicSize = screenWidth / 3;
-        g.drawImage(new ImageIcon(this.getClass().getResource("/images/background/sun" + animationTimer + ".png")).getImage(), 0, 0, screenWidth, (int) (profpicSize * 1.5), null);
-        g.setColor(Color.white);
-        g.fillRect(0, profpicSize, screenWidth, screenHeight);
-        g.setColor(Color.black);
-        g.drawLine(0, profpicSize, screenWidth, profpicSize);
-        if (m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000")) {
-            g.drawImage(new ImageIcon(this.getClass().getResource("/images/ranks/admin.png")).getImage(), screenWidth / 2 - profpicSize / 2, (profpicSize / 2), profpicSize, profpicSize, null);
-        } else {
-            g.drawImage(new ImageIcon(this.getClass().getResource("/images/ranks/" + m.getUser().getRank() + ".png")).getImage(), screenWidth / 2 - profpicSize / 2, (profpicSize / 2), profpicSize, profpicSize, null);
-        }
-
-        FontRenderContext frc = new FontRenderContext(null, true, true);
-
-        Font font;
-        if (m.getUser().getUsername().length() > 10) {
-            font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 10));
-        } else {
-            font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 8));
-        }
-        Rectangle2D r2D = font.getStringBounds(m.getUser().getUsername(), frc);
-        int rWidth = (int) Math.round(r2D.getWidth());
-        int rX = (int) Math.round(r2D.getX());
-        int a = (screenWidth / 2) - (rWidth / 2) - rX;
-        g.setFont(font);
-        g.drawString(m.getUser().getUsername(), a, (int) (profpicSize * 1.7));
-
-        int buttonNum = 1;
-
-        if (m.getUser().getUsercode().startsWith("0") && !m.getUser().getUsercode().equals("0000")) {
-            buttonTitle = "Vissza";
-            buttonNum = 4;
-        } else {
-            g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 20)));
-            g.drawString("A következő szint eléréséhez:", 10, (int) (profpicSize * 2));
-            for (int i = 0; i < missions.size(); i++) {
-                g.setColor(Color.green);
-                g.fillRect(0, (int) (screenWidth / 2 + ((i + 1.5) * (screenHeight / 8))), (int) (screenWidth * (missions.get(i).getCurrentCount() / (double) missions.get(i).getNeedCount())), screenHeight / 16);
-                g.setColor(Color.black);
-                g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + (isCompleted(i) ? "completed_border" : "border") + ".png")).getImage(), 0, screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenWidth, screenHeight / 8, null);
-                g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 25)));
-                g.drawString(missions.get(i).getTitle(), 10, screenWidth / 2 + 30 + ((i + 1) * (screenHeight / 8)));
-                g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 30)));
-                g.drawString("Ebből kész: " + missions.get(i).getCurrentCount(), 10, screenWidth / 2 + 50 + ((i + 1) * (screenHeight / 8)));
-                g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + missions.get(i).getIcon() + ".png")).getImage(), screenWidth - (screenHeight / 7), screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenHeight / 8, screenHeight / 8, null);
-
-            }
-
-            if (isAllMissionsCompleted()) {
-                buttonTitle = "Szintlépés";
+        if (!isSeeingUsers) {
+            int profpicSize = screenWidth / 3;
+            g.drawImage(new ImageIcon(this.getClass().getResource("/images/background/sun" + animationTimer + ".png")).getImage(), 0, 0, screenWidth, (int) (profpicSize * 1.5), null);
+            g.setColor(Color.white);
+            g.fillRect(0, profpicSize, screenWidth, screenHeight);
+            g.setColor(Color.black);
+            g.drawLine(0, profpicSize, screenWidth, profpicSize);
+            if (m.getUser().isAdmin()) {
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/ranks/admin.png")).getImage(), screenWidth / 2 - profpicSize / 2, (profpicSize / 2), profpicSize, profpicSize, null);
             } else {
-                buttonTitle = "Vissza";
+                g.drawImage(new ImageIcon(this.getClass().getResource("/images/ranks/" + m.getUser().getRank() + ".png")).getImage(), screenWidth / 2 - profpicSize / 2, (profpicSize / 2), profpicSize, profpicSize, null);
             }
-        }
 
-        for (int i = 0; i < buttonNum; i++) {
-            if (i == 1) {
-                buttonTitle = "Küldetések frissítése";
-            } else if (i == 2) {
-                buttonTitle = "Felhasználók kezelése";
-            } else if (i == 3) {
-                buttonTitle = "Vendég profilok törlése";
-            }
-            g.setColor(Color.gray);
-            if ((i == 1 && uploadedMissions) || (i == 3 && deletedUsers)) {
-                g.drawImage(new ImageIcon(this.getClass().getResource("/images/button_filter.png")).getImage(), 0, screenWidth / 2 + (((4 - i)) * (screenHeight / 8)) - 30, screenWidth, screenHeight / 8, null);
+            FontRenderContext frc = new FontRenderContext(null, true, true);
+
+            Font font;
+            if (m.getUser().getUsername().length() > 10) {
+                font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 10));
             } else {
-                g.drawImage(new ImageIcon(this.getClass().getResource("/images/button.png")).getImage(), 0, screenWidth / 2 + (((4 - i)) * (screenHeight / 8)) - 30, screenWidth, screenHeight / 8, null);
+                font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 8));
             }
-            frc = new FontRenderContext(null, true, true);
-
-            font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 12));
-            r2D = font.getStringBounds(buttonTitle, frc);
-            rWidth = (int) Math.round(r2D.getWidth());
-            int rHeight = (int) Math.round(r2D.getHeight());
-            rX = (int) Math.round(r2D.getX());
-            int rY = (int) Math.round(r2D.getY());
-
-            a = (screenWidth / 2) - (rWidth / 2) - rX;
-
+            Rectangle2D r2D = font.getStringBounds(m.getUser().getUsername(), frc);
+            int rWidth = (int) Math.round(r2D.getWidth());
+            int rX = (int) Math.round(r2D.getX());
+            int a = (screenWidth / 2) - (rWidth / 2) - rX;
             g.setFont(font);
-            g.drawString(buttonTitle, a, screenWidth / 2 + (((4 - i)) * (screenHeight / 8)) + 30);
+            g.drawString(m.getUser().getUsername(), a, (int) (profpicSize * 1.7));
+
+            int buttonNum = 1;
+
+            if (m.getUser().isAdmin()) {
+                buttonTitle = "Vissza";
+                buttonNum = 4;
+            } else {
+                g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 20)));
+                g.drawString("A következő szint eléréséhez:", 10, (int) (profpicSize * 2));
+                for (int i = 0; i < missions.size(); i++) {
+                    g.setColor(Color.green);
+                    g.fillRect(0, (int) (screenWidth / 2 + ((i + 1.5) * (screenHeight / 8))), (int) (screenWidth * (missions.get(i).getCurrentCount() / (double) missions.get(i).getNeedCount())), screenHeight / 16);
+                    g.setColor(Color.black);
+                    g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + (isCompleted(i) ? "completed_border" : "border") + ".png")).getImage(), 0, screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenWidth, screenHeight / 8, null);
+                    g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 25)));
+                    g.drawString(missions.get(i).getTitle(), 10, screenWidth / 2 + 30 + ((i + 1) * (screenHeight / 8)));
+                    g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 30)));
+                    g.drawString("Ebből kész: " + missions.get(i).getCurrentCount(), 10, screenWidth / 2 + 50 + ((i + 1) * (screenHeight / 8)));
+                    g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + missions.get(i).getIcon() + ".png")).getImage(), screenWidth - (screenHeight / 7), screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenHeight / 8, screenHeight / 8, null);
+
+                }
+
+                if (isAllMissionsCompleted()) {
+                    buttonTitle = "Szintlépés";
+                } else {
+                    buttonTitle = "Vissza";
+                }
+            }
+
+            for (int i = 0; i < buttonNum; i++) {
+                if (i == 1) {
+                    buttonTitle = "Küldetések frissítése";
+                } else if (i == 2) {
+                    buttonTitle = "Felhasználók kezelése";
+                } else if (i == 3) {
+                    buttonTitle = "Vendég profilok törlése";
+                }
+                g.setColor(Color.gray);
+                if ((i == 1 && uploadedMissions) || (i == 3 && deletedUsers)) {
+                    g.drawImage(new ImageIcon(this.getClass().getResource("/images/button_filter.png")).getImage(), 0, screenWidth / 2 + (((4 - i)) * (screenHeight / 8)) - 30, screenWidth, screenHeight / 8, null);
+                } else {
+                    g.drawImage(new ImageIcon(this.getClass().getResource("/images/button.png")).getImage(), 0, screenWidth / 2 + (((4 - i)) * (screenHeight / 8)) - 30, screenWidth, screenHeight / 8, null);
+                }
+                frc = new FontRenderContext(null, true, true);
+
+                font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 12));
+                r2D = font.getStringBounds(buttonTitle, frc);
+                rWidth = (int) Math.round(r2D.getWidth());
+                int rHeight = (int) Math.round(r2D.getHeight());
+                rX = (int) Math.round(r2D.getX());
+                int rY = (int) Math.round(r2D.getY());
+
+                a = (screenWidth / 2) - (rWidth / 2) - rX;
+
+                g.setFont(font);
+                g.drawString(buttonTitle, a, screenWidth / 2 + (((4 - i)) * (screenHeight / 8)) + 30);
+            }
         }
 
     }

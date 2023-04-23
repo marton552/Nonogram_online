@@ -127,7 +127,7 @@ public class Menu extends JFrame {
         server = new Server();
         history = new ArrayList<>();
         loginPanel = new LoginPanel(this, "");
-        user = new User("", "", 0);
+        user = new User("", "", 0, "");
         userPanel = new UserPanel(this);
         mainpanel = new JPanel();
         mainpanel.setLayout(new BorderLayout());
@@ -297,8 +297,8 @@ public class Menu extends JFrame {
         }
     }
 
-    public void setUser(String name, String usercode, int rank) {
-        user = new User(name, usercode, rank);
+    public void setUser(String name, String usercode, int rank, String role) {
+        user = new User(name, usercode, rank, role);
     }
 
     public User getUser() {
