@@ -102,6 +102,30 @@ public class Server {
         }
     }
 
+    public Response getUserRatedOnlineMaps(String fullUsername) {
+        getCompletedLevels();
+        int counter = 0;
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).get(1).equals(fullUsername) && !data.get(i).get(3).equals("0")) {
+                counter++;
+            }
+        }
+        closeRequest();
+        return new Response(200, counter + "");
+    }
+    
+    public Response getUserCreatedOnlineMaps(String fullUsername) {
+        getLevels("id");
+        int counter = 0;
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).get(2).equals(fullUsername)) {
+                counter++;
+            }
+        }
+        closeRequest();
+        return new Response(200, counter + "");
+    }
+    
     public Response getUserCompletedOnlineMaps(String fullUsername) {
         getCompletedLevels();
         int counter = 0;

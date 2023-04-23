@@ -145,9 +145,11 @@ public class UserPanel extends JPanel {
                 int done = collectOnlineLevels();
                 missions.get(i).setCurrentCount(done);
             } else if (missions.get(i).getIcon().equals("createX")) {
-                //todo offline map implementation
+                int done = collectCreatedLevels();
+                missions.get(i).setCurrentCount(done);
             } else if (missions.get(i).getIcon().equals("getratedX")) {
-                //todo offline map implementation
+                int done = collectRatedLevels();
+                missions.get(i).setCurrentCount(done);
             }
         }
         repaint();
@@ -174,6 +176,16 @@ public class UserPanel extends JPanel {
             }
         }
         return res;
+    }
+        
+    private int collectRatedLevels() {
+        Response res = server.getUserRatedOnlineMaps(m.getUser().getFullUsername());
+        return Integer.parseInt(res.getMessage());
+    }
+
+    private int collectCreatedLevels() {
+        Response res = server.getUserCreatedOnlineMaps(m.getUser().getFullUsername());
+        return Integer.parseInt(res.getMessage());
     }
 
     private int collectOnlineLevels() {
