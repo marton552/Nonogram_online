@@ -60,6 +60,9 @@ public class GamePanel extends JPanel {
                 if (game.lvl.isLayerFinished(game.getActualLayer())) {
                     mf.finishLayer();
                 }
+                if(game.getHp() == 0){
+                    mf.loseGame();
+                }
                 repaint();
             }
 

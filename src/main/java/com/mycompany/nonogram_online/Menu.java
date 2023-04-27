@@ -7,6 +7,7 @@ package com.mycompany.nonogram_online;
 
 import com.mycompany.nonogram_online.user.UserPanel;
 import com.mycompany.nonogram_online.buttons.BasicButton;
+import com.mycompany.nonogram_online.buttons.FailButton;
 import com.mycompany.nonogram_online.buttons.SearchButton;
 import com.mycompany.nonogram_online.buttons.SortButton;
 import com.mycompany.nonogram_online.buttons.SwitchButton;
@@ -67,7 +68,7 @@ public class Menu extends JFrame {
     private BasicButton hardLevel;
     private BasicButton backButton;
     private BasicButton userButton;
-
+    
     private JPanel prevNextPanel;
     private BasicButton prevButton;
     private BasicButton nextButton;
@@ -153,7 +154,7 @@ public class Menu extends JFrame {
         userButton = new BasicButton(menuMe, "Saját profil", 1, 4);
         prevButton = new BasicButton(menuMe, "Előző", 2, 4);
         nextButton = new BasicButton(menuMe, "Következő", 2, 4);
-
+        
         sortByDateButton = new SortButton(menuMe, "Dátum", 2, 4);
         sortByNameButton = new SortButton(menuMe, "Név", 2, 4);
         sortByRateButton = new SortButton(menuMe, "Értékelés", 2, 4);
@@ -354,7 +355,6 @@ public class Menu extends JFrame {
         menupanel.add(guestLogin);
         exitGameButton.setOrientation(1, 4);
         menupanel.add(exitGameButton);
-
     }
 
     private void setupMainMenu() {
@@ -683,7 +683,14 @@ public class Menu extends JFrame {
 
                 if (showLevel) {
                     icon.showLevelToAdmin();
-                } else if (playLevel) {
+                }  else if (deleteLevel) {
+                    server.deleteLevel(icon.getLvl().getName(), icon.getLvl().getCreator_name());
+                    setupOnlineLevelsMenu();
+                } else if (approveLevel) {
+                    server.approveLevel(icon.getLvl().getName(), icon.getLvl().getCreator_name());
+                    setupOnlineLevelsMenu();
+                }
+                else if (playLevel) {
                     menupanel.removeAll();
                     menupanel.revalidate();
                     menupanel.repaint();
@@ -691,12 +698,6 @@ public class Menu extends JFrame {
                     game = new MainFrame(icon.getLvl().getName(), menuMe, icon.getLvl(), false, false, false, 0);
                     menupanel.add(game, BorderLayout.CENTER);
                     menupanel.repaint();
-                } else if (deleteLevel) {
-                    server.deleteLevel(icon.getLvl().getName(), icon.getLvl().getCreator_name());
-                    setupOnlineLevelsMenu();
-                } else if (approveLevel) {
-                    server.approveLevel(icon.getLvl().getName(), icon.getLvl().getCreator_name());
-                    setupOnlineLevelsMenu();
                 }
             }
 

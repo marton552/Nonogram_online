@@ -115,8 +115,8 @@ public class LevelMatrix {
     }
     
     //FORDÍTVA MŰKÖDIK!
-    public void setTileBy(int colls,int rows){
-        rowsColls.get(rows * hanyszorhany + colls).clickOn();
+    public void setTileBy(int colls,int rows, int color){
+        rowsColls.get(rows * hanyszorhany + colls).clickOn(color);
         setLeftNumbers();
         setTopNumbers();
     }
@@ -149,6 +149,10 @@ public class LevelMatrix {
     
     public boolean getTileByIsFailed(int rows, int colls) {
         return rowsColls.get(rows * hanyszorhany + colls).isFailed();
+    }
+    
+    public boolean getTileByIsFlagged(int rows, int colls) {
+        return rowsColls.get(rows * hanyszorhany + colls).isFlagged();
     }
 
     public ArrayList<ArrayList<Point>> getLeftNumbers() {

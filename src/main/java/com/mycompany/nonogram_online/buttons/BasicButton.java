@@ -5,10 +5,7 @@
  */
 package com.mycompany.nonogram_online.buttons;
 
-import com.mycompany.nonogram_online.MainFrame;
 import com.mycompany.nonogram_online.Menu;
-import com.mycompany.nonogram_online.level.Level;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;

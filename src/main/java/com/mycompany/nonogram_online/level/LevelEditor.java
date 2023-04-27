@@ -19,7 +19,6 @@ public class LevelEditor extends Level {
 
     public static String[] templateData = {"new_level;",";2;rgb(255,255,255);rgb(0,0,0)"};
     
-    private int selectedColor = 1;
     private Server server;
 
     public LevelEditor(ArrayList<String> allData, int size, String creator_name, String created_date, boolean approved) {
@@ -31,17 +30,13 @@ public class LevelEditor extends Level {
     public boolean isFinished() {
         return false;
     }
-
-    @Override
-    public void setSelectedColor(int c){
-        selectedColor = c;
-    }
     
     @Override
     public void clickOnTile(int x, int y, int layer) {
         int posX = (x - matrixStartPosX) / squareSize;
         int posY = (y - matrixStartPosY) / squareSize;
         if (posX >= 0 && posX < hanyszorhany && posY >= 0 && posY < hanyszorhany) {
+            System.out.println(selectedColor);
             matrix.get(layer).addTileBy(posY, posX, selectedColor);
         }
         setMatrixMostLeftNumbers();

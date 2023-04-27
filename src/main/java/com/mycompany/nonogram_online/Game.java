@@ -72,10 +72,14 @@ public class Game {
     }
 
     public void useRemainingHelp() {
-        if (hp > 0) {
+        if (hp > 0 && !lvl.isFinished()) {
             this.remainingHelp--;
             lvl.randomHint();
         }
+    }
+
+    public int getHp() {
+        return hp;
     }
 
     public void draw(Graphics g, int width, int height) {
@@ -102,5 +106,11 @@ public class Game {
 
     public void addLayer() {
         lvl.addLayer();
+    }
+
+    void retry() {
+        hp = 3;
+        remainingHelp = 3;
+        lvl.retry();
     }
 }

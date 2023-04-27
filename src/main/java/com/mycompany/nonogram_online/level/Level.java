@@ -12,6 +12,7 @@ import java.awt.Graphics;
 import static java.lang.Integer.parseInt;
 import java.util.ArrayList;
 import java.util.Random;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -45,6 +46,8 @@ public class Level {
     private boolean isEditing = false;
     private boolean isMultisized = false;
     private ArrayList<Integer> completedParts;
+
+    protected int selectedColor = 1;
 
     public Level(ArrayList<String> allData, String creator_name, String created_date, boolean approved) {
         this.allData = allData;
@@ -81,15 +84,16 @@ public class Level {
         setMatrixMostLeftNumbers();
         setMatrixMostTopNumbers();
     }
-    public ArrayList<String> getAllData(){
+
+    public ArrayList<String> getAllData() {
         return allData;
     }
-    
-    public boolean isThisPartCompleted(Integer n){
+
+    public boolean isThisPartCompleted(Integer n) {
         return completedParts.contains(n);
     }
-    
-    public void addCompletedPart(Integer n){
+
+    public void addCompletedPart(Integer n) {
         completedParts.add(n);
         System.out.println(completedParts);
     }
@@ -214,7 +218,7 @@ public class Level {
         int posX = (x - matrixStartPosX) / squareSize;
         int posY = (y - matrixStartPosY) / squareSize;
         if (posX >= 0 && posX < hanyszorhany && posY >= 0 && posY < hanyszorhany) {
-            matrix.get(layer).setTileBy(posX, posY);
+            matrix.get(layer).setTileBy(posX, posY, selectedColor);
         }
     }
 
@@ -248,18 +252,19 @@ public class Level {
                     g.drawRect(matrixStartPosX + (k * squareSize), matrixStartPosY + (i * squareSize), squareSize, squareSize);
                 }
                 if (matrix.get(layer).getTileByIsFailed(i, k) && !isFinished()) {
-                    g.setColor(Color.RED);
+                    g.setColor(invertColor);
                     g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize * 1.3)));
                     g.drawChars("X".toCharArray(), 0, 1, matrixStartPosX + (k * squareSize) + (squareSize / 10), matrixStartPosY + ((i + 1) * squareSize));
                 }
+                if (matrix.get(layer).getTileByIsFlagged(i, k) && !isFinished()) {
+                    g.drawImage(new ImageIcon(this.getClass().getResource("/images/flag.png")).getImage(), matrixStartPosX + (k * squareSize) + (squareSize / 10), matrixStartPosY + ((i) * (squareSize)) + (int) (squareSize * 0.1), (int) (squareSize * 0.9), (int) (squareSize * 0.9), null);
+                }
             }
         }
-        if (isInGame) {
-            for (int i = 0; i < hanyszorhany / 5 - 1; i++) {
-                g.setColor(Color.BLACK);
-                g.fillRect(matrixStartPosX + (((i + 1) * 5) * squareSize) - 1, matrixStartPosY, 3, (hanyszorhany * squareSize));
-                g.fillRect(matrixStartPosX, matrixStartPosY + (((i + 1) * 5) * squareSize) - 1, (hanyszorhany * squareSize), 3);
-            }
+        for (int i = 0; i < hanyszorhany / 5 - (isInGame ? 1 : 0); i++) {
+            g.setColor(Color.BLACK);
+            g.fillRect(matrixStartPosX + (((i + 1) * 5) * squareSize) - 1, matrixStartPosY, 3, (hanyszorhany * squareSize));
+            g.fillRect(matrixStartPosX, matrixStartPosY + (((i + 1) * 5) * squareSize) - 1, (hanyszorhany * squareSize), 3);
         }
     }
 
@@ -299,16 +304,16 @@ public class Level {
     }
 
     public boolean isLayerFinished(int layer) {
-            for (int j = 0; j < matrix.get(layer).getLeftNumbers().size(); j++) {
-                for (int k = 0; k < matrix.get(layer).getLeftNumbers().get(j).size(); k++) {
-                    if (!matrix.get(layer).getLeftNumbers().get(j).get(k).isSolved()) {
-                        return false;
-                    }
+        for (int j = 0; j < matrix.get(layer).getLeftNumbers().size(); j++) {
+            for (int k = 0; k < matrix.get(layer).getLeftNumbers().get(j).size(); k++) {
+                if (!matrix.get(layer).getLeftNumbers().get(j).get(k).isSolved()) {
+                    return false;
                 }
             }
+        }
         return true;
     }
-    
+
     public boolean isFinished() {
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < matrix.get(i).getLeftNumbers().size(); j++) {
@@ -327,7 +332,8 @@ public class Level {
             for (int j = 0; j < hanyszorhany; j++) {
                 for (int k = 0; k < hanyszorhany; k++) {
                     if (matrix.get(i).getTileBy(j, k) != 0 && !matrix.get(i).getTileByIsDone(j, k)) {
-                        matrix.get(i).setTileBy(k, j);
+                        int color = matrix.get(i).getTileBy(j, k);
+                        matrix.get(i).setTileBy(k, j, color);
                     }
                 }
             }
@@ -339,9 +345,7 @@ public class Level {
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < hanyszorhany; j++) {
                 for (int k = 0; k < hanyszorhany; k++) {
-                    if (matrix.get(i).getTileBy(j, k) != 0 && matrix.get(i).getTileByIsDone(j, k)) {
-                        matrix.get(i).clearTileBy(j, k);
-                    }
+                    matrix.get(i).clearTileBy(j, k);
                 }
             }
         }
@@ -357,7 +361,8 @@ public class Level {
                         if (matrix.get(i).getTileBy(j, k) != 0 && !matrix.get(i).getTileByIsDone(j, k)) {
                             rnd--;
                             if (rnd == 0) {
-                                matrix.get(i).setTileBy(k, j);
+                                int color = matrix.get(i).getTileBy(j, k);
+                                matrix.get(i).setTileBy(k, j, color);
                             }
                         }
                     }
@@ -365,19 +370,19 @@ public class Level {
             }
         }
     }
-    
-    public String export(){
+
+    public String export() {
         String saveData = getName();
-        saveData+=";"+hanyszorhany;
-        saveData+=";"+matrix.size();
-        saveData+=";"+colors.size();
+        saveData += ";" + hanyszorhany;
+        saveData += ";" + matrix.size();
+        saveData += ";" + colors.size();
         for (int i = 0; i < colors.size(); i++) {
-            saveData+=";rgb("+colors.get(i).getRed()+","+colors.get(i).getGreen()+","+colors.get(i).getBlue()+")";
+            saveData += ";rgb(" + colors.get(i).getRed() + "," + colors.get(i).getGreen() + "," + colors.get(i).getBlue() + ")";
         }
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < hanyszorhany; j++) {
                 for (int k = 0; k < hanyszorhany; k++) {
-                    saveData+=";"+matrix.get(i).getTileBy(j, k);
+                    saveData += ";" + matrix.get(i).getTileBy(j, k);
                 }
             }
         }
@@ -392,8 +397,14 @@ public class Level {
     }
 
     public void setSelectedColor(int c) {
+        System.out.println(c);
+        selectedColor = c;
     }
 
     public void save(User user) {
+    }
+
+    public void retry() {
+        newLvl(false);
     }
 }

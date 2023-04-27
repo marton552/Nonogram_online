@@ -10,16 +10,19 @@ package com.mycompany.nonogram_online.level;
  * @author marton552
  */
 public class Point {
+
     private int num;
     private int color;
     private boolean solved;
     private boolean failed;
+    private boolean flagged;
 
     public Point(int num, int color, boolean solved) {
         this.num = num;
         this.color = color;
         this.solved = solved;
         this.failed = false;
+        this.flagged = false;
     }
 
     public int getNum() {
@@ -33,32 +36,45 @@ public class Point {
     public boolean isSolved() {
         return solved;
     }
-    
+
     @Override
     public String toString() {
-    return num+","+color;
-  }
-    
-    public void clickOn(){
-        this.solved = true;
-        if(color == 0) failed = true;
+        return num + "," + color;
     }
-    
-    public void add(int color){
+
+    public void clickOn(int c) {
+        if (!solved) {
+            this.solved = true;
+            if (c == 0 && color == 0) {
+                flagged = true;
+            }
+            if (color != c) {
+                failed = true;
+            }
+        }
+    }
+
+    public boolean isFlagged() {
+        return flagged;
+    }
+
+    public void add(int color) {
         this.color = color;
         this.solved = true;
     }
-    
-    public void unClick(){
+
+    public void unClick() {
         this.solved = false;
+        this.failed = false;
+        this.flagged = false;
     }
-    
-    public void resetColor(){
+
+    public void resetColor() {
         this.color = 0;
     }
 
     public boolean isFailed() {
         return failed;
     }
-    
+
 }

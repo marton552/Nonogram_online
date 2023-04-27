@@ -6,6 +6,7 @@
 package com.mycompany.nonogram_online;
 
 import com.mycompany.nonogram_online.buttons.BasicRate;
+import com.mycompany.nonogram_online.buttons.FailButton;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.server.NonogramFileWriter;
 import com.mycompany.nonogram_online.server.Response;
@@ -76,6 +77,7 @@ public class MainFrame extends JPanel {
     private JLabel solvableLabel;
     private JButton saveButton;
 
+    private FailButton failButton;
     private Server server;
 
     private boolean isEditing = false;
@@ -103,6 +105,7 @@ public class MainFrame extends JPanel {
 
         game = new Game(lvl, isEditing);
         server = new Server();
+        failButton = new FailButton(m, this, 1, 3);
 
         titleLabel = new JLabel(lvl.getName(), SwingConstants.CENTER);
         selectedColor = new JLabel("Ez a választott szín", SwingConstants.CENTER);
@@ -151,7 +154,7 @@ public class MainFrame extends JPanel {
             giveUpButton = new JButton("Feladás");
         }
 
-        ratePopUp = new BasicRate(m,lvl, 0, 1, 4);
+        ratePopUp = new BasicRate(m, lvl, 0, 1, 4);
 
         giveUpButton.addActionListener(new ActionListener() {
 
@@ -169,8 +172,8 @@ public class MainFrame extends JPanel {
                     } else {
                         NonogramFileWriter fw = new NonogramFileWriter("");
                         fw.saveLocalData(m.getUser().getFullUsername(), lvl.getName());
+                        m.backToMenu(true);
                     }
-
                 }
                 if (giveUpButton.getText() == " Vissza " || giveUpButton.getText() == " Befejezés ") {
                     isChoosing = true;
@@ -201,7 +204,7 @@ public class MainFrame extends JPanel {
         colorButtons[10] = new JButton("🚩");
         colorButtons[10].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                chooseColor(0);
             }
         });
 
@@ -334,7 +337,7 @@ public class MainFrame extends JPanel {
         topPanel.add(titlePanel);
         topPanel.add(giveUpButton);
         topPanel.add(colorPanel);
-        selectedColor.setVisible(false);
+        selectedColor.setVisible(true);
         topPanel.add(selectedColor);
         topPanel.add(colorError);
         bottomPanel.add(prevLayerButton);
@@ -345,11 +348,10 @@ public class MainFrame extends JPanel {
             bottomPanel.add(isSolvableButton);
             bottomPanel.add(solvableLabel);
             bottomPanel.add(saveButton);
+            colorPanel.add(colorButtons[0]);
+            colorPanel.add(colorButtons[1]);
             if (isColored) {
-                selectedColor.setVisible(true);
                 topPanel.add(deleteColor);
-                colorPanel.add(colorButtons[0]);
-                colorPanel.add(colorButtons[1]);
                 colorButtons[10] = new JButton("+");
                 colorButtons[10].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -364,6 +366,17 @@ public class MainFrame extends JPanel {
             chooseColor(1);
         } else {
             colorPanel.add(colorButtons[10]);
+            for (int i = 0; i < game.lvl.getColors().size() - 1; i++) {
+                colorButtons[i] = new JButton((i + 1) + "");
+                colorButtons[i].setBackground(game.lvl.getColors().get(i + 1));
+                colorButtons[i].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        chooseColor(Integer.parseInt(((JButton) e.getSource()).getText()));
+                    }
+                });
+                colorPanel.add(colorButtons[i]);
+                chooseColor(1);
+            }
             bottomPanel.add(hintButton);
         }
 
@@ -376,13 +389,12 @@ public class MainFrame extends JPanel {
     private void chooseMulti(int x, int y) {
         int size = (int) Math.sqrt(placeholder.getMatrix().size());
         int pWidth = width / size;
-        x = x / pWidth;
+        x = (x / pWidth);
         y = y - (height / 2 - width / 2);
         y = y / pWidth;
-        System.out.println(x + ", " + y);
         isChoosing = false;
-        game.setActualLayer(x * y + x);
-        if (x * y + x == 0) {
+        game.setActualLayer(size * y + x);
+        if (size * y + x == 0) {
             game.setActualLayer(1);
             zeroLayer = true;
         }
@@ -464,6 +476,11 @@ public class MainFrame extends JPanel {
         selectedColor.setForeground(invertColor);
         selectedColor.setBackground(color);
         selectedColor.setOpaque(true);
+        if (num == 0 && !isEditing) {
+            selectedColor.setText("Zászló kiválasztva");
+        } else {
+            selectedColor.setText("Ez a választott szín");
+        }
         topPanel.revalidate();
         topPanel.repaint();
         game.lvl.setSelectedColor(num);
@@ -493,7 +510,6 @@ public class MainFrame extends JPanel {
         if (currentColor == 0) {
             error = "Az alap színt nem lehet törölni!";
         } else {
-            System.out.println(currentColor);
             Color curr = colorButtons[currentColor].getBackground();
             for (int i = currentColor; i < lvl.getColors().size(); i++) {
                 colorButtons[i].setText((i) + "");
@@ -538,7 +554,6 @@ public class MainFrame extends JPanel {
 
     public void finishLayer() {
         if (isMultisized) {
-            System.out.println(game.getActualLayer());
             giveUpButton.setText(" Befejezés ");
             placeholder.addCompletedPart((Integer) game.getActualLayer());
             boolean finish = true;
@@ -557,12 +572,27 @@ public class MainFrame extends JPanel {
         this.repaint();
     }
 
+    void loseGame() {
+        this.removeAll();
+        this.revalidate();
+        this.repaint();
+        this.setLayout(new BorderLayout());
+        this.add(failButton, BorderLayout.CENTER);
+    }
+    
+    public void retry() {
+        setup();
+        game.retry();
+        hintButton.setVisible(true);
+        hintButton.setText("Segítség 3/3");
+    }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         this.repaint();
         this.setVisible(true);
-        if(isRating){
+        if (isRating) {
             gamePanel.repaint();
             ratePopUp.repaint();
         }
