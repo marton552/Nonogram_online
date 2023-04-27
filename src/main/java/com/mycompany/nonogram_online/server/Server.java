@@ -43,6 +43,14 @@ public class Server {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void promoteUser(String username, String usercode) {
+        runQueryNoResponse("UPDATE `users` SET `role`='mod' WHERE username ='"+username+"' and usercode='"+usercode+"'");
+    }
+    
+    public void deleteUser(String username, String usercode) {
+        runQueryNoResponse("DELETE FROM users WHERE username ='"+username+"' and usercode='"+usercode+"'");
+    }
 
     public void refreshMissions(ArrayList<String> missions) {
         runQueryNoResponse("DELETE FROM missions");

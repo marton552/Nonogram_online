@@ -42,6 +42,7 @@ public class UserIcon extends JPanel {
     protected boolean draw = true;
     protected User user;
     protected Server server;
+    protected UserPanel p;
     
     /*
     Rendezés:
@@ -57,8 +58,9 @@ public class UserIcon extends JPanel {
     + bann user (set role = banned)
     */
 
-    public UserIcon(Menu m, User user, int width, int height) {
+    public UserIcon(Menu m, UserPanel p, User user, int width, int height) {
         this.m = m;
+        this.p = p;
         this.user = user;
         this.screenWidth = m.getWidth();
         this.screenHeight = m.getHeight();
@@ -73,13 +75,19 @@ public class UserIcon extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 System.out.println(e.getX());
                 if(e.getX() > 260 && e.getX() < 300){
-                    //list levels
+                    m.menuActions("listusermaps:"+user.getUsername());
                 }
                 else if(e.getX() > 335 && e.getX() < 375){
-                    //add mod
+                    if(!(user.isAdmin() || user.isMod())){
+                        server.promoteUser(user.getUsername(),user.getUsercode());
+                    }
+                    p.setupUsers();
                 }
                 else if(e.getX() > 410 && e.getX() < 445){
-                    //Delete
+                    if(!user.isAdmin()){
+                        server.deleteUser(user.getUsername(),user.getUsercode());
+                    }
+                    p.setupUsers();
                 }
             }
 
@@ -148,8 +156,8 @@ public class UserIcon extends JPanel {
         g.drawChars(name.toCharArray(), 0, name.toCharArray().length, height + offset, (int)(height / 1.5) + offset);
         
         g.drawImage(new ImageIcon(this.getClass().getResource("/images/list_levels.png")).getImage(), screenWidth - (height * 3), offset * 2, (height - offset * 4), (height - offset * 4), null);
-        g.drawImage(new ImageIcon(this.getClass().getResource("/images/promote.png")).getImage(), screenWidth - (height*2), offset * 2, (height - offset * 4), (height - offset * 4), null);
-        g.drawImage(new ImageIcon(this.getClass().getResource("/images/trash.png")).getImage(), screenWidth - (height), offset * 2, (height - offset * 4), (height - offset * 4), null);
+        if(!(user.isAdmin() || user.isMod())) g.drawImage(new ImageIcon(this.getClass().getResource("/images/promote.png")).getImage(), screenWidth - (height*2), offset * 2, (height - offset * 4), (height - offset * 4), null);
+        if(!user.isAdmin())g.drawImage(new ImageIcon(this.getClass().getResource("/images/trash.png")).getImage(), screenWidth - (height), offset * 2, (height - offset * 4), (height - offset * 4), null);
         
     }
 }

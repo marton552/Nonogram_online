@@ -59,7 +59,7 @@ public class LevelIcon extends JPanel {
         this.count = count;
         this.nth = nth;
         this.completed = isCompleted;
-        this.show_admin = m.getUser().isAdmin();
+        this.show_admin = m.getUser().isAdmin() || m.getUser().isMod();
         if (!completed) {
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/questionmark.txt");
             String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
@@ -137,7 +137,7 @@ public class LevelIcon extends JPanel {
         if (animationTimer > 0) {
             g.drawImage(new ImageIcon(this.getClass().getResource("/images/flash.png")).getImage(), screenWidth - animationTimer, 0, height, height, null);
         }
-        if (completed || (!show_admin && m.getUser().isAdmin())) {
+        if (completed || (!show_admin && (m.getUser().isAdmin() || m.getUser().isMod()))) {
             lvl.setMatrixStartPos(offset, offset);
             for (int i = 0; i < lvl.getMatrix().size(); i++) {
                 lvl.setMenuSquareSize(height - 20);

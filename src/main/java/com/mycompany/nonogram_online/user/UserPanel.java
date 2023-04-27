@@ -131,7 +131,6 @@ public class UserPanel extends JPanel {
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println(e.getX() + ", " + e.getY());
                 if (m.getUser().isAdmin()) {
                     if (e.getY() > 290 && e.getY() < 380) {
                         if (!deletedUsers) {
@@ -147,14 +146,14 @@ public class UserPanel extends JPanel {
                         }
                     } else if (e.getY() > 560 && e.getY() < 650) {
                         timer.stop();
-                        m.backToMenu(false);
+                        m.menuActions("Vissza");
                     }
                     repaint();
                 } else {
                     if (e.getY() >= screenHeight - screenHeight / 6 - 30) {
                         if (buttonTitle.equals("Vissza")) {
                             timer.stop();
-                            m.backToMenu(false);
+                            m.menuActions("Vissza");
                         } else {
                             m.getUser().lvlUp();
                             server.lvlUpUser(m.getUser().getUsername(), m.getUser().getUsercode(), m.getUser().getRank());
@@ -268,7 +267,7 @@ public class UserPanel extends JPanel {
         return completed;
     }
 
-    private void setupUsers() {
+    public void setupUsers() {
         isSeeingUsers = true;
         thisPanel.removeAll();
         thisPanel.revalidate();
@@ -290,7 +289,7 @@ public class UserPanel extends JPanel {
         int size = (fullFilled) ? userPerPage : users.size();
         for (int i = 0; i < size; i++) {
             UserIcon icon;
-            icon = new UserIcon(m, users.get(i), 1, userPerPage + 3);
+            icon = new UserIcon(m, this, users.get(i), 1, userPerPage + 3);
             icon.setOrientation(1, userPerPage + 3);
             thisPanel.add(icon);
             icon.repaint();

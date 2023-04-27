@@ -55,6 +55,7 @@ public class Menu extends JFrame {
     private JPanel menupanel;
     private BasicButton newGameButton;
     private BasicButton exitGameButton;
+    private BasicButton logoutGameButton;
     private BasicButton login;
     private BasicButton signin;
     private BasicButton guestLogin;
@@ -180,6 +181,7 @@ public class Menu extends JFrame {
         searchByUser = new SearchButton(menuMe, "Felhasználó keresés", 2, 4);
 
         exitGameButton = new BasicButton(menuMe, "Exit", 1, 4);
+        logoutGameButton = new BasicButton(menuMe, "Kijelentkezés", 1, 4);
 
         mainpanel.add(menupanel, BorderLayout.CENTER);
 
@@ -192,6 +194,8 @@ public class Menu extends JFrame {
     public void menuActions(String text) {
         if (text == "Exit") {
             System.exit(0);
+        } else if (text == "Kijelentkezés") {
+            backToMenu(true);
         } else if (text == "Bejelentkezés") {
             loginPanel = new LoginPanel(menuMe, " Bejelentkezés");
             menupanel.removeAll();
@@ -223,14 +227,8 @@ public class Menu extends JFrame {
             menupanel.setLayout(new BorderLayout());
             menupanel.add(loginPanel, BorderLayout.CENTER);
         } else if (text == "Saját profil") {
-            loginPanel = new LoginPanel(menuMe, " Belépés vendégként");
-            menupanel.removeAll();
-            menupanel.revalidate();
-            menupanel.repaint();
-            menupanel.setLayout(new BorderLayout());
-            userPanel = new UserPanel(this);
-            userPanel.refreshMissions();
-            menupanel.add(userPanel, BorderLayout.CENTER);
+            history.add("user");
+            setupUserProfile();
         } else if (text == "Offline pályák") {
             history.add("diff");
             setupDifficultyMenu();
@@ -292,6 +290,10 @@ public class Menu extends JFrame {
             searchState.setSearch(searchTextField.getText());
             searchState.setUserName();
             setupOnlineLevelsMenu();
+        } else if (text.startsWith("listusermaps")) {
+            searchState.setSearch(text.split(":")[1]);
+            searchState.setUserName();
+            setupOnlineLevelsMenu();
         } else {
             loginPanel.menuActions(text);
         }
@@ -324,7 +326,19 @@ public class Menu extends JFrame {
             setupOfflineLevelsMenu();
         } else if (history.get(history.size() - 1).equals("online")) {
             setupOnlineLevelsMenu();
+        } else if (history.get(history.size() - 1).equals("user")) {
+            setupUserProfile();
         }
+    }
+
+    private void setupUserProfile() {
+        menupanel.removeAll();
+        menupanel.revalidate();
+        menupanel.repaint();
+        menupanel.setLayout(new BorderLayout());
+        userPanel = new UserPanel(this);
+        userPanel.refreshMissions();
+        menupanel.add(userPanel, BorderLayout.CENTER);
     }
 
     private void setupFirstMenu() {
@@ -353,14 +367,14 @@ public class Menu extends JFrame {
             offlineMaps.setOrientation(1, 5);
             onlineMaps.setOrientation(1, 5);
             levelCreator.setOrientation(1, 5);
-            exitGameButton.setOrientation(1, 5);
+            logoutGameButton.setOrientation(1, 5);
         } else {
             menupanel.setLayout(new GridLayout(5, 1));
             offlineMaps.setOrientation(1, 5);
             onlineMaps.setOrientation(1, 5);
             levelCreator.setOrientation(1, 5);
             userButton.setOrientation(1, 5);
-            exitGameButton.setOrientation(1, 5);
+            logoutGameButton.setOrientation(1, 5);
         }
         menupanel.add(offlineMaps);
         menupanel.add(onlineMaps);
@@ -371,7 +385,7 @@ public class Menu extends JFrame {
         } else {
             menupanel.add(userButton);
         }
-        menupanel.add(exitGameButton);
+        menupanel.add(logoutGameButton);
     }
 
     private void setupDifficultyMenu() {
