@@ -11,6 +11,7 @@ import com.mycompany.nonogram_online.buttons.FailButton;
 import com.mycompany.nonogram_online.buttons.SearchButton;
 import com.mycompany.nonogram_online.buttons.SortButton;
 import com.mycompany.nonogram_online.buttons.SwitchButton;
+import com.mycompany.nonogram_online.generator.ImageHandler;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.level.LevelEditor;
 import com.mycompany.nonogram_online.level.LevelIcon;
@@ -40,6 +41,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.util.*;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
@@ -125,6 +128,13 @@ public class Menu extends JFrame {
         this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
         this.setPreferredSize(new Dimension(width, height));
         this.setLocation(100, 100);
+        
+        try {
+            ImageHandler ih = new ImageHandler(ImageIO.read(Menu.class.getResourceAsStream("/images/background/sun1.png")), 100);
+            ih.pixeliseImage();
+        } catch (IOException ex) {
+            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
 
         server = new Server();
         history = new ArrayList<>();
