@@ -219,9 +219,15 @@ public class MainFrame extends JPanel {
         isSolvableButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //todo: implementation
-                saveButton.setEnabled(true);
-                solvableLabel.setText("Megoldható ✓");
-                solvableLabel.setForeground(Color.green);
+                if (game.lvl.isSolvable()) {
+                    saveButton.setEnabled(true);
+                    solvableLabel.setText("Megoldható ✓");
+                    solvableLabel.setForeground(Color.green);
+                }
+                else{
+                    solvableLabel.setText("Nem megoldható!");
+                    solvableLabel.setForeground(Color.red);
+                }
             }
         });
 
@@ -579,7 +585,7 @@ public class MainFrame extends JPanel {
         this.setLayout(new BorderLayout());
         this.add(failButton, BorderLayout.CENTER);
     }
-    
+
     public void retry() {
         setup();
         game.retry();

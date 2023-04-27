@@ -98,6 +98,36 @@ public class LevelMatrix {
         }
     }
     
+    public ArrayList<ArrayList<Integer>> getLeftOnlyNumbers(){
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        for (int i = 0; i < leftNumbers.size(); i++) {
+            ArrayList<Integer> x = new ArrayList<>();
+            int num = 0;
+            for (int j = 0; j < leftNumbers.get(i).size(); j++) {
+                num++;
+                x.add(leftNumbers.get(i).get(j).getNum());
+            }
+            if(num == 0) x.add(0);
+            res.add(x);
+        }
+        return res;
+    }
+    
+    public ArrayList<ArrayList<Integer>> getTopOnlyNumbers(){
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        for (int i = 0; i < topNumbers.size(); i++) {
+            ArrayList<Integer> x = new ArrayList<>();
+            int num = 0;
+            for (int j = 0; j < topNumbers.get(i).size(); j++) {
+                num++;
+                x.add(topNumbers.get(i).get(j).getNum());
+            }
+            if(num == 0) x.add(0);
+            res.add(x);
+        }
+        return res;
+    }
+    
     public int mostTopNumber(){
         int res = 0;
         for (int i = 0; i < topNumbers.size(); i++) {

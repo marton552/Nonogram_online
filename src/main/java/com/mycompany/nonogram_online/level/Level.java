@@ -5,6 +5,7 @@
  */
 package com.mycompany.nonogram_online.level;
 
+import com.mycompany.nonogram_online.generator.Nonogram;
 import com.mycompany.nonogram_online.user.User;
 import java.awt.Color;
 import java.awt.Font;
@@ -190,6 +191,14 @@ public class Level {
     public void setMatrixStartPos(int x, int y) {
         matrixStartPosX = x;
         matrixStartPosY = y;
+    }
+    
+    public boolean isSolvable(){
+        for (int i = 0; i < matrix.size(); i++) {
+            Nonogram n = new Nonogram(matrix.get(i).getTopOnlyNumbers(), matrix.get(i).getLeftOnlyNumbers());
+            if(!n.solveAndCheck()) return false;
+        }
+        return true;
     }
 
     public void setMatrixMostLeftNumbers() {
