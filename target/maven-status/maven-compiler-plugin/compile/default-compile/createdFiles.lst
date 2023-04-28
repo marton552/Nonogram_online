@@ -22,7 +22,9 @@ com\mycompany\nonogram_online\user\UserPanel$2.class
 com\mycompany\nonogram_online\user\UserIcon$1.class
 com\mycompany\nonogram_online\MainFrame$11.class
 com\mycompany\nonogram_online\buttons\BasicRate$2.class
+com\mycompany\nonogram_online\level\ImageToLevel.class
 com\mycompany\nonogram_online\LoginPanel$4.class
+com\mycompany\nonogram_online\level\ImageToLevel$3.class
 com\mycompany\nonogram_online\user\UserPanel$3.class
 com\mycompany\nonogram_online\MainFrame$5.class
 com\mycompany\nonogram_online\MainFrame$10.class
@@ -33,12 +35,15 @@ com\mycompany\nonogram_online\buttons\BasicRate.class
 com\mycompany\nonogram_online\MainFrame$17.class
 com\mycompany\nonogram_online\LoginPanel$3.class
 com\mycompany\nonogram_online\buttons\FailButton.class
+com\mycompany\nonogram_online\level\ImageToLevel$2.class
 com\mycompany\nonogram_online\GamePanel.class
 com\mycompany\nonogram_online\MainFrame$16.class
 com\mycompany\nonogram_online\Menu$6.class
 com\mycompany\nonogram_online\buttons\BasicButton$1.class
+com\mycompany\nonogram_online\generator\ImageHandler$1.class
 com\mycompany\nonogram_online\Menu$3.class
 com\mycompany\nonogram_online\MainFrame$13.class
+com\mycompany\nonogram_online\buttons\ImageGeneratorButton.class
 com\mycompany\nonogram_online\MainFrame$8.class
 com\mycompany\nonogram_online\server\Server.class
 com\mycompany\nonogram_online\user\UserPanel$1.class
@@ -54,9 +59,11 @@ com\mycompany\nonogram_online\LoginPanel$1.class
 com\mycompany\nonogram_online\buttons\BasicButton.class
 com\mycompany\nonogram_online\server\SortResponse.class
 com\mycompany\nonogram_online\MainFrame$3.class
+com\mycompany\nonogram_online\level\LevelPanel.class
 com\mycompany\nonogram_online\GamePanel$2.class
 com\mycompany\nonogram_online\buttons\SearchButton.class
 com\mycompany\nonogram_online\user\User.class
+com\mycompany\nonogram_online\level\ImageToLevel$1.class
 com\mycompany\nonogram_online\buttons\SwitchButton$1.class
 com\mycompany\nonogram_online\Menu.class
 com\mycompany\nonogram_online\Menu$5.class

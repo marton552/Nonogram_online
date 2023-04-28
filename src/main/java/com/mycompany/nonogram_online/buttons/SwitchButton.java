@@ -23,6 +23,7 @@ public class SwitchButton extends BasicButton {
     
     private boolean state = false;
     private String type = "";
+    private boolean centerText = true;
 
     public SwitchButton(Menu m, String type, int width, int height) {
         super(m, "off", width, height);
@@ -33,7 +34,6 @@ public class SwitchButton extends BasicButton {
             this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                m.changeEditorMenu(type,0);
                 if(state){
                     state = false;
                     text = "off";
@@ -42,6 +42,7 @@ public class SwitchButton extends BasicButton {
                     state = true;
                     text = "on";
                 }
+                m.changeEditorMenu(type,0);
                 repaint();
             }
 
@@ -71,6 +72,11 @@ public class SwitchButton extends BasicButton {
         return state;
     }
     
+    public void setWidthManualy(int width){
+        this.screenWidth = width;
+        centerText = false;
+    }
+    
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -89,7 +95,7 @@ public class SwitchButton extends BasicButton {
         int a = (width / 2) - (rWidth / 2) - rX;
 
         g.setFont(font);
-        g.drawString(newText, a, (int)(height*0.55));
+        if(centerText)g.drawString(newText, a, (int)(height*0.55));
     }
     
 }

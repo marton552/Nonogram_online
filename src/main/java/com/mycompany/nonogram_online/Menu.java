@@ -12,6 +12,7 @@ import com.mycompany.nonogram_online.buttons.SearchButton;
 import com.mycompany.nonogram_online.buttons.SortButton;
 import com.mycompany.nonogram_online.buttons.SwitchButton;
 import com.mycompany.nonogram_online.generator.ImageHandler;
+import com.mycompany.nonogram_online.level.ImageToLevel;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.level.LevelEditor;
 import com.mycompany.nonogram_online.level.LevelIcon;
@@ -71,7 +72,7 @@ public class Menu extends JFrame {
     private BasicButton hardLevel;
     private BasicButton backButton;
     private BasicButton userButton;
-    
+
     private JPanel prevNextPanel;
     private BasicButton prevButton;
     private BasicButton nextButton;
@@ -122,16 +123,17 @@ public class Menu extends JFrame {
 
     private ArrayList<String> history;
     private Server server;
+    private ImageToLevel itl;
 
     public Menu(String title) {
         super(title + " menü");
         this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
         this.setPreferredSize(new Dimension(width, height));
         this.setLocation(100, 100);
-        
+
         try {
-            ImageHandler ih = new ImageHandler(ImageIO.read(Menu.class.getResourceAsStream("/images/background/sun1.png")), 100);
-            ih.pixeliseImage();
+            ImageHandler ih = new ImageHandler(ImageIO.read(Menu.class.getResourceAsStream("/images/villam.png")), 500, 4);
+            //ih.createImage();
         } catch (IOException ex) {
             Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
@@ -151,6 +153,12 @@ public class Menu extends JFrame {
         sortState = new SortResponse();
         searchState = new SearchResponse("");
 
+        try {
+            itl = new ImageToLevel(menuMe, ImageIO.read(Menu.class.getResourceAsStream("/images/villam.png")));
+        } catch (IOException ex) {
+            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
         login = new BasicButton(menuMe, "Bejelentkezés", 1, 4);
         signin = new BasicButton(menuMe, "Regisztráció", 1, 4);
         guestLogin = new BasicButton(menuMe, "Belépés vendégként", 1, 4);
@@ -164,7 +172,7 @@ public class Menu extends JFrame {
         userButton = new BasicButton(menuMe, "Saját profil", 1, 4);
         prevButton = new BasicButton(menuMe, "Előző", 2, 4);
         nextButton = new BasicButton(menuMe, "Következő", 2, 4);
-        
+
         sortByDateButton = new SortButton(menuMe, "Dátum", 2, 4);
         sortByNameButton = new SortButton(menuMe, "Név", 2, 4);
         sortByRateButton = new SortButton(menuMe, "Értékelés", 2, 4);
@@ -203,7 +211,15 @@ public class Menu extends JFrame {
     }
 
     public void menuActions(String text) {
-        if (text == "Exit") {
+        if (text.startsWith("&")) {
+            itl.changeEditorMenu("&", 0);
+        }else if (text.startsWith("#")) {
+            itl.changeEditorMenu("#", 0);
+        } else if (text.startsWith("@")) {
+            itl.changeEditorMenu("@", 0);
+        } else if (text.startsWith("$")) {
+            itl.changeEditorMenu("$", 0);
+        }else if (text == "Exit") {
             System.exit(0);
         } else if (text == "Kijelentkezés") {
             backToMenu(true);
@@ -352,7 +368,24 @@ public class Menu extends JFrame {
         menupanel.add(userPanel, BorderLayout.CENTER);
     }
 
+    private void setupImageLoad() {
+        try {
+            menupanel.removeAll();
+            menupanel.revalidate();
+            menupanel.repaint();
+            menupanel.setLayout(new BorderLayout());
+            itl.setup();
+            itl.addImage(ImageIO.read(Menu.class.getResourceAsStream("/images/background/sun1.png")));
+            itl.generate();
+            menupanel.add(itl, BorderLayout.CENTER);
+        } catch (IOException ex) {
+            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }
+
     private void setupFirstMenu() {
+        setupImageLoad();
+        /*
         menupanel.removeAll();
         menupanel.revalidate();
         menupanel.repaint();
@@ -364,7 +397,7 @@ public class Menu extends JFrame {
         guestLogin.setOrientation(1, 4);
         menupanel.add(guestLogin);
         exitGameButton.setOrientation(1, 4);
-        menupanel.add(exitGameButton);
+        menupanel.add(exitGameButton);*/
     }
 
     private void setupMainMenu() {
@@ -652,7 +685,12 @@ public class Menu extends JFrame {
             } else {
                 gridPanel.setVisible(false);
             }
+        } else if (option == "&color") {
+            itl.changeEditorMenu(option, button);
+        } else if (option == "&layer") {
+            itl.changeEditorMenu(option, button);
         }
+ 
     }
 
     private void setupIcon(LevelIcon icon) {
@@ -693,14 +731,13 @@ public class Menu extends JFrame {
 
                 if (showLevel) {
                     icon.showLevelToAdmin();
-                }  else if (deleteLevel) {
+                } else if (deleteLevel) {
                     server.deleteLevel(icon.getLvl().getName(), icon.getLvl().getCreator_name());
                     setupOnlineLevelsMenu();
                 } else if (approveLevel) {
                     server.approveLevel(icon.getLvl().getName(), icon.getLvl().getCreator_name());
                     setupOnlineLevelsMenu();
-                }
-                else if (playLevel) {
+                } else if (playLevel) {
                     menupanel.removeAll();
                     menupanel.revalidate();
                     menupanel.repaint();

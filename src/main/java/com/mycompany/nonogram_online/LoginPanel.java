@@ -78,7 +78,7 @@ public class LoginPanel extends JPanel {
         passwordLabel = new JLabel("Jelszó:", SwingConstants.CENTER);
         passwordAgainLabel = new JLabel("Jelszó még egyszer:", SwingConstants.CENTER);
         if (mode == "Regisztráció") {
-            errorLabel = new JLabel("<html>Disclaimer: Ez egy szakdolgozat projekt,<br>a jelszó minimális titkosítást alkalmaz,<br>ne adj meg olyan jelszót amit máshol használnál.</html>", SwingConstants.CENTER);
+            errorLabel = new JLabel("<html>Disclaimer: Ez egy szakdolgozat projekt,<br>a jelszó semmiféle titkosítást nem alkalmaz,<br>ne adj meg olyan jelszót amit máshol használnál.</html>", SwingConstants.CENTER);
         } else {
             errorLabel = new JLabel("", SwingConstants.CENTER);
         }

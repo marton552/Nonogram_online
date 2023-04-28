@@ -134,9 +134,13 @@ public class BasicButton extends JPanel {
         this.width = (screenWidth - 15) / width;
         this.height = (screenHeight - 40) / height - hgap;
     }
+    
+    public void setHeightManualy(int height){
+        this.screenHeight = height+40;
+    }
 
     protected void setFontSize() {
-        fontSize = (int) (height / 5);
+        fontSize = (int) (width / 12);
     }
 
     @Override

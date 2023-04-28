@@ -43,6 +43,10 @@ public class LevelEditor extends Level {
         setMatrixMostTopNumbers();
     }
     
+    public void clickOnTile(int x, int y) {
+        matrix.get(0).addTileBy(x, y, selectedColor);
+    }
+    
     @Override
     public void addLayer(){
         ArrayList<Integer> data = new ArrayList<>();
