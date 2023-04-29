@@ -17,7 +17,7 @@ import java.util.Arrays;
  */
 public class LevelEditor extends Level {
 
-    public static String[] templateData = {"new_level;",";2;rgb(255,255,255);rgb(0,0,0)"};
+    public static String[] templateData = {"new_level;",";2;rgb(255,255,255);rgb(0,0,0)",";2;rgb(0,0,0);rgb(255,255,255)"};
     
     private Server server;
 
@@ -36,15 +36,14 @@ public class LevelEditor extends Level {
         int posX = (x - matrixStartPosX) / squareSize;
         int posY = (y - matrixStartPosY) / squareSize;
         if (posX >= 0 && posX < hanyszorhany && posY >= 0 && posY < hanyszorhany) {
-            System.out.println(selectedColor);
             matrix.get(layer).addTileBy(posY, posX, selectedColor);
         }
         setMatrixMostLeftNumbers();
         setMatrixMostTopNumbers();
     }
     
-    public void clickOnTile(int x, int y) {
-        matrix.get(0).addTileBy(x, y, selectedColor);
+    public void clickOnTileByExact(int x, int y, int layer) {
+        matrix.get(layer).addTileBy(x, y, selectedColor);
     }
     
     @Override

@@ -404,7 +404,6 @@ public class MainFrame extends JPanel {
             game.setActualLayer(1);
             zeroLayer = true;
         }
-        System.out.println(x * y + x);
         gamePanel = new GamePanel(this, game, width, height);
         this.add(gamePanel, BorderLayout.CENTER);
         setPrevNextVisible();

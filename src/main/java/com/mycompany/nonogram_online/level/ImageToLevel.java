@@ -49,7 +49,9 @@ public class ImageToLevel extends JPanel {
     private SwitchButton colorButton;
     private ImageGeneratorButton blackWhiteSwitch;
     private JLabel layerLabel;
+    private JPanel layerPanel;
     private SwitchButton layerButton;
+    private JTextField layerNumField;
     private JPanel leftMultisizedPanel;
     private JPanel rightMultisizedPanel;
     private JLabel multiLabel;
@@ -63,8 +65,8 @@ public class ImageToLevel extends JPanel {
     private JLabel compressLabel;
     private JSlider compressSlider;
 
-    private String grid = "1x1";
-    private boolean converter = true;
+    private int grid = 1;
+    private boolean converter = false;
 
     private int topHeight = 50;
     private int bottomHeight = 350;
@@ -99,7 +101,9 @@ public class ImageToLevel extends JPanel {
         blackWhiteSwitch = new ImageGeneratorButton(m, "FcsF", 4, 7);
 
         layerLabel = new JLabel("Legyen többrétegű:", SwingConstants.CENTER);
+        layerPanel = new JPanel(new GridLayout(1, 2));
         layerButton = new SwitchButton(m, "&layer", 3, 6);
+        layerNumField = new JTextField("2");
 
         leftMultisizedPanel = new JPanel(new GridLayout(1, 2));
         rightMultisizedPanel = new JPanel(new GridLayout(1, 2));
@@ -134,7 +138,7 @@ public class ImageToLevel extends JPanel {
 
         convertAvrageButton = new ImageGeneratorButton(m, "ÁtlagKonverter", 3, 6);
         convertSelectionButton = new ImageGeneratorButton(m, "KiválasztóKonverter", 3, 6);
-        convertSelectionButton.setEnabled(false);
+        convertAvrageButton.setEnabled(false);
 
         compressLabel = new JLabel("<html>Tömörítés. Minél balrább, annál korábban tömörít és csak utána választ színeket.</html>", SwingConstants.CENTER);
         int size = Math.min(image.getHeight(), image.getWidth());
@@ -142,7 +146,7 @@ public class ImageToLevel extends JPanel {
 
         this.setLayout(new BorderLayout());
         topPanel = new JPanel(new GridLayout(1, 2));
-        centerPanel = new LevelPanel(null, centerHeight - 40);
+        centerPanel = new LevelPanel(null, centerHeight - 40, true);
         bottomPanel = new JPanel(new GridLayout(7, 2));
         leftMultisizedPanel = new JPanel(new GridLayout(1, 2));
         rightMultisizedPanel = new JPanel(new GridLayout(1, 2));
@@ -179,11 +183,16 @@ public class ImageToLevel extends JPanel {
         blackWhiteSwitch.setOrientation(6, 7);
         colorPanel.add(blackWhiteSwitch);
         bottomPanel.add(colorPanel);
+
         bottomPanel.add(layerLabel);
         layerButton.setHeightManualy(bottomHeight);
         layerButton.setWidthManualy(m.getWidth() / 4);
         layerButton.setOrientation(2, 7);
-        bottomPanel.add(layerButton);
+        layerPanel.add(layerButton);
+        layerPanel.add(layerNumField);
+        layerNumField.setVisible(false);
+        bottomPanel.add(layerPanel);
+
         leftMultisizedPanel.add(multiLabel);
         leftMultisizedPanel.add(grid1x1);
         bottomPanel.add(leftMultisizedPanel);
@@ -210,27 +219,66 @@ public class ImageToLevel extends JPanel {
     }
 
     public void generate() {
+        centerPanel.setErrors("");
         int colorNum = 0;
         try {
             if (colorButton.isState()) {
                 colorNum = Integer.parseInt(colorNumField.getText());
+                if (colorNum < 2) {
+                    colorNum = 2;
+                    centerPanel.setErrors("Legalább 2 színnek kell lennie!");
+                } else if (colorNum > 8) {
+                    colorNum = 8;
+                    centerPanel.setErrors("Maximum 8 szín lehet!");
+                }
             } else {
                 colorNum = 2;
             }
         } catch (NumberFormatException e) {
-            colorNum = 2;
+            centerPanel.setErrors("Nem szám a bevitt szín mennyiség!");
         }
         int blackAndWhite = -1;
         if (!colorButton.isState()) {
             blackAndWhite = blackAndWhiteState;
+            centerPanel.setBlackAndWhite(true);
+        } else {
+            centerPanel.setBlackAndWhite(false);
         }
 
-        ImageHandler ih = new ImageHandler(image, sizeSlider.getValue(), colorNum);
-        if (ih.createImage()) {
-            lvl = ih.getImageAsLevel(blackAndWhite);
-            centerPanel.addLevel(lvl);
-            centerPanel.repaint();
-            repaint();
+        int layerNum = 1;
+        try {
+            if (layerButton.isState()) {
+                layerNum = Integer.parseInt(layerNumField.getText());
+                if (layerNum < 1) {
+                    colorNum = 1;
+                    centerPanel.setErrors("Legalább 1 rétegnek kell lennie!");
+                } else if (layerNum > 10) {
+                    layerNum = 10;
+                    centerPanel.setErrors("Maximum 10 réteg lehet!");
+                }
+            } else {
+                layerNum = 1;
+            }
+        } catch (NumberFormatException e) {
+            layerNum = 1;
+            centerPanel.setErrors("Nem szám a bevitt réteg mennyiség!");
+        }
+        if (!centerPanel.hasError()) {
+            int grided = (int) Math.sqrt((grid == 1 ? 1 : grid * -1));
+            ImageHandler ih = new ImageHandler(image, compressSlider.getValue(), sizeSlider.getValue() * grided, colorNum);
+            if ((converter ? ih.createSelectionImage() : ih.createAvgImage())) {
+                lvl = ih.getImageAsLevel(blackAndWhite, layerNum, 0, grid);
+                if (ih.getError() != "") {
+                    centerPanel.setErrors(ih.getError());
+                } else {
+                    centerPanel.addLevel(lvl);
+                    centerPanel.repaint();
+                    repaint();
+                    ih.setError("");
+                }
+            } else {
+                centerPanel.setErrors("Nem lehetséges a generálás! Túl sok a kért szín.");
+            }
         }
     }
 
@@ -241,34 +289,32 @@ public class ImageToLevel extends JPanel {
             grid3x3.setEnabled(true);
             if (num == 0) {
                 grid1x1.setEnabled(false);
-                grid = "1x1";
+                grid = 1;
             } else if (num == 1) {
                 grid2x2.setEnabled(false);
-                grid = "2x2";
+                grid = -4;
             } else if (num == 2) {
                 grid3x3.setEnabled(false);
-                grid = "3x3";
+                grid = -9;
             }
         } else if (type == "&color") {
             if (colorButton.isState()) {
-                layerButton.setVisible(false);
                 leftMultisizedPanel.setVisible(true);
                 rightMultisizedPanel.setVisible(true);
                 colorNumField.setVisible(true);
                 blackWhiteSwitch.setVisible(false);
             } else {
-                layerButton.setVisible(true);
                 colorNumField.setVisible(false);
                 blackWhiteSwitch.setVisible(true);
             }
         } else if (type == "&layer") {
             if (layerButton.isState()) {
-                colorPanel.setVisible(false);
+                layerNumField.setVisible(true);
 
                 leftMultisizedPanel.setVisible(false);
                 rightMultisizedPanel.setVisible(false);
             } else {
-                colorPanel.setVisible(true);
+                layerNumField.setVisible(false);
 
                 leftMultisizedPanel.setVisible(true);
                 rightMultisizedPanel.setVisible(true);
@@ -279,6 +325,13 @@ public class ImageToLevel extends JPanel {
             convertSelectionButton.repaint();
             convertAvrageButton.repaint();
             converter = !converter;
+            compressSlider.setValue(50);
+            if(converter){
+                compressSlider.setMaximum(200);
+            }
+            else{
+                compressSlider.setMaximum(Math.max(image.getHeight(), image.getWidth()));
+            }
         } else if (type == "#") {
             generate();
         } else if (type == "$") {

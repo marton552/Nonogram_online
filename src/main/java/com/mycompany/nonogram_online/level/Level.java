@@ -96,7 +96,6 @@ public class Level {
 
     public void addCompletedPart(Integer n) {
         completedParts.add(n);
-        System.out.println(completedParts);
     }
 
     public ArrayList<LevelMatrix> getMatrix() {
@@ -115,6 +114,10 @@ public class Level {
         return stars;
     }
 
+    public void clearColors() {
+        colors.clear();
+    }
+    
     public ArrayList<Color> getColors() {
         return colors;
     }
@@ -406,7 +409,6 @@ public class Level {
     }
 
     public void setSelectedColor(int c) {
-        System.out.println(c);
         selectedColor = c;
     }
 
@@ -415,5 +417,12 @@ public class Level {
 
     public void retry() {
         newLvl(false);
+    }
+    
+    public boolean hasEmptyLayer(int backColor){
+        for (LevelMatrix levelMatrix : matrix) {
+            if(levelMatrix.isLayerEmpty(backColor)) return true;
+        }
+        return false;
     }
 }

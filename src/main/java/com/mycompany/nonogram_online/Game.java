@@ -35,9 +35,6 @@ public class Game {
             if (lvl.testTile(x, y, actualLayer)) {
                 hp--;
             }
-            if (isFinished()) {
-                System.out.println(isFinished());
-            }
         }
     }
 

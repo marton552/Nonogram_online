@@ -131,13 +131,6 @@ public class Menu extends JFrame {
         this.setPreferredSize(new Dimension(width, height));
         this.setLocation(100, 100);
 
-        try {
-            ImageHandler ih = new ImageHandler(ImageIO.read(Menu.class.getResourceAsStream("/images/villam.png")), 500, 4);
-            //ih.createImage();
-        } catch (IOException ex) {
-            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-
         server = new Server();
         history = new ArrayList<>();
         loginPanel = new LoginPanel(this, "");
@@ -375,7 +368,7 @@ public class Menu extends JFrame {
             menupanel.repaint();
             menupanel.setLayout(new BorderLayout());
             itl.setup();
-            itl.addImage(ImageIO.read(Menu.class.getResourceAsStream("/images/background/sun1.png")));
+            itl.addImage(ImageIO.read(Menu.class.getResourceAsStream("/images/pm.png")));
             itl.generate();
             menupanel.add(itl, BorderLayout.CENTER);
         } catch (IOException ex) {
@@ -701,7 +694,6 @@ public class Menu extends JFrame {
                 boolean deleteLevel = false;
                 boolean approveLevel = false;
                 boolean showLevel = false;
-                System.out.println(e.getX() + ", " + e.getY());
                 //300-360 ig kuka  395-445 approve height 20-70ig
                 if (icon.isAdminVisible()) {
                     if (e.getX() < 70) {

@@ -11,10 +11,14 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
@@ -26,47 +30,152 @@ public class ImageHandler {
 
     private BufferedImage image;
     private BufferedImage pixelisedImage;
-    private int size;
+    private BufferedImage nonogramImage;
+    private int firstSize;
+    private int secondSize;
     private int colorNum;
     private ArrayList<Color> resultColors;
+    private String error = "";
+    private ArrayList<ArrayList<Color>> selectionColors;
 
-    public ImageHandler(BufferedImage image, int size, int colorNum) {
+    public ImageHandler(BufferedImage image, int firstSize, int secondSize, int colorNum) {
         this.image = image;
-        this.size = size;
+        int val = firstSize / secondSize;
+        this.firstSize = val * secondSize;
+        this.secondSize = secondSize;
         this.colorNum = colorNum;
         if (colorNum > 10) {
             colorNum = 10;
         }
-        if(colorNum < 2){
+        if (colorNum < 2) {
             colorNum = 1;
         }
         resultColors = new ArrayList<>();
-        pixelisedImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
+        selectionColors = new ArrayList<>();
+        if (this.firstSize < this.secondSize) {
+            this.firstSize = this.secondSize;
+        }
+        pixelisedImage = new BufferedImage(this.firstSize, this.firstSize, BufferedImage.TYPE_INT_RGB);
+        nonogramImage = new BufferedImage(secondSize, secondSize, BufferedImage.TYPE_INT_RGB);
     }
 
-    public boolean createImage() {
+    public boolean createSelectionImage() {
         pixeliseImage();
-        if (splitIntoNColor()) {
+        ArrayList<Color> selectionColors = collectColors();
+        if (selectionColors.size() == colorNum) {
+            resultColors = selectionColors;
+            compressBySelection(selectionColors);
             return true;
         } else {
             return false;
         }
     }
 
-    public void pixeliseImage() {
-        int width = image.getWidth();
-        int height = image.getHeight();
-        int stepX = width / size;
-        int stepY = height / size;
+    public boolean createAvgImage() {
+        pixeliseImage();
+        if (splitIntoNColor()) {
+            File outputfile = new File("image.jpg");
+            try {
+                ImageIO.write(pixelisedImage, "jpg", outputfile);
+            } catch (IOException ex) {
+                Logger.getLogger(ImageHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
+            compressPixelImage();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void compressBySelection(ArrayList<Color> selectionColors) {
+        int width = pixelisedImage.getWidth();
+        int height = pixelisedImage.getHeight();
+        int stepX = width / secondSize;
+        int stepY = height / secondSize;
         int xX = 0;
         int yY = 0;
 
-        for (int i = 0; xX < size; i += stepX) {
-            for (int j = 0; yY < size; j += stepY) {
+        for (int i = 0; xX < secondSize; i += stepX) {
+            int j = 0;
+            for (j = 0; yY < secondSize; j += stepY) {
                 ArrayList<Color> colors = new ArrayList<>();
                 for (int z = i; z < i + stepX; z++) {
                     for (int y = j; y < j + stepY; y++) {
-                        Color color = new Color(image.getRGB(i, j));
+                        Color color = new Color(pixelisedImage.getRGB(i, j));
+                        colors.add(color);
+                    }
+                }
+                Color c = mostCommonColor(colors);
+                c = changeToClosest(c, selectionColors);
+                nonogramImage.setRGB(xX, yY, (c.getRed() << 16) | (c.getGreen() << 8) | c.getBlue());
+                yY++;
+            }
+            xX++;
+            yY = 0;
+        }
+    }
+
+    public void compressPixelImage() {
+        int width = pixelisedImage.getWidth();
+        int height = pixelisedImage.getHeight();
+        int stepX = width / secondSize;
+        int stepY = height / secondSize;
+        int xX = 0;
+        int yY = 0;
+
+        for (int i = 0; xX < secondSize; i += stepX) {
+            int j = 0;
+            for (j = 0; yY < secondSize; j += stepY) {
+                ArrayList<Color> colors = new ArrayList<>();
+                for (int z = i; z < i + stepX; z++) {
+                    for (int y = j; y < j + stepY; y++) {
+                        Color color = new Color(pixelisedImage.getRGB(i, j));
+                        colors.add(color);
+                    }
+                }
+                Color c = mostCommonColor(colors);
+                nonogramImage.setRGB(xX, yY, (c.getRed() << 16) | (c.getGreen() << 8) | c.getBlue());
+                yY++;
+            }
+            xX++;
+            yY = 0;
+        }
+    }
+
+    public Color mostCommonColor(ArrayList<Color> colors) {
+        Map<Color, Integer> colorCounts = new HashMap<Color, Integer>();
+        for (Color color : colors) {
+            if (colorCounts.containsKey(color)) {
+                colorCounts.put(color, colorCounts.get(color) + 1);
+            } else {
+                colorCounts.put(color, 1);
+            }
+        }
+        int maxCount = 0;
+        Color mostCommon = null;
+        for (Map.Entry<Color, Integer> entry : colorCounts.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostCommon = entry.getKey();
+            }
+        }
+        return mostCommon;
+    }
+
+    public void pixeliseImage() {
+        double width = image.getWidth();
+        double height = image.getHeight();
+        double stepX = width / firstSize;
+        double stepY = height / firstSize;
+        int xX = 0;
+        int yY = 0;
+
+        for (double i = 0; xX < firstSize; i += stepX) {
+            for (double j = 0; yY < firstSize; j += stepY) {
+                ArrayList<Color> colors = new ArrayList<>();
+                for (double z = i; z < i + stepX; z++) {
+                    for (double y = j; y < j + stepY; y++) {
+                        Color color = new Color(image.getRGB((int) Math.round(i), (int) Math.round(j)));
                         colors.add(color);
                     }
                 }
@@ -80,10 +189,69 @@ public class ImageHandler {
 
     }
 
+    public ArrayList<Color> collectColors() {
+        int width = pixelisedImage.getWidth();
+        int height = pixelisedImage.getHeight();
+        int threshold = 2;
+        selectionColors.add(new ArrayList<>());
+        ArrayList<Color> pixelList = new ArrayList<>();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                pixelList.add(new Color(pixelisedImage.getRGB(i, j)));
+            }
+        }
+        while (pixelList.size() > colorNum) {
+            selectionColors = new ArrayList<>();
+            selectionColors.add(new ArrayList<>());
+            for (int i = 0; i < pixelList.size(); i++) {
+                boolean inList = false;
+                boolean nearList = false;
+                for (int colorList = 0; colorList < selectionColors.size(); colorList++) {
+                    if (selectionColors.get(colorList).contains(pixelList.get(i))) {
+                        inList = true;
+                        selectionColors.get(colorList).add(pixelList.get(i));
+                    }
+                }
+                if (!inList) {
+                    for (int colorList = 0; colorList < selectionColors.size(); colorList++) {
+                        if ((selectionColors.get(colorList).size()) > 0 && isColorNear(selectionColors.get(colorList).get(0), pixelList.get(i), threshold)) {
+                            nearList = true;
+                            selectionColors.get(colorList).add(pixelList.get(i));
+                        }
+                    }
+                    if (!nearList) {
+                        ArrayList<Color> newC = new ArrayList<>();
+                        newC.add(pixelList.get(i));
+                        selectionColors.add(newC);
+                    }
+                }
+            }
+            pixelList = new ArrayList<>();
+            for (ArrayList<Color> selectionColor : selectionColors) {
+                if (selectionColor.size() > 0) {
+                    pixelList.add(mostCommonColor(selectionColor));
+                }
+            }
+            threshold = threshold + 2;
+        }
+        return pixelList;
+    }
+
+    private boolean isColorNear(Color existing, Color newColor, int threshold) {
+        if (existing.getRed() + threshold > newColor.getRed() && existing.getRed() - threshold < newColor.getRed()) {
+            if (existing.getGreen() + threshold > newColor.getGreen() && existing.getGreen() - threshold < newColor.getGreen()) {
+                if (existing.getBlue() + threshold > newColor.getBlue() && existing.getBlue() - threshold < newColor.getBlue()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean splitIntoNColor() {
         ArrayList<Color> allColor = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < firstSize; i++) {
+            for (int j = 0; j < firstSize; j++) {
                 allColor.add(new Color(pixelisedImage.getRGB(i, j)));
             }
         }
@@ -97,8 +265,8 @@ public class ImageHandler {
         for (int i = 0; i < n.size(); i++) {
             averages.add(getAverageRGB(n.get(i)));
         }
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < firstSize; i++) {
+            for (int j = 0; j < firstSize; j++) {
                 Color newColor = changeToClosest(new Color(pixelisedImage.getRGB(i, j)), averages);
                 if (!resultColors.contains(newColor)) {
                     resultColors.add(newColor);
@@ -106,7 +274,6 @@ public class ImageHandler {
                 pixelisedImage.setRGB(i, j, (newColor.getRed() << 16) | (newColor.getGreen() << 8) | newColor.getBlue());
             }
         }
-        System.out.println(resultColors.size());
         return true;
     }
 
@@ -219,31 +386,96 @@ public class ImageHandler {
         return new Color(avgRed, avgGreen, avgBlue);
     }
 
-    public Level getImageAsLevel(int blackAndWhite) {
-        if(blackAndWhite == 0){
-            resultColors.add(Color.WHITE);
-            resultColors.add(Color.BLACK);
-        }
-        else if(blackAndWhite == 1){
-            resultColors.add(Color.BLACK);
-            resultColors.add(Color.WHITE);
-        }
-        String data = LevelEditor.templateData[0] + size + ";1" + LevelEditor.templateData[1];
-        for (int i = 0; i < ((Integer) size * (Integer) size); i++) {
-            data += ";0";
-        }
-        LevelEditor res = new LevelEditor(new ArrayList<String>(Arrays.asList(data.split(";"))),size, "", "", true);
-        for (int i = 0; i < resultColors.size(); i++) {
-            res.addColor(resultColors.get(i));
-        }
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                int c = res.getColors().indexOf(new Color(pixelisedImage.getRGB(i, j)));
-                if(blackAndWhite == 0) res.setSelectedColor(c+2);
-                else if(blackAndWhite == 1) res.setSelectedColor(c+2);
-                else res.setSelectedColor(c);
-                res.clickOnTile(j, i);
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    private void makeNonogramBlackAndWhite(int baw) {
+        Color start = new Color(nonogramImage.getRGB(0, 0));
+        for (int i = 0; i < nonogramImage.getWidth(); i++) {
+            for (int j = 0; j < nonogramImage.getHeight(); j++) {
+                Color c = new Color(nonogramImage.getRGB(i, j));
+                if (baw == 1) {
+                    if (c.equals(start)) {
+                        nonogramImage.setRGB(i, j, ((Color.BLACK.getRed() << 16) | (Color.BLACK.getGreen() << 8) | Color.BLACK.getBlue()));
+                    } else {
+                        nonogramImage.setRGB(i, j, ((Color.WHITE.getRed() << 16) | (Color.WHITE.getGreen() << 8) | Color.WHITE.getBlue()));
+                    }
+                }
+                else{
+                    if (c.equals(start)) {
+                        nonogramImage.setRGB(i, j, ((Color.WHITE.getRed() << 16) | (Color.WHITE.getGreen() << 8) | Color.WHITE.getBlue()));
+                    } else {
+                        nonogramImage.setRGB(i, j, ((Color.BLACK.getRed() << 16) | (Color.BLACK.getGreen() << 8) | Color.BLACK.getBlue()));
+                    }
+                }
             }
+        }
+    }
+
+    public Level getImageAsLevel(int blackAndWhite, int layers, int backColor, int grid) {
+        int gridSize = (grid == 1 ? 1 : grid * -1);
+        int actualSize = (secondSize / (int) Math.sqrt(gridSize));
+        LevelEditor res;
+        int bw = blackAndWhite;
+        if (blackAndWhite == -1) {
+            bw = 0;
+        }
+        else{
+            makeNonogramBlackAndWhite(blackAndWhite);
+        }
+        String error = "";
+        do {
+            String data = LevelEditor.templateData[0] + actualSize + ";" + (layers > 1 ? layers : grid) + LevelEditor.templateData[bw + 1];
+            for (int i = 0; i < ((layers > 1 ? layers : gridSize) * actualSize * actualSize); i++) {
+                data += ";0";
+            }
+            res = new LevelEditor(new ArrayList<String>(Arrays.asList(data.split(";"))), actualSize, "", "", true);
+            if (layers > 1 && blackAndWhite == -1) {
+                res.addColor(Color.WHITE);
+            }
+            for (int i = 0; i < resultColors.size(); i++) {
+                res.addColor(resultColors.get(i));
+            }
+            int notBackNum = 0;
+            Random r = new Random();
+            int gridLayer = 0;
+            for (int g = 0; g < Math.sqrt(gridSize); g++) {
+                for (int h = 0; h < Math.sqrt(gridSize); h++) {
+                    for (int i = 0; i < actualSize; i++) {
+                        for (int j = 0; j < actualSize; j++) {
+                            int c = res.getColors().indexOf(new Color(nonogramImage.getRGB(i + (g * actualSize), j + (h * actualSize))));
+                            res.setSelectedColor(c);
+                            if (c != backColor) {
+                                notBackNum++;
+                            }
+
+                            int low = 0;
+                            int high = layers;
+                            int result = r.nextInt(high - low) + low;
+                            res.clickOnTileByExact(j, i, (res.isIsMultisized() ? gridLayer : result));
+                        }
+                    }
+                    gridLayer++;
+                }
+            }
+            if (notBackNum < layers) {
+                error = "layer";
+            }
+            if (res.isIsMultisized()) {
+                error = "multi";
+            }
+        } while (res.hasEmptyLayer(backColor) && error == "");
+        if (error == "layer") {
+            setError("Túl sok réteg enny pixelhez!");
+            return null;
+        }
+        if (error == "multi" && res.hasEmptyLayer(backColor)) {
+            setError("Nem minden darabra került pixel!");
         }
         return res;
     }

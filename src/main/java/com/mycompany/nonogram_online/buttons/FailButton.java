@@ -46,7 +46,6 @@ public class FailButton extends JPanel {
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println(e.getX()+", "+e.getY());
                 if(e.getX() > 50 && e.getX() < 205 && e.getY() > 110 && e.getY() < 175){
                     m.backToMenu(false);
                 }

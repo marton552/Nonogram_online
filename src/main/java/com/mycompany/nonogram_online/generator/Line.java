@@ -152,7 +152,6 @@ public class Line {
 
     this.realFound = 0;
     for (int i = 0; i < this.length; ++i) {
-        // System.out.println("TRYING FROM " + i + "...");
         this.rec(0, i);
         if (this.cells.get(i) == 1) {
             break;
@@ -177,7 +176,6 @@ public boolean solve() {
         return false;
     }
     for (int i = 0; i < this.length; ++i) {
-        System.out.println("Checking " + i + "...");
         if (this.sure[i] == 1) {
             continue;
         }

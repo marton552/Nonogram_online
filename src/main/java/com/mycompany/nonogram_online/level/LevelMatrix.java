@@ -23,7 +23,7 @@ public class LevelMatrix {
     public LevelMatrix(ArrayList<Integer> data, int hanyszorhany) {
         rowsColls = new ArrayList<Point>();
         for (int i = 0; i < data.size(); i++) {
-            rowsColls.add(new Point(-1, data.get(i),false));
+            rowsColls.add(new Point(-1, data.get(i), false));
         }
         this.hanyszorhany = hanyszorhany;
         setLeftNumbers();
@@ -38,29 +38,28 @@ public class LevelMatrix {
             int color = -1;
             boolean solved = false;
             for (int k = 0; k < hanyszorhany; k++) {
-                if(db == 0 && color == -1 && getTileBy(i, k) != 0){
+                if (db == 0 && color == -1 && getTileBy(i, k) != 0) {
                     color = getTileBy(i, k);
                     db = 1;
-                    solved = getTileByIsDone(i,k);
-                }
-                else if(db > 0 && color == getTileBy(i, k)){
+                    solved = getTileByIsDone(i, k);
+                } else if (db > 0 && color == getTileBy(i, k)) {
                     db++;
-                    solved = solved ? getTileByIsDone(i,k) : solved;
-                }
-                else if(db > 0 && color != getTileBy(i, k) && getTileBy(i, k) != 0){
-                    leftNumbers.get(i).add(new Point(db,color,solved));
+                    solved = solved ? getTileByIsDone(i, k) : solved;
+                } else if (db > 0 && color != getTileBy(i, k) && getTileBy(i, k) != 0) {
+                    leftNumbers.get(i).add(new Point(db, color, solved));
                     color = getTileBy(i, k);
                     db = 1;
-                    solved = getTileByIsDone(i,k);
-                }
-                else if(db > 0 && color != getTileBy(i, k) && getTileBy(i, k) == 0){
-                    leftNumbers.get(i).add(new Point(db,color,solved));
+                    solved = getTileByIsDone(i, k);
+                } else if (db > 0 && color != getTileBy(i, k) && getTileBy(i, k) == 0) {
+                    leftNumbers.get(i).add(new Point(db, color, solved));
                     color = -1;
                     db = 0;
-                    solved = getTileByIsDone(i,k);
+                    solved = getTileByIsDone(i, k);
                 }
             }
-            if(db > 0) leftNumbers.get(i).add(new Point(db,color,solved));
+            if (db > 0) {
+                leftNumbers.get(i).add(new Point(db, color, solved));
+            }
         }
     }
 
@@ -72,33 +71,32 @@ public class LevelMatrix {
             int color = -1;
             boolean solved = false;
             for (int k = 0; k < hanyszorhany; k++) {
-                if(db == 0 && color == -1 && getTileBy(k, i) != 0){
+                if (db == 0 && color == -1 && getTileBy(k, i) != 0) {
                     color = getTileBy(k, i);
                     db = 1;
-                    solved = getTileByIsDone(k,i);
-                }
-                else if(db > 0 && color == getTileBy(k, i)){
+                    solved = getTileByIsDone(k, i);
+                } else if (db > 0 && color == getTileBy(k, i)) {
                     db++;
-                    solved = solved ? getTileByIsDone(k,i) : solved;
-                }
-                else if(db > 0 && color != getTileBy(k, i) && getTileBy(k, i) != 0){
-                    topNumbers.get(i).add(new Point(db,color,solved));
+                    solved = solved ? getTileByIsDone(k, i) : solved;
+                } else if (db > 0 && color != getTileBy(k, i) && getTileBy(k, i) != 0) {
+                    topNumbers.get(i).add(new Point(db, color, solved));
                     color = getTileBy(k, i);
                     db = 1;
-                    solved = getTileByIsDone(k,i);
-                }
-                else if(db > 0 && color != getTileBy(k, i) && getTileBy(k, i) == 0){
-                    topNumbers.get(i).add(new Point(db,color,solved));
+                    solved = getTileByIsDone(k, i);
+                } else if (db > 0 && color != getTileBy(k, i) && getTileBy(k, i) == 0) {
+                    topNumbers.get(i).add(new Point(db, color, solved));
                     color = -1;
                     db = 0;
-                    solved = getTileByIsDone(k,i);
+                    solved = getTileByIsDone(k, i);
                 }
             }
-            if(db > 0) topNumbers.get(i).add(new Point(db,color,solved));
+            if (db > 0) {
+                topNumbers.get(i).add(new Point(db, color, solved));
+            }
         }
     }
-    
-    public ArrayList<ArrayList<Integer>> getLeftOnlyNumbers(){
+
+    public ArrayList<ArrayList<Integer>> getLeftOnlyNumbers() {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
         for (int i = 0; i < leftNumbers.size(); i++) {
             ArrayList<Integer> x = new ArrayList<>();
@@ -107,13 +105,15 @@ public class LevelMatrix {
                 num++;
                 x.add(leftNumbers.get(i).get(j).getNum());
             }
-            if(num == 0) x.add(0);
+            if (num == 0) {
+                x.add(0);
+            }
             res.add(x);
         }
         return res;
     }
-    
-    public ArrayList<ArrayList<Integer>> getTopOnlyNumbers(){
+
+    public ArrayList<ArrayList<Integer>> getTopOnlyNumbers() {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
         for (int i = 0; i < topNumbers.size(); i++) {
             ArrayList<Integer> x = new ArrayList<>();
@@ -122,48 +122,59 @@ public class LevelMatrix {
                 num++;
                 x.add(topNumbers.get(i).get(j).getNum());
             }
-            if(num == 0) x.add(0);
+            if (num == 0) {
+                x.add(0);
+            }
             res.add(x);
         }
         return res;
     }
-    
-    public int mostTopNumber(){
+
+    public boolean isLayerEmpty(int backColor) {
+        for (Point rowsColl : rowsColls) {
+            if (rowsColl.getColor() != backColor) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int mostTopNumber() {
         int res = 0;
         for (int i = 0; i < topNumbers.size(); i++) {
             res = topNumbers.get(i).size() > res ? topNumbers.get(i).size() : res;
         }
         return res;
     }
-    
-    public int mostLeftNumber(){
+
+    public int mostLeftNumber() {
         int res = 0;
         for (int i = 0; i < leftNumbers.size(); i++) {
             res = leftNumbers.get(i).size() > res ? leftNumbers.get(i).size() : res;
         }
         return res;
     }
-    
+
     //FORDÍTVA MŰKÖDIK!
-    public void setTileBy(int colls,int rows, int color){
+    public void setTileBy(int colls, int rows, int color) {
         rowsColls.get(rows * hanyszorhany + colls).clickOn(color);
         setLeftNumbers();
         setTopNumbers();
     }
-    
-    public void clearTileBy(int rows, int colls){
+
+    public void clearTileBy(int rows, int colls) {
         rowsColls.get(rows * hanyszorhany + colls).unClick();
         setLeftNumbers();
         setTopNumbers();
     }
-    
-    public void resetTileBy(int rows, int colls){
+
+    public void resetTileBy(int rows, int colls) {
         rowsColls.get(rows * hanyszorhany + colls).resetColor();
         setLeftNumbers();
         setTopNumbers();
     }
-    
-    public void addTileBy(int rows,int colls, int color){
+
+    public void addTileBy(int rows, int colls, int color) {
         rowsColls.get(rows * hanyszorhany + colls).add(color);
         setLeftNumbers();
         setTopNumbers();
@@ -172,15 +183,15 @@ public class LevelMatrix {
     public int getTileBy(int rows, int colls) {
         return rowsColls.get(rows * hanyszorhany + colls).getColor();
     }
-    
+
     public boolean getTileByIsDone(int rows, int colls) {
         return rowsColls.get(rows * hanyszorhany + colls).isSolved();
     }
-    
+
     public boolean getTileByIsFailed(int rows, int colls) {
         return rowsColls.get(rows * hanyszorhany + colls).isFailed();
     }
-    
+
     public boolean getTileByIsFlagged(int rows, int colls) {
         return rowsColls.get(rows * hanyszorhany + colls).isFlagged();
     }

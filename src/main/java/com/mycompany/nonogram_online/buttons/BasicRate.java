@@ -67,7 +67,6 @@ public class BasicRate extends JPanel {
                 } else {
                     animationTimer = 0;
                     timer.stop();
-                    System.out.println(getStars());
                     server.rateLevel(lvl.getName(), lvl.getCreator_name(), m.getUser().getFullUsername(),getStars());
                     
                     m.backToMenu(false);
@@ -80,7 +79,6 @@ public class BasicRate extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (stars == 0) {
                     if (e.getY() > 60 && e.getY() < 125) {
-                        System.out.println(e.getX() / (screenWidth / 5) + 1);
                         int s = e.getX() / (screenWidth / 5) + 1;
                         setStars(s);
                         repaint();

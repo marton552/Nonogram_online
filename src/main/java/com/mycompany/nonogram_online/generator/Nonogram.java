@@ -19,8 +19,6 @@ public class Nonogram {
     private boolean changed;
 
     public Nonogram(ArrayList<ArrayList<Integer>> groupsHor, ArrayList<ArrayList<Integer>> groupsVert) {
-        System.out.println(groupsHor);
-        System.out.println(groupsVert);
         this.width = groupsVert.size();
         this.height = groupsHor.size();
         this.matrix = zero2D(this.height,this.width);
@@ -104,7 +102,6 @@ public class Nonogram {
             return false;
         }
 
-        System.out.println(Arrays.deepToString(this.matrix));
         if (!this.isComplete()) {
             return false;
         } else {

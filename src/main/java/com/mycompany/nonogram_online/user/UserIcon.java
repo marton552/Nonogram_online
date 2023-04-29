@@ -73,7 +73,6 @@ public class UserIcon extends JPanel {
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println(e.getX());
                 if(e.getX() > 260 && e.getX() < 300){
                     m.menuActions("listusermaps:"+user.getUsername());
                 }
