@@ -37,6 +37,7 @@ public class ImageHandler {
     private ArrayList<Color> resultColors;
     private String error = "";
     private ArrayList<ArrayList<Color>> selectionColors;
+    private LevelEditor res;
 
     public ImageHandler(BufferedImage image, int firstSize, int secondSize, int colorNum) {
         this.image = image;
@@ -420,7 +421,6 @@ public class ImageHandler {
     public Level getImageAsLevel(int blackAndWhite, int layers, int backColor, int grid) {
         int gridSize = (grid == 1 ? 1 : grid * -1);
         int actualSize = (secondSize / (int) Math.sqrt(gridSize));
-        LevelEditor res;
         int bw = blackAndWhite;
         if (blackAndWhite == -1) {
             bw = 0;
@@ -477,6 +477,19 @@ public class ImageHandler {
         if (error == "multi" && res.hasEmptyLayer(backColor)) {
             setError("Nem minden darabra került pixel!");
         }
+        return res;
+    }
+    
+    public void save(int back){
+        Color backColor = res.getColors().get(back);
+        res.setColorBackGroundColor(backColor);
+    }
+    
+    public boolean isSolvable(){
+        return res.isSolvable();
+    }
+    
+    public Level getFullLevel(){
         return res;
     }
 

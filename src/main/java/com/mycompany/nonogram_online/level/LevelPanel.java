@@ -63,6 +63,10 @@ public class LevelPanel extends JPanel {
         this.blackAndWhite = blackAndWhite;
     }
 
+    public int getChoosenBackGroundColor() {
+        return choosenBackGroundColor;
+    }
+
     private void click(MouseEvent e) {
         if (e.getX() < 100) {
             int y = e.getY();

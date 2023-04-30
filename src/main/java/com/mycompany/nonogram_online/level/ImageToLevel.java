@@ -40,6 +40,7 @@ public class ImageToLevel extends JPanel {
 
     private BasicButton backButton;
     private ImageGeneratorButton generateButton;
+    private ImageGeneratorButton saveButton;
 
     private JLabel sizeLabel;
     private JSlider sizeSlider;
@@ -74,6 +75,7 @@ public class ImageToLevel extends JPanel {
     private int blackAndWhiteState = 0;
 
     private Level lvl;
+    private ImageHandler ih;
 
     public ImageToLevel(Menu m, BufferedImage image) {
         this.m = m;
@@ -84,6 +86,7 @@ public class ImageToLevel extends JPanel {
 
         backButton = new BasicButton(m, "Vissza", 3, 6);
         generateButton = new ImageGeneratorButton(m, "Újra generálás", 3, 6);
+        saveButton = new ImageGeneratorButton(m, "Mentés", 3, 6);
 
         sizeLabel = new JLabel("Nonogram mérete:", SwingConstants.CENTER);
         sizeSlider = new JSlider(5, 20);
@@ -145,18 +148,21 @@ public class ImageToLevel extends JPanel {
         compressSlider = new JSlider(20, size);
 
         this.setLayout(new BorderLayout());
-        topPanel = new JPanel(new GridLayout(1, 2));
+        topPanel = new JPanel(new GridLayout(1, 3));
         centerPanel = new LevelPanel(null, centerHeight - 40, true);
         bottomPanel = new JPanel(new GridLayout(7, 2));
         leftMultisizedPanel = new JPanel(new GridLayout(1, 2));
         rightMultisizedPanel = new JPanel(new GridLayout(1, 2));
 
         backButton.setHeightManualy(topHeight);
-        backButton.setOrientation(2, 1);
+        backButton.setOrientation(3, 1);
         topPanel.add(backButton);
         generateButton.setHeightManualy(topHeight);
-        generateButton.setOrientation(2, 1);
+        generateButton.setOrientation(3, 1);
+        saveButton.setHeightManualy(topHeight);
+        saveButton.setOrientation(3, 1);
         topPanel.add(generateButton);
+        topPanel.add(saveButton);
         topPanel.setPreferredSize(new Dimension(m.getWidth(), topHeight));
         topPanel.setMaximumSize(new Dimension(m.getWidth(), topHeight));
         this.add(topPanel, BorderLayout.NORTH);
@@ -265,7 +271,7 @@ public class ImageToLevel extends JPanel {
         }
         if (!centerPanel.hasError()) {
             int grided = (int) Math.sqrt((grid == 1 ? 1 : grid * -1));
-            ImageHandler ih = new ImageHandler(image, compressSlider.getValue(), sizeSlider.getValue() * grided, colorNum);
+            ih = new ImageHandler(image, compressSlider.getValue(), sizeSlider.getValue() * grided, colorNum);
             if ((converter ? ih.createSelectionImage() : ih.createAvgImage())) {
                 lvl = ih.getImageAsLevel(blackAndWhite, layerNum, 0, grid);
                 if (ih.getError() != "") {
@@ -279,6 +285,38 @@ public class ImageToLevel extends JPanel {
             } else {
                 centerPanel.setErrors("Nem lehetséges a generálás! Túl sok a kért szín.");
             }
+        }
+    }
+
+    public Level getLvl() {
+        return lvl;
+    }
+    
+    public int getLvlSize(){
+        return sizeSlider.getValue();
+    }
+    
+    public boolean isColored(){
+        return colorButton.isState();
+    }
+    
+    public boolean isLayered(){
+        return layerButton.isState();
+    }
+    
+    public int getGrid(){
+        return grid;
+    }
+    
+    public void save(){
+        ih.save(centerPanel.getChoosenBackGroundColor());
+        if(true){
+            lvl = ih.getFullLevel();
+            m.menuActions("imageEdit");
+        }
+        else{
+            centerPanel.setErrors("Nem megoldható Nonogram! Szerkesztés kötelező!");
+            saveButton.setText("Szerkesztés");
         }
     }
 
@@ -341,6 +379,9 @@ public class ImageToLevel extends JPanel {
                 blackAndWhiteState = 0;
             }
             generate();
+        }
+        else if (type == "+") {
+            save();
         }
     }
 

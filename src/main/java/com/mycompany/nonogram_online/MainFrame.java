@@ -218,7 +218,6 @@ public class MainFrame extends JPanel {
         isSolvableButton = new JButton("Megoldhatóság check");
         isSolvableButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //todo: implementation
                 if (game.lvl.isSolvable()) {
                     saveButton.setEnabled(true);
                     solvableLabel.setText("Megoldható ✓");
@@ -595,7 +594,6 @@ public class MainFrame extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        this.repaint();
         this.setVisible(true);
         if (isRating) {
             gamePanel.repaint();

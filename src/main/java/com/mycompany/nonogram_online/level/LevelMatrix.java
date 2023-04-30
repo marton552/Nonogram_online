@@ -18,6 +18,8 @@ public class LevelMatrix {
     private ArrayList<Point> rowsColls;
     private ArrayList<ArrayList<Point>> leftNumbers;
     private ArrayList<ArrayList<Point>> topNumbers;
+    private ArrayList<ArrayList<Point>> leftColorlessNumbers;
+    private ArrayList<ArrayList<Point>> topColorlessNumbers;
     private int hanyszorhany;
 
     public LevelMatrix(ArrayList<Integer> data, int hanyszorhany) {
@@ -96,14 +98,71 @@ public class LevelMatrix {
         }
     }
 
+    private void setLeftColorlessNumbers() {
+        leftColorlessNumbers = new ArrayList<ArrayList<Point>>();
+        for (int i = 0; i < hanyszorhany; i++) {
+            leftColorlessNumbers.add(new ArrayList<>());
+            int db = 0;
+            int color = -1;
+            boolean solved = false;
+            for (int k = 0; k < hanyszorhany; k++) {
+                if (db == 0 && color == -1 && getTileBy(i, k) != 0) {
+                    color = 1;
+                    db = 1;
+                    solved = getTileByIsDone(i, k);
+                } else if (db > 0 && getTileBy(i, k) != 0) {
+                    db++;
+                    solved = solved ? getTileByIsDone(i, k) : solved;
+                } else if (db > 0 && color != getTileBy(i, k) && getTileBy(i, k) == 0) {
+                    leftColorlessNumbers.get(i).add(new Point(db, color, solved));
+                    color = -1;
+                    db = 0;
+                    solved = getTileByIsDone(i, k);
+                }
+            }
+            if (db > 0) {
+                leftColorlessNumbers.get(i).add(new Point(db, color, solved));
+            }
+        }
+    }
+    
+    private void setTopColorlessNumbers() {
+        topColorlessNumbers = new ArrayList<ArrayList<Point>>();
+        for (int i = 0; i < hanyszorhany; i++) {
+            topColorlessNumbers.add(new ArrayList<>());
+            int db = 0;
+            int color = -1;
+            boolean solved = false;
+            for (int k = 0; k < hanyszorhany; k++) {
+                if (db == 0 && color == -1 && getTileBy(k, i) != 0) {
+                    color = 1;
+                    db = 1;
+                    solved = getTileByIsDone(k, i);
+                } else if (db > 0 && getTileBy(k, i) != 0) {
+                    db++;
+                    solved = solved ? getTileByIsDone(k, i) : solved;
+                }  else if (db > 0 && color != getTileBy(k, i) && getTileBy(k, i) == 0) {
+                    topColorlessNumbers.get(i).add(new Point(db, color, solved));
+                    color = -1;
+                    db = 0;
+                    solved = getTileByIsDone(k, i);
+                }
+            }
+            if (db > 0) {
+                topColorlessNumbers.get(i).add(new Point(db, color, solved));
+            }
+        }
+    }
+
     public ArrayList<ArrayList<Integer>> getLeftOnlyNumbers() {
+        setLeftColorlessNumbers();
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        for (int i = 0; i < leftNumbers.size(); i++) {
+        for (int i = 0; i < leftColorlessNumbers.size(); i++) {
             ArrayList<Integer> x = new ArrayList<>();
             int num = 0;
-            for (int j = 0; j < leftNumbers.get(i).size(); j++) {
+            for (int j = 0; j < leftColorlessNumbers.get(i).size(); j++) {
                 num++;
-                x.add(leftNumbers.get(i).get(j).getNum());
+                x.add(leftColorlessNumbers.get(i).get(j).getNum());
             }
             if (num == 0) {
                 x.add(0);
@@ -114,13 +173,14 @@ public class LevelMatrix {
     }
 
     public ArrayList<ArrayList<Integer>> getTopOnlyNumbers() {
+        setTopColorlessNumbers();
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        for (int i = 0; i < topNumbers.size(); i++) {
+        for (int i = 0; i < topColorlessNumbers.size(); i++) {
             ArrayList<Integer> x = new ArrayList<>();
             int num = 0;
-            for (int j = 0; j < topNumbers.get(i).size(); j++) {
+            for (int j = 0; j < topColorlessNumbers.get(i).size(); j++) {
                 num++;
-                x.add(topNumbers.get(i).get(j).getNum());
+                x.add(topColorlessNumbers.get(i).get(j).getNum());
             }
             if (num == 0) {
                 x.add(0);

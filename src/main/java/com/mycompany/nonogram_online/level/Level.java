@@ -114,10 +114,13 @@ public class Level {
         return stars;
     }
 
-    public void clearColors() {
-        colors.clear();
+    public void setColorBackGroundColor(Color back) {
+        int index = getColors().indexOf(back);
+        Color tmp = getColors().get(0);
+        colors.set(0, back);
+        colors.set(index, tmp);
     }
-    
+
     public ArrayList<Color> getColors() {
         return colors;
     }
@@ -195,11 +198,15 @@ public class Level {
         matrixStartPosX = x;
         matrixStartPosY = y;
     }
-    
-    public boolean isSolvable(){
+
+    public boolean isSolvable() {
         for (int i = 0; i < matrix.size(); i++) {
+            System.out.println(matrix.get(i).getTopOnlyNumbers());
+            System.out.println(matrix.get(i).getLeftOnlyNumbers());
             Nonogram n = new Nonogram(matrix.get(i).getTopOnlyNumbers(), matrix.get(i).getLeftOnlyNumbers());
-            if(!n.solveAndCheck()) return false;
+            if (!n.solveAndCheck()) {
+                return false;
+            }
         }
         return true;
     }
@@ -294,7 +301,8 @@ public class Level {
                 g.fillRect(shiftLeft + numbersStartPosX + (k * squareSize), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize), squareSize, squareSize);
                 g.setColor(invertColor);
                 g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize / 1.5)));
-                g.drawChars(("" + matrix.get(layer).getLeftNumbers().get(i).get(k).getNum()).toCharArray(), 0, 1, shiftLeft + numbersStartPosX + (k * squareSize) + (squareSize / 3), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize) + (int) (squareSize / 1.3));
+                char[] text = ("" + matrix.get(layer).getLeftNumbers().get(i).get(k).getNum()).toCharArray();
+                g.drawChars(text, 0, text.length, (text.length>1 ? (int)(-1*squareSize/4) : 0) + shiftLeft + numbersStartPosX + (k * squareSize) + (squareSize / 3), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize) + (int) (squareSize / 1.3));
             }
         }
         for (int i = 0; i < hanyszorhany; i++) {
@@ -310,7 +318,8 @@ public class Level {
                 g.fillRect(numbersStartPosX + (i * squareSize) + matrixMostMostNumbers * squareSize, shiftTop + numbersStartPosY + (k * squareSize), squareSize, squareSize);
                 g.setColor(invertColor);
                 g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize / 1.5)));
-                g.drawChars(("" + matrix.get(layer).getTopNumbers().get(i).get(k).getNum()).toCharArray(), 0, 1, numbersStartPosX + matrixMostMostNumbers * squareSize + (i * squareSize) + (squareSize / 3), shiftTop + numbersStartPosY + (k * squareSize) + (int) (squareSize / 1.3));
+                char[] text = ("" + matrix.get(layer).getTopNumbers().get(i).get(k).getNum()).toCharArray();
+                g.drawChars(text, 0, text.length, (text.length>1 ? (int)(-1*squareSize/4) : 0) + numbersStartPosX + matrixMostMostNumbers * squareSize + (i * squareSize) + (squareSize / 3), shiftTop + numbersStartPosY + (k * squareSize) + (int) (squareSize / 1.3));
             }
         }
     }
@@ -354,10 +363,20 @@ public class Level {
 
     public void newLvl(boolean isEditing) {
         this.isEditing = isEditing;
+        if(isEditing){
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < hanyszorhany; j++) {
                 for (int k = 0; k < hanyszorhany; k++) {
                     matrix.get(i).clearTileBy(j, k);
+                }
+            }
+        }}
+        for (int l = 0; l < matrix.size(); l++) {
+            for (int i = 0; i < hanyszorhany; i++) {
+                for (int j = 0; j < hanyszorhany; j++) {
+                    if (matrix.get(l).getTileBy(i, j) != 0) {
+                        matrix.get(l).addTileBy(i, j, matrix.get(l).getTileBy(i, j));
+                    }
                 }
             }
         }
@@ -418,10 +437,12 @@ public class Level {
     public void retry() {
         newLvl(false);
     }
-    
-    public boolean hasEmptyLayer(int backColor){
+
+    public boolean hasEmptyLayer(int backColor) {
         for (LevelMatrix levelMatrix : matrix) {
-            if(levelMatrix.isLayerEmpty(backColor)) return true;
+            if (levelMatrix.isLayerEmpty(backColor)) {
+                return true;
+            }
         }
         return false;
     }

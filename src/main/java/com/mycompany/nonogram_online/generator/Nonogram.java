@@ -21,7 +21,7 @@ public class Nonogram {
     public Nonogram(ArrayList<ArrayList<Integer>> groupsHor, ArrayList<ArrayList<Integer>> groupsVert) {
         this.width = groupsVert.size();
         this.height = groupsHor.size();
-        this.matrix = zero2D(this.height,this.width);
+        this.matrix = zero2D(this.height, this.width);
         this.rows = new ArrayList<>();
         this.columns = new ArrayList<>();
 
@@ -32,7 +32,7 @@ public class Nonogram {
             this.columns.add(new Line(groupsVert.get(i)));
         }
     }
-    
+
     public static int[][] zero2D(int rows, int cols) {
         int[][] array = new int[rows][cols];
         for (int i = 0; i < rows; i++) {
@@ -98,16 +98,18 @@ public class Nonogram {
     }
 
     public boolean solveAndCheck() {
-        if (!this.solve()) {
-            return false;
-        }
+        try {
+            if (!this.solve()) {
+                return false;
+            }
 
-        if (!this.isComplete()) {
-            return false;
-        } else {
+            if (!this.isComplete()) {
+                return false;
+            } else {
+                return true;
+            }
+        }catch(IndexOutOfBoundsException e){
             return true;
         }
     }
 }
-
-

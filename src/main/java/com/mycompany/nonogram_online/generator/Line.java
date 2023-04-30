@@ -108,7 +108,7 @@ public class Line {
         if (pos + this.restLength[g] > this.length) {
             return;
         }
-
+        
         boolean ok = true;
         for (int i = pos; i < pos + this.groups.get(g); i++) {
             if (this.cells.get(i) == -1) {

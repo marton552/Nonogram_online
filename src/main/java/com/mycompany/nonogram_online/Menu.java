@@ -31,7 +31,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,10 +47,14 @@ import java.util.*;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -67,6 +73,8 @@ public class Menu extends JFrame {
     private BasicButton offlineMaps;
     private BasicButton onlineMaps;
     private BasicButton levelCreator;
+    private BasicButton levelByHand;
+    private BasicButton levelByImage;
     private BasicButton easyLevel;
     private BasicButton mediumLevel;
     private BasicButton hardLevel;
@@ -131,6 +139,18 @@ public class Menu extends JFrame {
         this.setPreferredSize(new Dimension(width, height));
         this.setLocation(100, 100);
 
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+
         server = new Server();
         history = new ArrayList<>();
         loginPanel = new LoginPanel(this, "");
@@ -158,6 +178,8 @@ public class Menu extends JFrame {
         offlineMaps = new BasicButton(menuMe, "Offline pályák", 1, 4);
         onlineMaps = new BasicButton(menuMe, "Online pályák", 1, 4);
         levelCreator = new BasicButton(menuMe, "Saját pálya készítése", 1, 4);
+        levelByHand = new BasicButton(menuMe, "Pálya kézzel készítése", 1, 4);
+        levelByImage = new BasicButton(menuMe, "Pálya képfeltöltéssel", 1, 4);
         easyLevel = new BasicButton(menuMe, "Könnyű", 1, 4);
         mediumLevel = new BasicButton(menuMe, "Közepes", 1, 4);
         hardLevel = new BasicButton(menuMe, "Nehéz", 1, 4);
@@ -206,13 +228,23 @@ public class Menu extends JFrame {
     public void menuActions(String text) {
         if (text.startsWith("&")) {
             itl.changeEditorMenu("&", 0);
-        }else if (text.startsWith("#")) {
+        } else if (text.startsWith("#")) {
             itl.changeEditorMenu("#", 0);
         } else if (text.startsWith("@")) {
             itl.changeEditorMenu("@", 0);
         } else if (text.startsWith("$")) {
             itl.changeEditorMenu("$", 0);
-        }else if (text == "Exit") {
+        } else if (text.startsWith("+")) {
+            itl.changeEditorMenu("+", 0);
+        } else if (text == "imageEdit") {
+            menupanel.removeAll();
+            menupanel.revalidate();
+            menupanel.repaint();
+            menupanel.setLayout(new BorderLayout());
+            game = new MainFrame("Új pálya", menuMe, new LevelEditor(new ArrayList<String>(Arrays.asList(itl.getLvl().export().split(";"))), itl.getLvlSize(), "", "", true), true, itl.isLayered(), itl.isColored(), itl.getGrid());
+            menupanel.add(game, BorderLayout.CENTER);
+            menupanel.repaint();
+        } else if (text == "Exit") {
             System.exit(0);
         } else if (text == "Kijelentkezés") {
             backToMenu(true);
@@ -257,7 +289,12 @@ public class Menu extends JFrame {
             levelStartNum = 0;
             setupOnlineLevelsMenu();
         } else if (text == "Saját pálya készítése") {
+            history.add("editor");
+            setupMakeLevelMenu();
+        } else if (text == "Pálya kézzel készítése") {
             setupLevelEditorMenu();
+        } else if (text == "Pálya képfeltöltéssel") {
+            setupImageLoad();
         } else if (text == "Könnyű") {
             filePath += "easy/";
             levelStartNum = 0;
@@ -348,6 +385,8 @@ public class Menu extends JFrame {
             setupOnlineLevelsMenu();
         } else if (history.get(history.size() - 1).equals("user")) {
             setupUserProfile();
+        } else if (history.get(history.size() - 1).equals("editor")) {
+            setupMakeLevelMenu();
         }
     }
 
@@ -362,23 +401,30 @@ public class Menu extends JFrame {
     }
 
     private void setupImageLoad() {
-        try {
-            menupanel.removeAll();
-            menupanel.revalidate();
-            menupanel.repaint();
-            menupanel.setLayout(new BorderLayout());
-            itl.setup();
-            itl.addImage(ImageIO.read(Menu.class.getResourceAsStream("/images/pm.png")));
-            itl.generate();
-            menupanel.add(itl, BorderLayout.CENTER);
-        } catch (IOException ex) {
-            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes()));
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        int result = fileChooser.showOpenDialog(menuMe);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try {
+                File selectedFile = fileChooser.getSelectedFile();
+                BufferedImage bi = ImageIO.read(selectedFile);
+                menupanel.removeAll();
+                menupanel.revalidate();
+                menupanel.repaint();
+                menupanel.setLayout(new BorderLayout());
+                itl.setup();
+                itl.addImage(bi);
+                itl.generate();
+                menupanel.add(itl, BorderLayout.CENTER);
+            } catch (IOException ex) {
+                Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
         }
     }
 
     private void setupFirstMenu() {
-        setupImageLoad();
-        /*
         menupanel.removeAll();
         menupanel.revalidate();
         menupanel.repaint();
@@ -390,7 +436,7 @@ public class Menu extends JFrame {
         guestLogin.setOrientation(1, 4);
         menupanel.add(guestLogin);
         exitGameButton.setOrientation(1, 4);
-        menupanel.add(exitGameButton);*/
+        menupanel.add(exitGameButton);
     }
 
     private void setupMainMenu() {
@@ -569,6 +615,19 @@ public class Menu extends JFrame {
         backButton.setOrientation(1, (levelPerPage + 3));
     }
 
+    private void setupMakeLevelMenu() {
+        menupanel.removeAll();
+        menupanel.revalidate();
+        menupanel.repaint();
+        menupanel.setLayout(new GridLayout(3, 1));
+        levelByHand.setOrientation(1, 3);
+        menupanel.add(levelByHand);
+        levelByImage.setOrientation(1, 3);
+        menupanel.add(levelByImage);
+        backButton.setOrientation(1, 3);
+        menupanel.add(backButton);
+    }
+
     private void setupLevelEditorMenu() {
         menupanel.removeAll();
         menupanel.revalidate();
@@ -674,16 +733,16 @@ public class Menu extends JFrame {
             }
         } else if (option == "layer") {
             if (layerButton.isState()) {
-                gridPanel.setVisible(true);
-            } else {
                 gridPanel.setVisible(false);
+            } else {
+                gridPanel.setVisible(true);
             }
         } else if (option == "&color") {
             itl.changeEditorMenu(option, button);
         } else if (option == "&layer") {
             itl.changeEditorMenu(option, button);
         }
- 
+
     }
 
     private void setupIcon(LevelIcon icon) {
