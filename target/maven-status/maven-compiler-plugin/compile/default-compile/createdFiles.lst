@@ -1,5 +1,6 @@
 com\mycompany\nonogram_online\Main.class
 com\mycompany\nonogram_online\MainFrame$1.class
+com\mycompany\nonogram_online\generator\ColorHandler.class
 com\mycompany\nonogram_online\server\NonogramFileWriter.class
 com\mycompany\nonogram_online\level\LevelMatrix.class
 com\mycompany\nonogram_online\MainFrame$7.class
@@ -13,7 +14,6 @@ com\mycompany\nonogram_online\LoginPanel$4.class
 com\mycompany\nonogram_online\buttons\FailButton$1.class
 com\mycompany\nonogram_online\Menu$2.class
 com\mycompany\nonogram_online\buttons\BasicRate.class
-com\mycompany\nonogram_online\MainFrame$17.class
 com\mycompany\nonogram_online\LoginPanel$3.class
 com\mycompany\nonogram_online\buttons\FailButton.class
 com\mycompany\nonogram_online\GamePanel.class

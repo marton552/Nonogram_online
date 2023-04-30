@@ -224,7 +224,7 @@ public class ImageToLevel extends JPanel {
         setVisible(true);
     }
 
-    public void generate() {
+    public void generate(boolean pixelise) {
         centerPanel.setErrors("");
         int colorNum = 0;
         try {
@@ -256,7 +256,7 @@ public class ImageToLevel extends JPanel {
             if (layerButton.isState()) {
                 layerNum = Integer.parseInt(layerNumField.getText());
                 if (layerNum < 1) {
-                    colorNum = 1;
+                    layerNum = 1;
                     centerPanel.setErrors("Legalább 1 rétegnek kell lennie!");
                 } else if (layerNum > 10) {
                     layerNum = 10;
@@ -272,7 +272,7 @@ public class ImageToLevel extends JPanel {
         if (!centerPanel.hasError()) {
             int grided = (int) Math.sqrt((grid == 1 ? 1 : grid * -1));
             ih = new ImageHandler(image, compressSlider.getValue(), sizeSlider.getValue() * grided, colorNum);
-            if ((converter ? ih.createSelectionImage() : ih.createAvgImage())) {
+            if (((pixelise) ? (converter ? ih.createSelectionImage() : ih.createAvgImage()) : true)) {
                 lvl = ih.getImageAsLevel(blackAndWhite, layerNum, 0, grid);
                 if (ih.getError() != "") {
                     centerPanel.setErrors(ih.getError());
@@ -291,33 +291,40 @@ public class ImageToLevel extends JPanel {
     public Level getLvl() {
         return lvl;
     }
-    
-    public int getLvlSize(){
+
+    public int getLvlSize() {
         return sizeSlider.getValue();
     }
-    
-    public boolean isColored(){
+
+    public boolean isColored() {
         return colorButton.isState();
     }
-    
-    public boolean isLayered(){
+
+    public boolean isLayered() {
         return layerButton.isState();
     }
-    
-    public int getGrid(){
+
+    public int getGrid() {
         return grid;
     }
-    
-    public void save(){
-        ih.save(centerPanel.getChoosenBackGroundColor());
-        if(true){
+
+    public void save() {
+        if (ih.save(centerPanel.getChoosenBackGroundColor())) {
             lvl = ih.getFullLevel();
             m.menuActions("imageEdit");
+        } else {
+            saveButton.setText("Színek egyesítése");
+            saveButton.repaint();
+            centerPanel.setErrors("Vannak színek amik túl hasonlóak!");
         }
-        else{
-            centerPanel.setErrors("Nem megoldható Nonogram! Szerkesztés kötelező!");
-            saveButton.setText("Szerkesztés");
-        }
+    }
+
+    private void colorSum() {
+        saveButton.setText("Mentés");
+        saveButton.repaint();
+        ih.colorSum(centerPanel.getChoosenBackGroundColor());
+        lvl = ih.getFullLevel();
+        m.menuActions("imageEdit");
     }
 
     public void changeEditorMenu(String type, int num) {
@@ -364,24 +371,24 @@ public class ImageToLevel extends JPanel {
             convertAvrageButton.repaint();
             converter = !converter;
             compressSlider.setValue(50);
-            if(converter){
+            if (converter) {
                 compressSlider.setMaximum(200);
-            }
-            else{
+            } else {
                 compressSlider.setMaximum(Math.max(image.getHeight(), image.getWidth()));
             }
         } else if (type == "#") {
-            generate();
+            generate(true);
         } else if (type == "$") {
             if (blackAndWhiteState == 0) {
                 blackAndWhiteState = 1;
             } else {
                 blackAndWhiteState = 0;
             }
-            generate();
-        }
-        else if (type == "+") {
+            generate(true);
+        } else if (type == "+") {
             save();
+        } else if (type == "-") {
+            colorSum();
         }
     }
 

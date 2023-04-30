@@ -7,6 +7,7 @@ package com.mycompany.nonogram_online;
 
 import com.mycompany.nonogram_online.buttons.BasicRate;
 import com.mycompany.nonogram_online.buttons.FailButton;
+import com.mycompany.nonogram_online.generator.ColorHandler;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.server.NonogramFileWriter;
 import com.mycompany.nonogram_online.server.Response;
@@ -186,20 +187,6 @@ public class MainFrame extends JPanel {
         });
 
         colorButtons = new JButton[11];
-        colorButtons[0] = new JButton("0");
-        colorButtons[0].setBackground(Color.WHITE);
-        colorButtons[0].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                chooseColor(0);
-            }
-        });
-        colorButtons[1] = new JButton("1");
-        colorButtons[1].setBackground(Color.BLACK);
-        colorButtons[1].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                chooseColor(1);
-            }
-        });
 
         colorButtons[10] = new JButton("🚩");
         colorButtons[10].addActionListener(new ActionListener() {
@@ -349,6 +336,16 @@ public class MainFrame extends JPanel {
         bottomPanel.add(nextLayerButton);
         bottomPanel.add(addLayer);
         addLayer.setVisible(false);
+        for (int i = 0; i < lvl.getColors().size(); i++) {
+            colorButtons[i] = new JButton(i + "");
+            colorButtons[i].setBackground(lvl.getColors().get(i));
+            colorButtons[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    chooseColor(Integer.parseInt(((JButton) e.getSource()).getText()));
+                }
+            });
+            colorPanel.add(colorButtons[i]);
+        }
         if (isEditing) {
             bottomPanel.add(isSolvableButton);
             bottomPanel.add(solvableLabel);
@@ -493,7 +490,11 @@ public class MainFrame extends JPanel {
     private void addColor() {
         JColorChooser c = new JColorChooser();
         Color color = c.showDialog(null, "Válassz színt!", Color.BLACK);
-        if (color != null) {
+        if(color != null && !ColorHandler.findCloseColors(lvl.getColors(),color).isEmpty()){
+            colorError.setText("Ez a szín túl hasonló egy másikhoz!");
+        }
+        else if (color != null) {
+            colorError.setText("");
             colorPanel.remove(colorButtons[10]);
             colorButtons[lvl.getColors().size()] = new JButton((lvl.getColors().size()) + "");
             colorButtons[lvl.getColors().size()].setBackground(color);

@@ -406,8 +406,7 @@ public class ImageHandler {
                     } else {
                         nonogramImage.setRGB(i, j, ((Color.WHITE.getRed() << 16) | (Color.WHITE.getGreen() << 8) | Color.WHITE.getBlue()));
                     }
-                }
-                else{
+                } else {
                     if (c.equals(start)) {
                         nonogramImage.setRGB(i, j, ((Color.WHITE.getRed() << 16) | (Color.WHITE.getGreen() << 8) | Color.WHITE.getBlue()));
                     } else {
@@ -421,11 +420,10 @@ public class ImageHandler {
     public Level getImageAsLevel(int blackAndWhite, int layers, int backColor, int grid) {
         int gridSize = (grid == 1 ? 1 : grid * -1);
         int actualSize = (secondSize / (int) Math.sqrt(gridSize));
-        int bw = blackAndWhite;
+        int bw = 0;
         if (blackAndWhite == -1) {
             bw = 0;
-        }
-        else{
+        } else {
             makeNonogramBlackAndWhite(blackAndWhite);
         }
         String error = "";
@@ -438,8 +436,10 @@ public class ImageHandler {
             if (layers > 1 && blackAndWhite == -1) {
                 res.addColor(Color.WHITE);
             }
-            for (int i = 0; i < resultColors.size(); i++) {
-                res.addColor(resultColors.get(i));
+            if (blackAndWhite == -1) {
+                for (int i = 0; i < resultColors.size(); i++) {
+                    res.addColor(resultColors.get(i));
+                }
             }
             int notBackNum = 0;
             Random r = new Random();
@@ -479,18 +479,41 @@ public class ImageHandler {
         }
         return res;
     }
-    
-    public void save(int back){
+
+    public boolean save(int back) {
+        System.out.println(res.export());
         Color backColor = res.getColors().get(back);
         res.setColorBackGroundColor(backColor);
+        HashMap<Integer, Integer> closes = ColorHandler.findCloseColors(res.getColors());
+        return closes.isEmpty();
     }
-    
-    public boolean isSolvable(){
-        return res.isSolvable();
-    }
-    
-    public Level getFullLevel(){
+
+    public Level getFullLevel() {
         return res;
     }
 
+    public void colorSum(int back) {
+        HashMap<Integer, Integer> closes;
+        int removedNum = 0;
+        do {
+            closes = ColorHandler.findCloseColors(res.getColors());
+            boolean happenedRemove = false;
+            for (int i = 0; i < res.getColors().size() && !happenedRemove; i++) {
+                if (closes.get(i) != null) {
+                    ArrayList<Color> cs = new ArrayList<>();
+                    cs.add(res.getColors().get(i));
+                    cs.add(res.getColors().get(closes.get(i)));
+                    Color avgColor = getAverageRGB(cs);
+                    res.removeColor(closes.get(i), i);
+                    res.setColor(i, avgColor);
+                    removedNum++;
+                    happenedRemove = true;
+                }
+            }
+
+        } while (!closes.isEmpty());
+        res.afterAllRemoved(removedNum);
+        Color backColor = res.getColors().get(back);
+        res.setColorBackGroundColor(backColor);
+    }
 }

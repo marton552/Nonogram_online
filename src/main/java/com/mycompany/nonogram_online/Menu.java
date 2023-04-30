@@ -132,6 +132,7 @@ public class Menu extends JFrame {
     private ArrayList<String> history;
     private Server server;
     private ImageToLevel itl;
+    private File selectedFile;
 
     public Menu(String title) {
         super(title + " menü");
@@ -236,6 +237,8 @@ public class Menu extends JFrame {
             itl.changeEditorMenu("$", 0);
         } else if (text.startsWith("+")) {
             itl.changeEditorMenu("+", 0);
+        }else if (text.startsWith("-")) {
+            itl.changeEditorMenu("-", 0);
         } else if (text == "imageEdit") {
             menupanel.removeAll();
             menupanel.revalidate();
@@ -294,7 +297,8 @@ public class Menu extends JFrame {
         } else if (text == "Pálya kézzel készítése") {
             setupLevelEditorMenu();
         } else if (text == "Pálya képfeltöltéssel") {
-            setupImageLoad();
+            history.add("uploadImage");
+            setupImageLoad(true);
         } else if (text == "Könnyű") {
             filePath += "easy/";
             levelStartNum = 0;
@@ -387,6 +391,8 @@ public class Menu extends JFrame {
             setupUserProfile();
         } else if (history.get(history.size() - 1).equals("editor")) {
             setupMakeLevelMenu();
+        } else if (history.get(history.size() - 1).equals("uploadImage")) {
+            setupImageLoad(false);
         }
     }
 
@@ -400,27 +406,45 @@ public class Menu extends JFrame {
         menupanel.add(userPanel, BorderLayout.CENTER);
     }
 
-    private void setupImageLoad() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes()));
-        fileChooser.setAcceptAllFileFilterUsed(false);
-        int result = fileChooser.showOpenDialog(menuMe);
-        if (result == JFileChooser.APPROVE_OPTION) {
+    private void setupImageLoad(boolean backPressed) {
+        if (backPressed) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes()));
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            int result = fileChooser.showOpenDialog(menuMe);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                try {
+                    selectedFile = fileChooser.getSelectedFile();
+                    BufferedImage bi = ImageIO.read(selectedFile);
+                    menupanel.removeAll();
+                    menupanel.revalidate();
+                    menupanel.repaint();
+                    menupanel.setLayout(new BorderLayout());
+                    itl.setup();
+                    itl.addImage(bi);
+                    itl.generate(true);
+                    menupanel.add(itl, BorderLayout.CENTER);
+                } catch (IOException ex) {
+                    Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+                }
+            }
+        } else {
+            BufferedImage bi;
             try {
-                File selectedFile = fileChooser.getSelectedFile();
-                BufferedImage bi = ImageIO.read(selectedFile);
+                bi = ImageIO.read(selectedFile);
                 menupanel.removeAll();
                 menupanel.revalidate();
                 menupanel.repaint();
                 menupanel.setLayout(new BorderLayout());
                 itl.setup();
                 itl.addImage(bi);
-                itl.generate();
+                itl.generate(true);
                 menupanel.add(itl, BorderLayout.CENTER);
             } catch (IOException ex) {
                 Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
+
         }
     }
 

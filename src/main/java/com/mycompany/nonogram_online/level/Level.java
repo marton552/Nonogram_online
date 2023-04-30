@@ -118,11 +118,67 @@ public class Level {
         int index = getColors().indexOf(back);
         Color tmp = getColors().get(0);
         colors.set(0, back);
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < hanyszorhany; j++) {
+                for (int k = 0; k < hanyszorhany; k++) {
+                    if (matrix.get(i).getTileBy(j, k) == 0) {
+                        matrix.get(i).addTileBy(j, k, 100);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < hanyszorhany; j++) {
+                for (int k = 0; k < hanyszorhany; k++) {
+                    if (matrix.get(i).getTileBy(j, k) == index) {
+                        matrix.get(i).addTileBy(j, k, 0);
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < hanyszorhany; j++) {
+                for (int k = 0; k < hanyszorhany; k++) {
+                    if (matrix.get(i).getTileBy(j, k) == 100) {
+                        matrix.get(i).addTileBy(j, k, index);
+                    }
+                }
+            }
+        }
         colors.set(index, tmp);
     }
 
     public ArrayList<Color> getColors() {
         return colors;
+    }
+
+    public void setColor(int num, Color c) {
+        colors.set(num, c);
+    }
+
+    public void removeColor(int num, int newColor) {
+        colors.remove(num);
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < hanyszorhany; j++) {
+                for (int k = 0; k < hanyszorhany; k++) {
+                    if (matrix.get(i).getTileBy(j, k) == num) {
+                        matrix.get(i).addTileBy(j, k, newColor);
+                    }
+                }
+            }
+        }
+    }
+
+    public void afterAllRemoved(int removedNum) {
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < hanyszorhany; j++) {
+                for (int k = 0; k < hanyszorhany; k++) {
+                    if (matrix.get(i).getTileBy(j, k) >= colors.size()) {
+                        matrix.get(i).addTileBy(j, k, matrix.get(i).getTileBy(j, k)-removedNum);
+                    }
+                }
+            }
+        }
     }
 
     public void addColor(Color c) {
@@ -302,7 +358,7 @@ public class Level {
                 g.setColor(invertColor);
                 g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize / 1.5)));
                 char[] text = ("" + matrix.get(layer).getLeftNumbers().get(i).get(k).getNum()).toCharArray();
-                g.drawChars(text, 0, text.length, (text.length>1 ? (int)(-1*squareSize/4) : 0) + shiftLeft + numbersStartPosX + (k * squareSize) + (squareSize / 3), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize) + (int) (squareSize / 1.3));
+                g.drawChars(text, 0, text.length, (text.length > 1 ? (int) (-1 * squareSize / 4) : 0) + shiftLeft + numbersStartPosX + (k * squareSize) + (squareSize / 3), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize) + (int) (squareSize / 1.3));
             }
         }
         for (int i = 0; i < hanyszorhany; i++) {
@@ -319,7 +375,7 @@ public class Level {
                 g.setColor(invertColor);
                 g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize / 1.5)));
                 char[] text = ("" + matrix.get(layer).getTopNumbers().get(i).get(k).getNum()).toCharArray();
-                g.drawChars(text, 0, text.length, (text.length>1 ? (int)(-1*squareSize/4) : 0) + numbersStartPosX + matrixMostMostNumbers * squareSize + (i * squareSize) + (squareSize / 3), shiftTop + numbersStartPosY + (k * squareSize) + (int) (squareSize / 1.3));
+                g.drawChars(text, 0, text.length, (text.length > 1 ? (int) (-1 * squareSize / 4) : 0) + numbersStartPosX + matrixMostMostNumbers * squareSize + (i * squareSize) + (squareSize / 3), shiftTop + numbersStartPosY + (k * squareSize) + (int) (squareSize / 1.3));
             }
         }
     }
@@ -363,14 +419,15 @@ public class Level {
 
     public void newLvl(boolean isEditing) {
         this.isEditing = isEditing;
-        if(isEditing){
-        for (int i = 0; i < matrix.size(); i++) {
-            for (int j = 0; j < hanyszorhany; j++) {
-                for (int k = 0; k < hanyszorhany; k++) {
-                    matrix.get(i).clearTileBy(j, k);
+        if (isEditing) {
+            for (int i = 0; i < matrix.size(); i++) {
+                for (int j = 0; j < hanyszorhany; j++) {
+                    for (int k = 0; k < hanyszorhany; k++) {
+                        matrix.get(i).clearTileBy(j, k);
+                    }
                 }
             }
-        }}
+        }
         for (int l = 0; l < matrix.size(); l++) {
             for (int i = 0; i < hanyszorhany; i++) {
                 for (int j = 0; j < hanyszorhany; j++) {
@@ -417,6 +474,7 @@ public class Level {
                 }
             }
         }
+        System.out.println(saveData);
         return saveData;
     }
 
