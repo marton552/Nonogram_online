@@ -174,7 +174,7 @@ public class Level {
             for (int j = 0; j < hanyszorhany; j++) {
                 for (int k = 0; k < hanyszorhany; k++) {
                     if (matrix.get(i).getTileBy(j, k) >= colors.size()) {
-                        matrix.get(i).addTileBy(j, k, matrix.get(i).getTileBy(j, k)-removedNum);
+                        matrix.get(i).addTileBy(j, k, matrix.get(i).getTileBy(j, k) - removedNum);
                     }
                 }
             }
@@ -359,6 +359,10 @@ public class Level {
                 g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize / 1.5)));
                 char[] text = ("" + matrix.get(layer).getLeftNumbers().get(i).get(k).getNum()).toCharArray();
                 g.drawChars(text, 0, text.length, (text.length > 1 ? (int) (-1 * squareSize / 4) : 0) + shiftLeft + numbersStartPosX + (k * squareSize) + (squareSize / 3), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize) + (int) (squareSize / 1.3));
+                if (matrix.get(layer).getLeftNumbers().get(i).get(k).getColor() == selectedColor) {
+                    g.setColor(invertColor);
+                    g.drawRect(shiftLeft + numbersStartPosX + (k * squareSize), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize), squareSize, squareSize);
+                }
             }
         }
         for (int i = 0; i < hanyszorhany; i++) {
@@ -376,6 +380,10 @@ public class Level {
                 g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize / 1.5)));
                 char[] text = ("" + matrix.get(layer).getTopNumbers().get(i).get(k).getNum()).toCharArray();
                 g.drawChars(text, 0, text.length, (text.length > 1 ? (int) (-1 * squareSize / 4) : 0) + numbersStartPosX + matrixMostMostNumbers * squareSize + (i * squareSize) + (squareSize / 3), shiftTop + numbersStartPosY + (k * squareSize) + (int) (squareSize / 1.3));
+                if (matrix.get(layer).getTopNumbers().get(i).get(k).getColor() == selectedColor) {
+                    g.setColor(invertColor);
+                    g.drawRect(numbersStartPosX + (i * squareSize) + matrixMostMostNumbers * squareSize, shiftTop + numbersStartPosY + (k * squareSize), squareSize, squareSize);
+                }
             }
         }
     }
@@ -427,12 +435,12 @@ public class Level {
                     }
                 }
             }
-        }
-        for (int l = 0; l < matrix.size(); l++) {
-            for (int i = 0; i < hanyszorhany; i++) {
-                for (int j = 0; j < hanyszorhany; j++) {
-                    if (matrix.get(l).getTileBy(i, j) != 0) {
-                        matrix.get(l).addTileBy(i, j, matrix.get(l).getTileBy(i, j));
+            for (int l = 0; l < matrix.size(); l++) {
+                for (int i = 0; i < hanyszorhany; i++) {
+                    for (int j = 0; j < hanyszorhany; j++) {
+                        if (matrix.get(l).getTileBy(i, j) != 0) {
+                            matrix.get(l).addTileBy(i, j, matrix.get(l).getTileBy(i, j));
+                        }
                     }
                 }
             }

@@ -336,12 +336,15 @@ public class MainFrame extends JPanel {
         bottomPanel.add(nextLayerButton);
         bottomPanel.add(addLayer);
         addLayer.setVisible(false);
-        for (int i = 0; i < lvl.getColors().size(); i++) {
+        int index = 0;
+        if(!isEditing) index = 1;
+        for (int i = index; i < lvl.getColors().size(); i++) {
             colorButtons[i] = new JButton(i + "");
             colorButtons[i].setBackground(lvl.getColors().get(i));
             colorButtons[i].addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     chooseColor(Integer.parseInt(((JButton) e.getSource()).getText()));
+                    gamePanel.repaint();
                 }
             });
             colorPanel.add(colorButtons[i]);
@@ -350,8 +353,6 @@ public class MainFrame extends JPanel {
             bottomPanel.add(isSolvableButton);
             bottomPanel.add(solvableLabel);
             bottomPanel.add(saveButton);
-            colorPanel.add(colorButtons[0]);
-            colorPanel.add(colorButtons[1]);
             if (isColored) {
                 topPanel.add(deleteColor);
                 colorButtons[10] = new JButton("+");
@@ -368,17 +369,6 @@ public class MainFrame extends JPanel {
             chooseColor(1);
         } else {
             colorPanel.add(colorButtons[10]);
-            for (int i = 0; i < game.lvl.getColors().size() - 1; i++) {
-                colorButtons[i] = new JButton((i + 1) + "");
-                colorButtons[i].setBackground(game.lvl.getColors().get(i + 1));
-                colorButtons[i].addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        chooseColor(Integer.parseInt(((JButton) e.getSource()).getText()));
-                    }
-                });
-                colorPanel.add(colorButtons[i]);
-                chooseColor(1);
-            }
             bottomPanel.add(hintButton);
         }
 
