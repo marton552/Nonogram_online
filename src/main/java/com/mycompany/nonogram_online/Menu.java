@@ -426,7 +426,7 @@ public class Menu extends JFrame {
     private void setupImageLoad(boolean backPressed) {
         if (backPressed) {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Desktop/super"));
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
             fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes()));
             fileChooser.setAcceptAllFileFilterUsed(false);
             int result = fileChooser.showOpenDialog(menuMe);

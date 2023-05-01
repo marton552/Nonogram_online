@@ -20,6 +20,7 @@ public class Game {
     private int actualLayer = 0;
     private int remainingHelp = 3;
     private int hp = 3;
+    private boolean isZoomed = false;
 
     private boolean isEditing = false;
 
@@ -36,6 +37,14 @@ public class Game {
                 hp--;
             }
         }
+    }
+
+    public boolean isIsZoomed() {
+        return isZoomed;
+    }
+
+    public void setIsZoomed(boolean isZoomed) {
+        this.isZoomed = isZoomed;
     }
 
     public boolean isFinished() {
@@ -84,7 +93,7 @@ public class Game {
     }
 
     public void draw(Graphics g, int width, int height) {
-        lvl.setSquareSize(width, height);
+        lvl.setSquareSize(width, height, isZoomed);
         if (isFinished()) {
             winGame(g);
         } else {

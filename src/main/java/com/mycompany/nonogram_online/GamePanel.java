@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -55,6 +56,10 @@ public class GamePanel extends JPanel {
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if(e.getY() > mf.getMenu().getHeight()-170-50 && e.getX() > mf.getMenu().getWidth()-70){
+                    if(game.isIsZoomed())game.setIsZoomed(false);
+                    else game.setIsZoomed(true);
+                }
                 game.clickedOn(e.getX(), e.getY());
                 if (game.isFinished()) {
                     mf.finishLevel();
@@ -106,6 +111,9 @@ public class GamePanel extends JPanel {
             g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (width / 20)));
             String title = "Hátralévő próbálkozások: " + game.getHp();
             g.drawChars(title.toCharArray(), 0, title.toCharArray().length, 10, mf.getMenu().getHeight()-170);
+            
         }
+        if(game.isIsZoomed()) g.drawImage(new ImageIcon(this.getClass().getResource("/images/zoom_out.png")).getImage(), mf.getMenu().getWidth()-70, mf.getMenu().getHeight()-170-50, 50,50,null);
+        else g.drawImage(new ImageIcon(this.getClass().getResource("/images/zoom_in.png")).getImage(), mf.getMenu().getWidth()-70, mf.getMenu().getHeight()-170-50, 50,50,null);
     }
 }

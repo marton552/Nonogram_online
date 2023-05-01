@@ -225,9 +225,11 @@ public class Level {
         return r + hanyszorhany;
     }
 
-    public void setSquareSize(int width, int height) {
+    public void setSquareSize(int width, int height, boolean zoomed) {
+        int x = 2;
+        if(zoomed) x = 1;
         matrixMostMostNumbers = matrixMostLeftNumbers > matrixMostTopNumbers ? matrixMostLeftNumbers : matrixMostTopNumbers;
-        newSquareSize = width / (matrixMostMostNumbers * 2 + hanyszorhany);
+        newSquareSize = width / (matrixMostMostNumbers * x + hanyszorhany);
     }
 
     public boolean isSquareSizeChanged() {
