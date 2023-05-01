@@ -79,6 +79,10 @@ public class Game {
         return hp;
     }
 
+    public boolean isIsEditing() {
+        return isEditing;
+    }
+
     public void draw(Graphics g, int width, int height) {
         lvl.setSquareSize(width, height);
         if (isFinished()) {
@@ -92,12 +96,6 @@ public class Game {
                     lvl.drawMatrix(g, i, true, (i == actualLayer));
                 }
             }
-        }
-        if (!isEditing) {
-            g.setColor(Color.BLACK);
-            g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (width / 20)));
-            String title = "Hátralévő próbálkozások: " + hp;
-            g.drawChars(title.toCharArray(), 0, title.toCharArray().length, 10, lvl.getSquareSize() * (lvl.getHeight() + 3));
         }
     }
 

@@ -370,7 +370,52 @@ public class Server {
         closeRequest();
         return response;
     }
+    
+    public Response getSPTop(int top){
+        getSPTopList();
+        if(data.size() > top) response = new Response(Integer.parseInt(data.get(top).get(1)), data.get(top).get(0));
+        else response = new Response(404, "Not found");
+        closeRequest();
+        return response;
+    }
+    
+    public void completeSuperProject(int index, String username){
+        runQueryNoResponse("UPDATE `superproject` SET completed_by='"+username+"' WHERE id='"+index+"'");
+    }
+    
+    public Response getSuperProjectisDone(int index){
+        getSP();
+        response = new Response(200, data.get(index).get(3));
+        closeRequest();
+        return response;
+    }
+    
+    public Response getSuperProject(int index){
+        getSP();
+        response = new Response(200, data.get(index).get(2));
+        closeRequest();
+        return response;
+    }
+    
+    public void refreshSuperProject(ArrayList<String> sps) {
+        runQueryNoResponse("DELETE FROM superproject");
+        Date d = new Date(System.currentTimeMillis());
+        DateFormat df = new SimpleDateFormat("yyyy.MM.dd");
+        for (int i = 0; i < sps.size(); i++) {
+            int id = i+1;
+            System.out.println("INSERT INTO superproject(id, type, data, completed_by) VALUES ('"+(id)+"', '"+df.format(d)+"','"+sps.get(i)+"','no')");
+            runQueryNoResponse("INSERT INTO superproject(id, type, data, completed_by) VALUES ('"+(id)+"', '"+df.format(d)+"','"+sps.get(i)+"','no')");
+        }
+    }
 
+    private void getSPTopList() {
+        runQuery("SELECT completed_by, COUNT(*) AS count FROM superproject WHERE completed_by <> 'no' GROUP BY completed_by ORDER BY count DESC");
+    }
+    
+    private void getSP() {
+        runQuery("select * from superproject");
+    }
+    
     private void getMissions(int level) {
         runQuery("select * from missions where level='" + level + "'");
     }

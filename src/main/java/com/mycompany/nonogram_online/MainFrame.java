@@ -171,6 +171,9 @@ public class MainFrame extends JPanel {
                             m.backToMenu(true);
                         }
                     } else {
+                        if(lvl.getName().length() < 4){
+                            server.completeSuperProject(Integer.parseInt(lvl.getName()), m.getUser().getFullUsername());
+                        }
                         NonogramFileWriter fw = new NonogramFileWriter("");
                         fw.saveLocalData(m.getUser().getFullUsername(), lvl.getName());
                         m.backToMenu(true);
@@ -274,7 +277,7 @@ public class MainFrame extends JPanel {
         this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (isMultisized) {
+                if (isMultisized && isChoosing) {
                     chooseMulti(e.getX(), e.getY());
                     repaint();
                 }
@@ -580,6 +583,10 @@ public class MainFrame extends JPanel {
         game.retry();
         hintButton.setVisible(true);
         hintButton.setText("Segítség 3/3");
+    }
+    
+    public Menu getMenu(){
+        return m;
     }
 
     @Override

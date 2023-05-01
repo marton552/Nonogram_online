@@ -16,6 +16,7 @@ import com.mycompany.nonogram_online.level.ImageToLevel;
 import com.mycompany.nonogram_online.level.Level;
 import com.mycompany.nonogram_online.level.LevelEditor;
 import com.mycompany.nonogram_online.level.LevelIcon;
+import com.mycompany.nonogram_online.level.SuperProject;
 import com.mycompany.nonogram_online.server.SearchResponse;
 import com.mycompany.nonogram_online.server.Server;
 import com.mycompany.nonogram_online.server.SortResponse;
@@ -72,6 +73,8 @@ public class Menu extends JFrame {
     private BasicButton guestLogin;
     private BasicButton offlineMaps;
     private BasicButton onlineMaps;
+    private BasicButton onlineCollection;
+    private BasicButton superProjects;
     private BasicButton levelCreator;
     private BasicButton levelByHand;
     private BasicButton levelByImage;
@@ -133,6 +136,7 @@ public class Menu extends JFrame {
     private Server server;
     private ImageToLevel itl;
     private File selectedFile;
+    private SuperProject sp;
 
     public Menu(String title) {
         super(title + " menü");
@@ -166,6 +170,7 @@ public class Menu extends JFrame {
         menuMe = this;
         sortState = new SortResponse();
         searchState = new SearchResponse("");
+        sp = new SuperProject(menuMe);
 
         try {
             itl = new ImageToLevel(menuMe, ImageIO.read(Menu.class.getResourceAsStream("/images/villam.png")));
@@ -178,6 +183,8 @@ public class Menu extends JFrame {
         guestLogin = new BasicButton(menuMe, "Belépés vendégként", 1, 4);
         offlineMaps = new BasicButton(menuMe, "Offline pályák", 1, 4);
         onlineMaps = new BasicButton(menuMe, "Online pályák", 1, 4);
+        onlineCollection = new BasicButton(menuMe, "Online pályatár", 1, 3);
+        superProjects = new BasicButton(menuMe, "Szuperprojekt", 1, 3);
         levelCreator = new BasicButton(menuMe, "Saját pálya készítése", 1, 4);
         levelByHand = new BasicButton(menuMe, "Pálya kézzel készítése", 1, 4);
         levelByImage = new BasicButton(menuMe, "Pálya képfeltöltéssel", 1, 4);
@@ -237,7 +244,7 @@ public class Menu extends JFrame {
             itl.changeEditorMenu("$", 0);
         } else if (text.startsWith("+")) {
             itl.changeEditorMenu("+", 0);
-        }else if (text.startsWith("-")) {
+        } else if (text.startsWith("-")) {
             itl.changeEditorMenu("-", 0);
         } else if (text == "imageEdit") {
             menupanel.removeAll();
@@ -289,8 +296,14 @@ public class Menu extends JFrame {
             setupDifficultyMenu();
         } else if (text == "Online pályák") {
             history.add("online");
+            setupOnlineChooser();
+        } else if (text == "Online pályatár") {
+            history.add("online_maps");
             levelStartNum = 0;
             setupOnlineLevelsMenu();
+        } else if (text == "Szuperprojekt") {
+            history.add("super");
+            setupSuperProject();
         } else if (text == "Saját pálya készítése") {
             history.add("editor");
             setupMakeLevelMenu();
@@ -386,6 +399,8 @@ public class Menu extends JFrame {
         } else if (history.get(history.size() - 1).equals("offline")) {
             setupOfflineLevelsMenu();
         } else if (history.get(history.size() - 1).equals("online")) {
+            setupOnlineChooser();
+        } else if (history.get(history.size() - 1).equals("online_maps")) {
             setupOnlineLevelsMenu();
         } else if (history.get(history.size() - 1).equals("user")) {
             setupUserProfile();
@@ -393,6 +408,8 @@ public class Menu extends JFrame {
             setupMakeLevelMenu();
         } else if (history.get(history.size() - 1).equals("uploadImage")) {
             setupImageLoad(false);
+        } else if (history.get(history.size() - 1).equals("super")) {
+            setupSuperProject();
         }
     }
 
@@ -409,7 +426,7 @@ public class Menu extends JFrame {
     private void setupImageLoad(boolean backPressed) {
         if (backPressed) {
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Desktop/super"));
             fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes()));
             fileChooser.setAcceptAllFileFilterUsed(false);
             int result = fileChooser.showOpenDialog(menuMe);
@@ -583,6 +600,39 @@ public class Menu extends JFrame {
                 = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
 
         return in == null ? getClass().getResourceAsStream(resource) : in;
+    }
+
+    private void setupOnlineChooser() {
+        menupanel.removeAll();
+        menupanel.revalidate();
+        menupanel.repaint();
+        menupanel.setLayout(new GridLayout(3, 1));
+        onlineCollection.setOrientation(1, 3);
+        menupanel.add(onlineCollection);
+        superProjects.setOrientation(1, 3);
+        menupanel.add(superProjects);
+        backButton.setOrientation(1, 3);
+        menupanel.add(backButton);
+    }
+
+    private void setupSuperProject() {
+        menupanel.removeAll();
+        menupanel.revalidate();
+        menupanel.repaint();
+        menupanel.setLayout(new BorderLayout());
+        sp.setup();
+        menupanel.add(sp);
+        sp.repaint();
+    }
+
+    public void playSuperProject(Level lvl) {
+        menupanel.removeAll();
+        menupanel.revalidate();
+        menupanel.repaint();
+        menupanel.setLayout(new BorderLayout());
+        game = new MainFrame(lvl.getName(), menuMe, lvl, false, false, false, 0);
+        menupanel.add(game, BorderLayout.CENTER);
+        menupanel.repaint();
     }
 
     private void setupOnlineLevelsMenu() {

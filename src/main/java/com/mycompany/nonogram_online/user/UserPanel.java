@@ -143,6 +143,7 @@ public class UserPanel extends JPanel {
                         if (!uploadedMissions) {
                             uploadedMissions = true;
                             server.refreshMissions(collectMissions());
+                            server.refreshSuperProject(collectSuperProject());
                         }
                     } else if (e.getY() > 560 && e.getY() < 650) {
                         timer.stop();
@@ -204,11 +205,33 @@ public class UserPanel extends JPanel {
         repaint();
     }
 
+    private ArrayList<String> collectSuperProject() {
+        ArrayList<String> res = new ArrayList<>();
+        for (int i = 1; i < 101; i++) {
+            BufferedReader input = null;
+
+            try {
+                input = new BufferedReader(new FileReader("src/main/resources/updates/superproject/"+i+".txt"));
+                String data = input.lines().collect(Collectors.joining(""));
+                res.add(data);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    input.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return res;
+    }
+
     private ArrayList<String> collectMissions() {
         BufferedReader input = null;
         ArrayList<String> res = new ArrayList<>();
         try {
-            input = new BufferedReader(new FileReader("src/main/resources/levels/missions.txt"));
+            input = new BufferedReader(new FileReader("src/main/resources/updates/missions.txt"));
             String data = input.lines().collect(Collectors.joining("\n"));
             ArrayList<String> missions = new ArrayList<String>(Arrays.asList(data.split("\n")));
 
@@ -388,7 +411,7 @@ public class UserPanel extends JPanel {
 
             for (int i = 0; i < buttonNum; i++) {
                 if (i == 1) {
-                    buttonTitle = "Küldetések frissítése";
+                    buttonTitle = "Küldetések és Szuperprojekt frissítése";
                 } else if (i == 2) {
                     buttonTitle = "Felhasználók kezelése";
                 } else if (i == 3) {
@@ -403,6 +426,9 @@ public class UserPanel extends JPanel {
                 frc = new FontRenderContext(null, true, true);
 
                 font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 12));
+                if (buttonTitle.length() > 30) {
+                    font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 20));
+                }
                 r2D = font.getStringBounds(buttonTitle, frc);
                 rWidth = (int) Math.round(r2D.getWidth());
                 int rHeight = (int) Math.round(r2D.getHeight());

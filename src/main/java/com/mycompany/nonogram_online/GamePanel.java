@@ -6,6 +6,8 @@
 package com.mycompany.nonogram_online;
 
 import com.mycompany.nonogram_online.level.Level;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -98,6 +100,12 @@ public class GamePanel extends JPanel {
         if (game.lvl.isSquareSizeChanged()) {
             animationTimer = Math.abs(game.lvl.getNewSquareSize() - game.lvl.getSquareSize());
             timer.start();
+        }
+        if (!game.isIsEditing()) {
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (width / 20)));
+            String title = "Hátralévő próbálkozások: " + game.getHp();
+            g.drawChars(title.toCharArray(), 0, title.toCharArray().length, 10, mf.getMenu().getHeight()-170);
         }
     }
 }

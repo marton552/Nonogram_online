@@ -336,10 +336,27 @@ public class Level {
                 }
             }
         }
-        for (int i = 0; i < hanyszorhany / 5 - (isInGame ? 1 : 0); i++) {
-            g.setColor(Color.BLACK);
-            g.fillRect(matrixStartPosX + (((i + 1) * 5) * squareSize) - 1, matrixStartPosY, 3, (hanyszorhany * squareSize));
-            g.fillRect(matrixStartPosX, matrixStartPosY + (((i + 1) * 5) * squareSize) - 1, (hanyszorhany * squareSize), 3);
+        if (!isFinished()) {
+            for (int i = 0; i < hanyszorhany / 5 - (isInGame ? 1 : 0); i++) {
+                g.setColor(Color.BLACK);
+                g.fillRect(matrixStartPosX + (((i + 1) * 5) * squareSize) - 1, matrixStartPosY, 3, (hanyszorhany * squareSize));
+                g.fillRect(matrixStartPosX, matrixStartPosY + (((i + 1) * 5) * squareSize) - 1, (hanyszorhany * squareSize), 3);
+            }
+        }
+    }
+
+    public void drawSPMatrix(Graphics g, int actSize) {
+        g.setColor(Color.BLACK);
+        g.drawRect(matrixStartPosX, matrixStartPosY, squareSize * actSize, squareSize * actSize);
+        for (int i = 0; i < hanyszorhany; i++) {
+            for (int k = 0; k < hanyszorhany; k++) {
+                Color color = matrix.get(0).getTileByIsDone(i, k) ? colors.get(matrix.get(0).getTileBy(i, k)) : colors.get(0);
+                Color color2 = new Color((color.getRed()) / 255.0f, (color.getGreen()) / 255.0f, (color.getBlue()) / 255.0f, (1.0f));
+                g.setColor(color2);
+                if (matrix.get(0).getTileByIsDone(i, k)) {
+                    g.fillRect(matrixStartPosX + (k * squareSize), matrixStartPosY + (i * squareSize), squareSize, squareSize);
+                }
+            }
         }
     }
 
@@ -427,14 +444,14 @@ public class Level {
 
     public void newLvl(boolean isEditing) {
         this.isEditing = isEditing;
-        if (isEditing) {
-            for (int i = 0; i < matrix.size(); i++) {
+        for (int i = 0; i < matrix.size(); i++) {
                 for (int j = 0; j < hanyszorhany; j++) {
                     for (int k = 0; k < hanyszorhany; k++) {
                         matrix.get(i).clearTileBy(j, k);
                     }
                 }
             }
+        if (isEditing) {
             for (int l = 0; l < matrix.size(); l++) {
                 for (int i = 0; i < hanyszorhany; i++) {
                     for (int j = 0; j < hanyszorhany; j++) {
@@ -470,7 +487,7 @@ public class Level {
     public String export() {
         String saveData = getName();
         saveData += ";" + hanyszorhany;
-        saveData += ";" + matrix.size();
+        saveData += ";" + (isIsMultisized() ? matrix.size() * -1 : matrix.size());
         saveData += ";" + colors.size();
         for (int i = 0; i < colors.size(); i++) {
             saveData += ";rgb(" + colors.get(i).getRed() + "," + colors.get(i).getGreen() + "," + colors.get(i).getBlue() + ")";

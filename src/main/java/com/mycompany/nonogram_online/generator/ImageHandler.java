@@ -176,7 +176,7 @@ public class ImageHandler {
                 ArrayList<Color> colors = new ArrayList<>();
                 for (double z = i; z < i + stepX; z++) {
                     for (double y = j; y < j + stepY; y++) {
-                        Color color = new Color(image.getRGB((int) Math.round(i), (int) Math.round(j)));
+                        Color color = new Color(image.getRGB((int) Math.floor(i), (int) Math.floor(j)));
                         colors.add(color);
                     }
                 }
