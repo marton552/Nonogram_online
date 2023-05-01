@@ -311,6 +311,8 @@ public class Level {
     public void drawMatrix(Graphics g, int layer, boolean isInGame, boolean isFocusedLayer) {
         matrixStartPosX = isInGame ? matrixMostMostNumbers * squareSize : matrixStartPosX;
         matrixStartPosY = isInGame ? matrixMostMostNumbers * squareSize + 30 : matrixStartPosY;
+        g.setColor(colors.get(0));
+        g.fillRect(matrixStartPosX, matrixStartPosY, squareSize * hanyszorhany, squareSize * hanyszorhany);
         for (int i = 0; i < hanyszorhany; i++) {
             for (int k = 0; k < hanyszorhany; k++) {
                 Color color = matrix.get(layer).getTileByIsDone(i, k) ? colors.get(matrix.get(layer).getTileBy(i, k)) : colors.get(0);
