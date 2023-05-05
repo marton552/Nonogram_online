@@ -25,6 +25,10 @@ import javax.swing.event.DocumentListener;
  */
 public class LoginPanel extends JPanel {
 
+    private static final String guestRegistString = " Vendég regisztrálása";
+    private static final String registString = " Regisztráció";
+    private static final String guestLoginString = " Belépés vendégként";
+    
     private String mode;
 
     private JLabel titleLabel;
@@ -148,7 +152,7 @@ public class LoginPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (time > 0) {
                     String stringPart = "";
-                    if (mode.equals(" Regisztráció") || mode.equals(" Vendég regisztrálása")) {
+                    if (mode.equals(registString) || mode.equals(guestRegistString)) {
                         stringPart = "Felhasználó sikeresen létrehozva!<br>";
                     }
                     if (time == 4) {
@@ -178,13 +182,13 @@ public class LoginPanel extends JPanel {
 
         errorServer = false;
 
-        if (mode.equals(" Regisztráció")) {
+        if (mode.equals(registString)) {
             setupRegistry();
         } else if (mode.equals(" Bejelentkezés")) {
             setupLogin();
-        } else if (mode.equals(" Belépés vendégként")) {
+        } else if (mode.equals(guestLoginString)) {
             setupGuest();
-        } else if (mode.equals(" Vendég regisztrálása")) {
+        } else if (mode.equals(guestRegistString)) {
             setupRegistryGuest();
         }
 
@@ -221,7 +225,7 @@ public class LoginPanel extends JPanel {
         if (text.equals("Új kód generálása")) {
             randomUserNumber();
         }
-        else if (mode.equals(" Regisztráció") && mode.equals(text)) {
+        else if (mode.equals(registString) && mode.equals(text)) {
             response = server.isRealUserExist(usernameInput.getText());
             if (response.equalsStatusCode(404)) {
                 response = server.addNewUser(usernameInput.getText(), new String(passwordInput.getPassword()));
@@ -259,7 +263,7 @@ public class LoginPanel extends JPanel {
                     timer.start();
                 }
             }
-        } else if (mode.equals(" Belépés vendégként") && mode.equals(text)) {
+        } else if (mode.equals(guestLoginString) && mode.equals(text)) {
             response = server.addGuest(usernameInput.getText(), userCode);
             if (response.equalsStatusCode(409)) {
                 errorServer = true;
@@ -275,7 +279,7 @@ public class LoginPanel extends JPanel {
                 timer.start();
 
             }
-        } else if (mode.equals(" Vendég regisztrálása") && mode.equals(text)) {
+        } else if (mode.equals(guestRegistString) && mode.equals(text)) {
             response = server.isRealUserExist(usernameInput.getText());
             if (response.equalsStatusCode(404)) {
                 response = server.registerGuestUser(m.getUser().getUsername(), usernameInput.getText(), new String(passwordInput.getPassword()), m.getUser().getUsercode());
@@ -309,7 +313,7 @@ public class LoginPanel extends JPanel {
     }
 
     private void checkPassword() {
-        if (mode.equals(" Regisztráció") || mode.equals(" Vendég regisztrálása")) {
+        if (mode.equals(registString) || mode.equals(guestRegistString)) {
             errorPassword = true;
             if (new String(passwordInput.getPassword()).length() < 4) {
                 errorLabel.setText("A jelszónak legalább 4 karakterből kell állnia!");
@@ -329,7 +333,7 @@ public class LoginPanel extends JPanel {
     }
 
     private void checkUsername() {
-        if (mode.equals(" Regisztráció") || mode.equals(" Belépés vendégként") || mode.equals(" Vendég regisztrálása")) {
+        if (mode.equals(registString) || mode.equals(guestLoginString) || mode.equals(guestRegistString)) {
             errorUsername = true;
             if (usernameInput.getText().length() < 4) {
                 errorLabel.setText("A felhasználónévnek legalább 4 karakterből kell állnia!");

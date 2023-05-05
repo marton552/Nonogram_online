@@ -13,7 +13,7 @@ import javax.swing.JPanel;
  * @author marton552
  */
 public class LevelPanel extends JPanel {
-
+    
     private Level lvl;
     private int widthHeight;
     private int choosenLayer = 0;
