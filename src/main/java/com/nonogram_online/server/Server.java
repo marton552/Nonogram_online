@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online.server;
 
 import com.nonogram_online.level.Level;
@@ -18,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.logging.Logger;
 
 /**
  *
@@ -107,7 +102,7 @@ public class Server {
     }
 
     public Response finishLevel(String lvlName, String fullUsername, String actualUsername) {
-        if (isLevelFinishedByUser(lvlName, fullUsername, actualUsername).getStatusCode() == 200) {
+        if (isLevelFinishedByUser(lvlName, fullUsername, actualUsername).equalsStatusCode(200)) {
             return new Response(409, "This user already completed this map!");
         } else {
             runQueryNoResponse("INSERT INTO completed_maps (level_name, creator_name, player_name, rate) VALUES ('" + lvlName + "','" + fullUsername + "','" + actualUsername + "','0')");
@@ -276,17 +271,20 @@ public class Server {
     }
 
     public Response registerGuestUser(String oldName, String newName, String pass, String usercode) {
-        if (isRealUserExist(newName).getStatusCode() == 200) {
+        if (isRealUserExist(newName).equalsStatusCode(200)) {
             return new Response(409, "This username already taken!");
         } else {
-            //todo: implement in other tables
+            runQueryNoResponse("UPDATE completed_maps SET creator_name='"+(newName+"#0000")+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE completed_maps SET player_name='"+(newName+"#0000")+"' WHERE player_name='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE levels SET creator_name='"+(newName+"#0000")+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE superproject SET completed_by='"+(newName+"#0000")+"' WHERE completed_by='"+(oldName+"#"+usercode)+"'");
             runQueryNoResponse("UPDATE users SET username = '" + newName + "', password = '" + pass + "', usercode = '0000', rank='1', role='user' WHERE username ='" + oldName + "' and usercode = '" + usercode + "' ;");
             return new Response(200, "User added succesfully");
         }
     }
 
     public Response addGuest(String name, int usercode) {
-        if (isRealUserExist(name).getStatusCode() == 200) {
+        if (isRealUserExist(name).equalsStatusCode(200)) {
             return new Response(409, "This username already taken!");
         } else {
             runQueryNoResponse("INSERT INTO users (username, password, usercode,rank,role) VALUES ('" + name + "', '0', '" + usercode + "', '0','guest')");
@@ -295,7 +293,7 @@ public class Server {
     }
 
     public Response addNewUser(String name, String pass) {
-        if (isRealUserExist(name).getStatusCode() == 200) {
+        if (isRealUserExist(name).equalsStatusCode(200)) {
             return new Response(409, "This username already taken!");
         } else {
             runQueryNoResponse("INSERT INTO users (username, password, usercode,rank,role) VALUES ('" + name + "', '" + pass + "', '0000','1','user')");

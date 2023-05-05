@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online;
 
 import com.nonogram_online.user.UserPanel;
@@ -246,7 +242,7 @@ public class Menu extends JFrame {
             itl.changeEditorMenu("+", 0);
         } else if (text.startsWith("-")) {
             itl.changeEditorMenu("-", 0);
-        } else if (text == "imageEdit") {
+        } else if (text.equals("imageEdit")) {
             menupanel.removeAll();
             menupanel.revalidate();
             menupanel.repaint();
@@ -254,19 +250,19 @@ public class Menu extends JFrame {
             game = new MainFrame("Új pálya", menuMe, new LevelEditor(new ArrayList<String>(Arrays.asList(itl.getLvl().export().split(";"))), itl.getLvlSize(), "", "", true), true, itl.isLayered(), itl.isColored(), itl.getGrid());
             menupanel.add(game, BorderLayout.CENTER);
             menupanel.repaint();
-        } else if (text == "Exit") {
+        } else if (text.equals("Exit")) {
             System.exit(0);
-        } else if (text == "Kijelentkezés") {
+        } else if (text.equals("Kijelentkezés")) {
             backToMenu(true);
-        } else if (text == "Bejelentkezés") {
+        } else if (text.equals("Bejelentkezés")) {
             loginPanel = new LoginPanel(menuMe, " Bejelentkezés");
             menupanel.removeAll();
             menupanel.revalidate();
             menupanel.repaint();
             menupanel.setLayout(new BorderLayout());
             menupanel.add(loginPanel, BorderLayout.CENTER);
-        } else if (text == "Regisztráció") {
-            if (history.get(history.size() - 1) == "main") {
+        } else if (text.equals("Regisztráció")) {
+            if (history.get(history.size() - 1).equals("main")) {
                 loginPanel = new LoginPanel(menuMe, " Vendég regisztrálása");
                 menupanel.removeAll();
                 menupanel.revalidate();
@@ -281,57 +277,57 @@ public class Menu extends JFrame {
                 menupanel.setLayout(new BorderLayout());
                 menupanel.add(loginPanel, BorderLayout.CENTER);
             }
-        } else if (text == "Belépés vendégként") {
+        } else if (text.equals("Belépés vendégként")) {
             loginPanel = new LoginPanel(menuMe, " Belépés vendégként");
             menupanel.removeAll();
             menupanel.revalidate();
             menupanel.repaint();
             menupanel.setLayout(new BorderLayout());
             menupanel.add(loginPanel, BorderLayout.CENTER);
-        } else if (text == "Saját profil") {
+        } else if (text.equals("Saját profil")) {
             history.add("user");
             setupUserProfile();
-        } else if (text == "Offline pályák") {
+        } else if (text.equals("Offline pályák")) {
             history.add("diff");
             setupDifficultyMenu();
-        } else if (text == "Online pályák") {
+        } else if (text.equals("Online pályák")) {
             history.add("online");
             setupOnlineChooser();
-        } else if (text == "Online pályatár") {
+        } else if (text.equals("Online pályatár")) {
             history.add("online_maps");
             levelStartNum = 0;
             setupOnlineLevelsMenu();
-        } else if (text == "Szuperprojekt") {
+        } else if (text.equals("Szuperprojekt")) {
             history.add("super");
             setupSuperProject();
-        } else if (text == "Saját pálya készítése") {
+        } else if (text.equals("Saját pálya készítése")) {
             history.add("editor");
             setupMakeLevelMenu();
-        } else if (text == "Pálya kézzel készítése") {
+        } else if (text.equals("Pálya kézzel készítése")) {
             setupLevelEditorMenu();
-        } else if (text == "Pálya képfeltöltéssel") {
+        } else if (text.equals("Pálya képfeltöltéssel")) {
             history.add("uploadImage");
             setupImageLoad(true);
-        } else if (text == "Könnyű") {
+        } else if (text.equals("Könnyű")) {
             filePath += "easy/";
             levelStartNum = 0;
             history.add("offline");
             setupOfflineLevelsMenu();
-        } else if (text == "Közepes") {
+        } else if (text.equals("Közepes")) {
             filePath += "medium/";
             levelStartNum = 0;
             history.add("offline");
             setupOfflineLevelsMenu();
-        } else if (text == "Nehéz") {
+        } else if (text.equals("Nehéz")) {
             filePath += "hard/";
             levelStartNum = 0;
             history.add("offline");
             setupOfflineLevelsMenu();
-        } else if (text == "Vissza") {
+        } else if (text.equals("Vissza")) {
             backToMenu(true);
-        } else if (text == " Vissza") {
+        } else if (text.equals(" Vissza")) {
             backToMenu(false);
-        } else if (text == "Előző") {
+        } else if (text.equals("Előző")) {
             if (history.contains("offline")) {
                 levelStartNum -= levelPerPage;
                 setupOfflineLevelsMenu();
@@ -339,7 +335,7 @@ public class Menu extends JFrame {
                 levelStartNum -= levelPerPage;
                 setupOnlineLevelsMenu();
             }
-        } else if (text == "Következő") {
+        } else if (text.equals("Következő")) {
             if (history.contains("offline")) {
                 levelStartNum += levelPerPage;
                 setupOfflineLevelsMenu();
@@ -660,7 +656,7 @@ public class Menu extends JFrame {
         int size = (fullFilled) ? levelPerPage : levels.size();
         for (int i = 0; i < size; i++) {
             LevelIcon icon;
-            if (server.isLevelFinishedByUser(levels.get(i).getName(), levels.get(i).getCreator_name(), user.getFullUsername()).getStatusCode() == 200) {
+            if (server.isLevelFinishedByUser(levels.get(i).getName(), levels.get(i).getCreator_name(), user.getFullUsername()).equalsStatusCode(200)) {
                 icon = new LevelIcon(menuMe, levels.get(i), levelPerPage + 3, 0, true);
             } else {
                 icon = new LevelIcon(menuMe, levels.get(i), levelPerPage + 3, 0, false);
@@ -794,7 +790,7 @@ public class Menu extends JFrame {
     }
 
     public void changeEditorMenu(String option, int button) {
-        if (option == "grid") {
+        if (option.equals("grid")) {
             grid1x1.setEnabled(true);
             grid2x2.setEnabled(true);
             grid3x3.setEnabled(true);
@@ -805,15 +801,15 @@ public class Menu extends JFrame {
             } else {
                 grid3x3.setEnabled(false);
             }
-        } else if (option == "layer") {
+        } else if (option.equals("layer")) {
             if (layerButton.isState()) {
                 gridPanel.setVisible(false);
             } else {
                 gridPanel.setVisible(true);
             }
-        } else if (option == "&color") {
+        } else if (option.equals("&color")) {
             itl.changeEditorMenu(option, button);
-        } else if (option == "&layer") {
+        } else if (option.equals("&layer")) {
             itl.changeEditorMenu(option, button);
         }
 

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online.generator;
 
 import com.nonogram_online.level.Level;
@@ -11,13 +7,11 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -401,12 +395,12 @@ public class ImageHandler {
             if (res.isIsMultisized()) {
                 error = "multi";
             }
-        } while (res.hasEmptyLayer(backColor) && error == "");
-        if (error == "layer") {
+        } while (res.hasEmptyLayer(backColor) && error.equals(""));
+        if (error.equals("layer")) {
             setError("Túl sok réteg enny pixelhez!");
             return null;
         }
-        if (error == "multi" && res.hasEmptyLayer(backColor)) {
+        if (error.equals("multi") && res.hasEmptyLayer(backColor)) {
             setError("Nem minden darabra került pixel!");
         }
         return res;

@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online.level;
 
 import com.nonogram_online.server.NonogramFileWriter;
 import com.nonogram_online.server.Server;
 import com.nonogram_online.user.User;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  *

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online.server;
 
 import java.util.Arrays;
@@ -41,10 +37,10 @@ public class SortResponse {
     public void setDate() {
         orderNum++;
         this.date = orderNum;
-        if (dateAsc == "") {
+        if (dateAsc.equals("")) {
             dateAsc = "ASC";
-        } else if (dateAsc == "ASC") {
-            dateAsc = "DESC";
+        } else if (dateAsc.equals("ASC")) {
+            dateAsc.equals("DESC");
         } else {
             dateAsc = "";
         }
@@ -57,9 +53,9 @@ public class SortResponse {
     public void setName() {
         orderNum++;
         this.name = orderNum;
-        if (nameAsc == "") {
+        if (nameAsc.equals("")) {
             nameAsc = "ASC";
-        } else if (nameAsc == "ASC") {
+        } else if (nameAsc.equals("ASC")) {
             nameAsc = "DESC";
         } else {
             nameAsc = "";
@@ -73,9 +69,9 @@ public class SortResponse {
     public void setRate() {
         orderNum++;
         this.rate = orderNum;
-        if (rateAsc == "") {
+        if (rateAsc.equals("")) {
             rateAsc = "ASC";
-        } else if (rateAsc == "ASC") {
+        } else if (rateAsc.equals("ASC")) {
             rateAsc = "DESC";
         } else {
             rateAsc = "";

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online.buttons;
 
 import com.nonogram_online.Menu;
@@ -21,10 +17,10 @@ public class ImageGeneratorButton extends BasicButton{
     
     @Override
     public void click() {
-        if(text == "Újra generálás") m.menuActions("#"+text);
-        else if(text == "@") m.menuActions("$"+text);
-        else if(text == "Mentés") m.menuActions("+"+text);
-        else if(text == "Színek egyesítése") m.menuActions("-"+text);
+        if(text .equals( "Újra generálás")) m.menuActions("#"+text);
+        else if(text .equals( "@")) m.menuActions("$"+text);
+        else if(text .equals( "Mentés")) m.menuActions("+"+text);
+        else if(text .equals( "Színek egyesítése")) m.menuActions("-"+text);
         else m.menuActions("&"+text);
     }
 }

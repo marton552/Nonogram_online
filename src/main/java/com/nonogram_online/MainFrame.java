@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online;
 
 import com.nonogram_online.buttons.BasicRate;
@@ -160,11 +156,11 @@ public class MainFrame extends JPanel {
         giveUpButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if (giveUpButton.getText() == "Befejezés") {
+                if (giveUpButton.getText().equals("Befejezés")) {
                     Response res;
                     if (lvl.getCreator_name() != "") {
                         res = server.finishLevel(lvl.getName(), lvl.getCreator_name(), m.getUser().getFullUsername());
-                        if (res.getStatusCode() == 200) {
+                        if (res.equalsStatusCode(200)) {
                             isRating = true;
                             setup();
                         } else {
@@ -179,11 +175,11 @@ public class MainFrame extends JPanel {
                         m.backToMenu(true);
                     }
                 }
-                if (giveUpButton.getText() == " Vissza " || giveUpButton.getText() == " Befejezés ") {
+                if (giveUpButton.getText().equals(" Vissza ") || giveUpButton.getText().equals(" Befejezés ")) {
                     isChoosing = true;
                     giveUpButton.setText("Feladás");
                     setup();
-                } else if (giveUpButton.getText() == "Vissza" || giveUpButton.getText() == "Feladás") {
+                } else if (giveUpButton.getText().equals("Vissza") || giveUpButton.getText().equals("Feladás")) {
                     m.backToMenu(false);
                 }
             }
@@ -223,13 +219,13 @@ public class MainFrame extends JPanel {
         saveButton = new JButton("Mentés");
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (saveButton.getText() == "Mentés") {
+                if (saveButton.getText().equals("Mentés")) {
                     titlePanel.removeAll();
                     titlePanel.add(titleEdit);
                     saveButton.setEnabled(false);
                     saveButton.setText("Publikálás");
                     checkSave();
-                } else if (saveButton.getText() == "Publikálás") {
+                } else if (saveButton.getText().equals("Publikálás")) {
                     game.lvl.setName(titleEdit.getText());
                     game.lvl.save(m.getUser());
                     m.backToMenu(false);
@@ -450,7 +446,7 @@ public class MainFrame extends JPanel {
             colorError.setBackground(Color.WHITE);
             colorError.setText("A név nem lehet hosszabb 20 karakternél!");
             saveButton.setEnabled(false);
-        } else if (server.isLevelExist(titleEdit.getText(), m.getUser().getFullUsername()).getStatusCode() == 200) {
+        } else if (server.isLevelExist(titleEdit.getText(), m.getUser().getFullUsername()).equalsStatusCode(200)) {
             colorError.setForeground(Color.red);
             colorError.setBackground(Color.WHITE);
             colorError.setText("Létezik már ilyen nevű pályád!");

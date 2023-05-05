@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online;
 
 import com.nonogram_online.buttons.BasicButton;
@@ -77,13 +73,13 @@ public class LoginPanel extends JPanel {
         usernameLabel = new JLabel("Felhasználónév:", SwingConstants.CENTER);
         passwordLabel = new JLabel("Jelszó:", SwingConstants.CENTER);
         passwordAgainLabel = new JLabel("Jelszó még egyszer:", SwingConstants.CENTER);
-        if (mode == "Regisztráció") {
+        if (mode.equals("Regisztráció")) {
             errorLabel = new JLabel("<html>Disclaimer: Ez egy szakdolgozat projekt,<br>a jelszó semmiféle titkosítást nem alkalmaz,<br>ne adj meg olyan jelszót amit máshol használnál.</html>", SwingConstants.CENTER);
         } else {
             errorLabel = new JLabel("", SwingConstants.CENTER);
         }
         usercodeLabel = new JLabel("Vendég azonosító: ", SwingConstants.CENTER);
-        if (mode == "Belépés vendégként") {
+        if (mode.equals("Belépés vendégként")) {
             randomUserNumber();
         }
 
@@ -152,7 +148,7 @@ public class LoginPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (time > 0) {
                     String stringPart = "";
-                    if (mode == " Regisztráció" || mode == " Vendég regisztrálása") {
+                    if (mode.equals(" Regisztráció") || mode.equals(" Vendég regisztrálása")) {
                         stringPart = "Felhasználó sikeresen létrehozva!<br>";
                     }
                     if (time == 4) {
@@ -174,7 +170,7 @@ public class LoginPanel extends JPanel {
                     timer.stop();
                     Response rank = server.getUserRank(usernameInput.getText(), User.fullCode(userCode));
                     Response role = server.getUserRole(usernameInput.getText(), User.fullCode(userCode));
-                    m.setUser(usernameInput.getText(), User.fullCode(userCode),(rank.getStatusCode() == 200 ? Integer.parseInt(rank.getMessage()) : 0),(role.getStatusCode() == 200 ? role.getMessage() : "user"));
+                    m.setUser(usernameInput.getText(), User.fullCode(userCode),(rank.getStatusCode() == 200 ? Integer.parseInt(rank.getMessage()) : 0),(role.equalsStatusCode(200) ? role.getMessage() : "user"));
                     m.login();
                 }
             }
@@ -182,13 +178,13 @@ public class LoginPanel extends JPanel {
 
         errorServer = false;
 
-        if (mode == " Regisztráció") {
+        if (mode.equals(" Regisztráció")) {
             setupRegistry();
-        } else if (mode == " Bejelentkezés") {
+        } else if (mode.equals(" Bejelentkezés")) {
             setupLogin();
-        } else if (mode == " Belépés vendégként") {
+        } else if (mode.equals(" Belépés vendégként")) {
             setupGuest();
-        } else if (mode == " Vendég regisztrálása") {
+        } else if (mode.equals(" Vendég regisztrálása")) {
             setupRegistryGuest();
         }
 
@@ -222,12 +218,12 @@ public class LoginPanel extends JPanel {
     }
 
     public void menuActions(String text) {
-        if (text == "Új kód generálása") {
+        if (text.equals("Új kód generálása")) {
             randomUserNumber();
         }
-        else if (mode == " Regisztráció" && mode == text) {
+        else if (mode.equals(" Regisztráció") && mode.equals(text)) {
             response = server.isRealUserExist(usernameInput.getText());
-            if (response.getStatusCode() == 404) {
+            if (response.equalsStatusCode(404)) {
                 response = server.addNewUser(usernameInput.getText(), new String(passwordInput.getPassword()));
                 mainPanel.removeAll();
                 mainPanel.revalidate();
@@ -241,14 +237,14 @@ public class LoginPanel extends JPanel {
                 errorServer = true;
                 ableToLogin();
             }
-        } else if (mode == " Bejelentkezés" && mode == text) {
+        } else if (mode.equals(" Bejelentkezés") && mode.equals(text)) {
             response = server.isRealUserExist(usernameInput.getText());
-            if (response.getStatusCode() == 404) {
+            if (response.equalsStatusCode(404)) {
                 errorServer = true;
                 ableToLogin();
             } else {
                 response = server.matchingPass(usernameInput.getText(), new String(passwordInput.getPassword()));
-                if (response.getStatusCode() == 403) {
+                if (response.equalsStatusCode(403)) {
                     errorServer = true;
                     ableToLogin();
                 } else {
@@ -263,9 +259,9 @@ public class LoginPanel extends JPanel {
                     timer.start();
                 }
             }
-        } else if (mode == " Belépés vendégként" && mode == text) {
+        } else if (mode.equals(" Belépés vendégként") && mode.equals(text)) {
             response = server.addGuest(usernameInput.getText(), userCode);
-            if (response.getStatusCode() == 409) {
+            if (response.equalsStatusCode(409)) {
                 errorServer = true;
                 ableToLogin();
             } else {
@@ -279,9 +275,9 @@ public class LoginPanel extends JPanel {
                 timer.start();
 
             }
-        } else if (mode == " Vendég regisztrálása" && mode == text) {
+        } else if (mode.equals(" Vendég regisztrálása") && mode.equals(text)) {
             response = server.isRealUserExist(usernameInput.getText());
-            if (response.getStatusCode() == 404) {
+            if (response.equalsStatusCode(404)) {
                 response = server.registerGuestUser(m.getUser().getUsername(), usernameInput.getText(), new String(passwordInput.getPassword()), m.getUser().getUsercode());
                 mainPanel.removeAll();
                 mainPanel.revalidate();
@@ -304,7 +300,7 @@ public class LoginPanel extends JPanel {
         int high = 10000;
         response = new Response(404, "");
         int result = 0;
-        while (response.getStatusCode() == 404) {
+        while (response.equalsStatusCode(404)) {
             result = r.nextInt(high - low) + low;
             response = server.isUserCodeUsed(result);
         }
@@ -313,7 +309,7 @@ public class LoginPanel extends JPanel {
     }
 
     private void checkPassword() {
-        if (mode == " Regisztráció" || mode == " Vendég regisztrálása") {
+        if (mode.equals(" Regisztráció") || mode.equals(" Vendég regisztrálása")) {
             errorPassword = true;
             if (new String(passwordInput.getPassword()).length() < 4) {
                 errorLabel.setText("A jelszónak legalább 4 karakterből kell állnia!");
@@ -333,7 +329,7 @@ public class LoginPanel extends JPanel {
     }
 
     private void checkUsername() {
-        if (mode == " Regisztráció" || mode == " Belépés vendégként" || mode == " Vendég regisztrálása") {
+        if (mode.equals(" Regisztráció") || mode.equals(" Belépés vendégként") || mode.equals(" Vendég regisztrálása")) {
             errorUsername = true;
             if (usernameInput.getText().length() < 4) {
                 errorLabel.setText("A felhasználónévnek legalább 4 karakterből kell állnia!");

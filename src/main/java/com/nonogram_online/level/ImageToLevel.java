@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online.level;
 
 import com.nonogram_online.buttons.BasicButton;
@@ -13,7 +9,6 @@ import com.nonogram_online.generator.ImageHandler;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -352,7 +347,7 @@ public class ImageToLevel extends JPanel {
     }
 
     public void changeEditorMenu(String type, int num) {
-        if (type == "grid") {
+        if (type.equals("grid")) {
             grid1x1.setEnabled(true);
             grid2x2.setEnabled(true);
             grid3x3.setEnabled(true);
@@ -366,7 +361,7 @@ public class ImageToLevel extends JPanel {
                 grid3x3.setEnabled(false);
                 grid = -9;
             }
-        } else if (type == "&color") {
+        } else if (type.equals("&color")) {
             colorButton.repaint();
             if (colorButton.isState()) {
                 colorNumField.setVisible(true);
@@ -375,7 +370,7 @@ public class ImageToLevel extends JPanel {
                 colorNumField.setVisible(false);
                 blackWhiteSwitch.setVisible(true);
             }
-        } else if (type == "&layer") {
+        } else if (type.equals("&layer")) {
             layerButton.repaint();
             if (layerButton.isState()) {
                 layerNumField.setVisible(true);
@@ -388,7 +383,7 @@ public class ImageToLevel extends JPanel {
                 leftMultisizedPanel.setVisible(true);
                 rightMultisizedPanel.setVisible(true);
             }
-        } else if (type == "&") {
+        } else if (type.equals("&")) {
             convertSelectionButton.setEnabled(converter);
             convertAvrageButton.setEnabled(!converter);
             convertSelectionButton.repaint();
@@ -400,18 +395,18 @@ public class ImageToLevel extends JPanel {
             } else {
                 compressSlider.setMaximum(Math.max(image.getHeight(), image.getWidth()));
             }
-        } else if (type == "#") {
+        } else if (type.equals("#")) {
             generate(true);
-        } else if (type == "$") {
+        } else if (type.equals("$")) {
             if (blackAndWhiteState == 0) {
                 blackAndWhiteState = 1;
             } else {
                 blackAndWhiteState = 0;
             }
             generate(true);
-        } else if (type == "+") {
+        } else if (type.equals("+")) {
             save();
-        } else if (type == "-") {
+        } else if (type.equals("-")) {
             colorSum();
         }
     }

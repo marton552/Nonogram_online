@@ -1,16 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.nonogram_online.user;
 
-import com.nonogram_online.MainFrame;
 import com.nonogram_online.Menu;
 import com.nonogram_online.buttons.BasicButton;
 import com.nonogram_online.buttons.SearchButton;
 import com.nonogram_online.buttons.SortButton;
-import com.nonogram_online.level.LevelIcon;
 import com.nonogram_online.server.Response;
 import com.nonogram_online.server.SearchResponse;
 import com.nonogram_online.server.Server;
