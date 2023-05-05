@@ -480,10 +480,7 @@ public class ImageHandler {
         return res;
     }
 
-    public boolean save(int back) {
-        System.out.println(res.export());
-        Color backColor = res.getColors().get(back);
-        res.setColorBackGroundColor(backColor);
+    public boolean save() {
         HashMap<Integer, Integer> closes = ColorHandler.findCloseColors(res.getColors());
         return closes.isEmpty();
     }
@@ -492,7 +489,7 @@ public class ImageHandler {
         return res;
     }
 
-    public void colorSum(int back) {
+    public void colorSum() {
         HashMap<Integer, Integer> closes;
         int removedNum = 0;
         do {
@@ -513,7 +510,10 @@ public class ImageHandler {
 
         } while (!closes.isEmpty());
         res.afterAllRemoved(removedNum);
-        Color backColor = res.getColors().get(back);
-        res.setColorBackGroundColor(backColor);
+    }
+
+    public void setBackgroundColor(Color backColor) {
+        Color newBackColor = changeToClosest(backColor,res.getColors());
+        res.setColorBackGroundColor(newBackColor);
     }
 }

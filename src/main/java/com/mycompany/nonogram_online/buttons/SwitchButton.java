@@ -20,29 +20,28 @@ import javax.swing.ImageIcon;
  * @author marton552
  */
 public class SwitchButton extends BasicButton {
-    
+
     private boolean state = false;
     private String type = "";
     private boolean centerText = true;
 
     public SwitchButton(Menu m, String type, int width, int height) {
         super(m, "off", width, height);
-        setOrientation(width,height);
+        setOrientation(width, height);
         draw = false;
         this.type = type;
-        
-            this.addMouseListener(new MouseListener() {
+
+        this.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(state){
+                if (state) {
                     state = false;
                     text = "off";
-                }
-                    else{
+                } else {
                     state = true;
                     text = "on";
                 }
-                m.changeEditorMenu(type,0);
+                m.changeEditorMenu(type, 0);
                 repaint();
             }
 
@@ -58,7 +57,7 @@ public class SwitchButton extends BasicButton {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                
+
             }
 
             @Override
@@ -68,20 +67,29 @@ public class SwitchButton extends BasicButton {
         });
     }
 
+    public void setState(boolean state) {
+        this.state = state;
+        if (state) {
+            text = "on";
+        } else {
+            text = "off";
+        }
+    }
+
     public boolean isState() {
         return state;
     }
-    
-    public void setWidthManualy(int width){
+
+    public void setWidthManualy(int width) {
         this.screenWidth = width;
         centerText = false;
     }
-    
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.BLACK);
-        g.drawImage(new ImageIcon(this.getClass().getResource("/images/toggle_"+text+".png")).getImage(), 0,0, width, height, null);
+        g.drawImage(new ImageIcon(this.getClass().getResource("/images/toggle_" + text + ".png")).getImage(), 0, 0, width, height, null);
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
         setFontSize();
@@ -95,7 +103,9 @@ public class SwitchButton extends BasicButton {
         int a = (width / 2) - (rWidth / 2) - rX;
 
         g.setFont(font);
-        if(centerText)g.drawString(newText, a, (int)(height*0.55));
+        if (centerText) {
+            g.drawString(newText, a, (int) (height * 0.55));
+        }
     }
-    
+
 }

@@ -22,7 +22,7 @@ public class ImageGeneratorButton extends BasicButton{
     @Override
     public void click() {
         if(text == "Újra generálás") m.menuActions("#"+text);
-        else if(text == "FcsF") m.menuActions("$"+text);
+        else if(text == "@") m.menuActions("$"+text);
         else if(text == "Mentés") m.menuActions("+"+text);
         else if(text == "Színek egyesítése") m.menuActions("-"+text);
         else m.menuActions("&"+text);

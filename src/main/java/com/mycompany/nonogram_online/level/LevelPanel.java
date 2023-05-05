@@ -65,7 +65,7 @@ public class LevelPanel extends JPanel {
 
     public int getChoosenBackGroundColor() {
         if(blackAndWhite) return 0;
-        else return choosenBackGroundColor;
+        else return choosenBackGroundColor+2;
     }
 
     private void click(MouseEvent e) {

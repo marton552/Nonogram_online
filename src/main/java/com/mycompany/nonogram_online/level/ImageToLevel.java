@@ -11,6 +11,7 @@ import com.mycompany.nonogram_online.Menu;
 import com.mycompany.nonogram_online.buttons.ImageGeneratorButton;
 import com.mycompany.nonogram_online.generator.ImageHandler;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -76,6 +77,7 @@ public class ImageToLevel extends JPanel {
 
     private Level lvl;
     private ImageHandler ih;
+    private Color backColor;
 
     public ImageToLevel(Menu m, BufferedImage image) {
         this.m = m;
@@ -83,6 +85,7 @@ public class ImageToLevel extends JPanel {
         lvl = null;
 
         centerHeight = m.getHeight() - topHeight - bottomHeight;
+        backColor = Color.WHITE;
 
         backButton = new BasicButton(m, "Vissza", 3, 6);
         generateButton = new ImageGeneratorButton(m, "Újra generálás", 3, 6);
@@ -101,7 +104,7 @@ public class ImageToLevel extends JPanel {
         colorNumField = new JTextField("2");
         colorNumField.setVisible(false);
         colorButton = new SwitchButton(m, "&color", 3, 6);
-        blackWhiteSwitch = new ImageGeneratorButton(m, "FcsF", 4, 7);
+        blackWhiteSwitch = new ImageGeneratorButton(m, "@", 4, 7);
 
         layerLabel = new JLabel("Legyen többrétegű:", SwingConstants.CENTER);
         layerPanel = new JPanel(new GridLayout(1, 2));
@@ -176,7 +179,23 @@ public class ImageToLevel extends JPanel {
         image = im;
     }
 
-    public void setup() {
+    public void setup(boolean fromMenu) {
+        if (fromMenu) {
+            converter = false;
+            colorNumField.setText("2");
+            layerNumField.setText("2");
+            sizeSlider.setValue(10);
+            colorButton.setState(false);
+            changeEditorMenu("&color", 0);
+            changeEditorMenu("&layer", 0);
+            layerButton.setState(false);
+            changeEditorMenu("grid", 0);
+            convertSelectionButton.setEnabled(true);
+            convertAvrageButton.setEnabled(false);
+            leftMultisizedPanel.setVisible(true);
+            rightMultisizedPanel.setVisible(true);
+        }
+
         bottomPanel.add(sizeLabel);
         bottomPanel.add(sizeSlider);
         bottomPanel.add(colorLabel);
@@ -308,10 +327,16 @@ public class ImageToLevel extends JPanel {
         return grid;
     }
 
+    private void publishLevel() {
+        ih.setBackgroundColor(backColor);
+        lvl = ih.getFullLevel();
+        m.menuActions("imageEdit");
+    }
+
     public void save() {
-        if (ih.save(centerPanel.getChoosenBackGroundColor())) {
-            lvl = ih.getFullLevel();
-            m.menuActions("imageEdit");
+        backColor = ih.getFullLevel().getColors().get(centerPanel.getChoosenBackGroundColor());
+        if (ih.save()) {
+            publishLevel();
         } else {
             saveButton.setText("Színek egyesítése");
             saveButton.repaint();
@@ -322,9 +347,8 @@ public class ImageToLevel extends JPanel {
     private void colorSum() {
         saveButton.setText("Mentés");
         saveButton.repaint();
-        ih.colorSum(centerPanel.getChoosenBackGroundColor());
-        lvl = ih.getFullLevel();
-        m.menuActions("imageEdit");
+        ih.colorSum();
+        publishLevel();
     }
 
     public void changeEditorMenu(String type, int num) {
@@ -343,9 +367,8 @@ public class ImageToLevel extends JPanel {
                 grid = -9;
             }
         } else if (type == "&color") {
+            colorButton.repaint();
             if (colorButton.isState()) {
-                leftMultisizedPanel.setVisible(true);
-                rightMultisizedPanel.setVisible(true);
                 colorNumField.setVisible(true);
                 blackWhiteSwitch.setVisible(false);
             } else {
@@ -353,6 +376,7 @@ public class ImageToLevel extends JPanel {
                 blackWhiteSwitch.setVisible(true);
             }
         } else if (type == "&layer") {
+            layerButton.repaint();
             if (layerButton.isState()) {
                 layerNumField.setVisible(true);
 

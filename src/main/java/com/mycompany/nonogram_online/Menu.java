@@ -438,7 +438,7 @@ public class Menu extends JFrame {
                     menupanel.revalidate();
                     menupanel.repaint();
                     menupanel.setLayout(new BorderLayout());
-                    itl.setup();
+                    itl.setup(true);
                     itl.addImage(bi);
                     itl.generate(true);
                     menupanel.add(itl, BorderLayout.CENTER);
@@ -454,7 +454,7 @@ public class Menu extends JFrame {
                 menupanel.revalidate();
                 menupanel.repaint();
                 menupanel.setLayout(new BorderLayout());
-                itl.setup();
+                itl.setup(false);
                 itl.addImage(bi);
                 itl.generate(true);
                 menupanel.add(itl, BorderLayout.CENTER);
