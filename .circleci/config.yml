@@ -28,6 +28,8 @@ jobs:
       - qodana/scan:
           args: -l jetbrains/qodana-jvm
   javadoc:
+    machine:
+      image: 'ubuntu-2004:current'
     steps:
       - run: mvn javadoc:javadoc
       - attach_workspace:
@@ -41,5 +43,8 @@ workflows:
           context: qodana
       - build
       - test:
+          requires:
+            - build
+      - javadoc:
           requires:
             - build
