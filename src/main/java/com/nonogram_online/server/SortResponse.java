@@ -40,7 +40,7 @@ public class SortResponse {
         if (dateAsc.equals("")) {
             dateAsc = "ASC";
         } else if (dateAsc.equals("ASC")) {
-            dateAsc.equals("DESC");
+            dateAsc = "DESC";
         } else {
             dateAsc = "";
         }
