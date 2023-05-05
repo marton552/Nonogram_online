@@ -51,4 +51,4 @@ workflows:
           requires:
             - build
       - maven/test
-      - maven/build
+      - maven-build/docker_build
