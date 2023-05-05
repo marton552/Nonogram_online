@@ -7,9 +7,39 @@ jobs:
       image: 'ubuntu-2004:current'
     steps:
       - checkout
-      - qodana/scan
+      - qodana/scan:
+          args: -l jetbrains/qodana-jvm
+  build:
+    docker:
+      - image: 'docker:latest'
+    steps:
+      - checkout
+      - run:
+          name: Build the application
+          command: mvn clean install
+  test:
+    machine:
+      image: 'ubuntu-2004:current'
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: mvn test
+      - qodana/scan:
+          args: -l jetbrains/qodana-jvm
+  javadoc:
+    steps:
+      - run: mvn javadoc:javadoc
+      - attach_workspace:
+          at: ./docs
+      - store_artifacts:
+          path: ./docs
 workflows:
   main:
     jobs:
       - code-quality:
           context: qodana
+      - build
+      - test:
+          requires:
+            - build
