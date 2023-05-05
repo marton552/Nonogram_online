@@ -3,11 +3,10 @@ package com.nonogram_online;
 
 import com.nonogram_online.user.UserPanel;
 import com.nonogram_online.buttons.BasicButton;
-import com.nonogram_online.buttons.FailButton;
 import com.nonogram_online.buttons.SearchButton;
+import com.nonogram_online.buttons.SearchTextField;
 import com.nonogram_online.buttons.SortButton;
 import com.nonogram_online.buttons.SwitchButton;
-import com.nonogram_online.generator.ImageHandler;
 import com.nonogram_online.level.ImageToLevel;
 import com.nonogram_online.level.Level;
 import com.nonogram_online.level.LevelEditor;
@@ -21,7 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -87,7 +85,7 @@ public class Menu extends JFrame {
     private SortButton sortByDateButton;
     private SortButton sortByNameButton;
     private SortButton sortByRateButton;
-    private JTextField searchTextField;
+    private SearchTextField searchTextField;
     private SearchButton searchByLevel;
     private SearchButton searchByUser;
     private SortResponse sortState;
@@ -195,26 +193,7 @@ public class Menu extends JFrame {
         sortByDateButton = new SortButton(menuMe, "Dátum", 2, 4);
         sortByNameButton = new SortButton(menuMe, "Név", 2, 4);
         sortByRateButton = new SortButton(menuMe, "Értékelés", 2, 4);
-        searchTextField = new JTextField("");
-        searchTextField = new JTextField("Keresés");
-        searchTextField.setForeground(Color.GRAY);
-        searchTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (searchTextField.getText().equals("Keresés")) {
-                    searchTextField.setText("");
-                    searchTextField.setForeground(Color.BLACK);
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (searchTextField.getText().isEmpty()) {
-                    searchTextField.setForeground(Color.GRAY);
-                    searchTextField.setText("Keresés");
-                }
-            }
-        });
+        searchTextField = new SearchTextField();
         searchByLevel = new SearchButton(menuMe, "Pálya keresés", 2, 4);
         searchByUser = new SearchButton(menuMe, "Felhasználó keresés", 2, 4);
 

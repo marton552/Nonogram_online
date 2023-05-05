@@ -39,7 +39,7 @@ import javax.swing.event.DocumentListener;
  */
 public class MainFrame extends JPanel {
     
-    private static final String finishString = "Befejezés";
+    private static final String FinishString = "Befejezés";
 
     private GamePanel gamePanel;
     private JPanel topPanel;
@@ -158,7 +158,7 @@ public class MainFrame extends JPanel {
         giveUpButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if (giveUpButton.getText().equals(finishString)) {
+                if (giveUpButton.getText().equals(FinishString)) {
                     Response res;
                     if (lvl.getCreator_name() != "") {
                         res = server.finishLevel(lvl.getName(), lvl.getCreator_name(), m.getUser().getFullUsername());
@@ -544,7 +544,7 @@ public class MainFrame extends JPanel {
     }
 
     public void finishLevel() {
-        giveUpButton.setText(finishString);
+        giveUpButton.setText(FinishString);
         this.repaint();
     }
 
@@ -561,7 +561,7 @@ public class MainFrame extends JPanel {
             if (finish) {
                 placeholder.finishGame();
                 isChoosing = true;
-                giveUpButton.setText(finishString);
+                giveUpButton.setText(FinishString);
                 setup();
             }
         }

@@ -21,7 +21,7 @@ import java.util.Date;
  */
 public class Server {
     
-    private static final String userHastagString = "#0000";
+    private static final String UserHastagString = "#0000";
 
     private static String url = "jdbc:mysql://localhost:3306/nonogram_online";
     private static String dbUsername = "root";
@@ -276,10 +276,10 @@ public class Server {
         if (isRealUserExist(newName).equalsStatusCode(200)) {
             return new Response(409, "This username already taken!");
         } else {
-            runQueryNoResponse("UPDATE completed_maps SET creator_name='"+(newName+userHastagString)+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
-            runQueryNoResponse("UPDATE completed_maps SET player_name='"+(newName+userHastagString)+"' WHERE player_name='"+(oldName+"#"+usercode)+"'");
-            runQueryNoResponse("UPDATE levels SET creator_name='"+(newName+userHastagString)+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
-            runQueryNoResponse("UPDATE superproject SET completed_by='"+(newName+userHastagString)+"' WHERE completed_by='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE completed_maps SET creator_name='"+(newName+UserHastagString)+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE completed_maps SET player_name='"+(newName+UserHastagString)+"' WHERE player_name='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE levels SET creator_name='"+(newName+UserHastagString)+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE superproject SET completed_by='"+(newName+UserHastagString)+"' WHERE completed_by='"+(oldName+"#"+usercode)+"'");
             runQueryNoResponse("UPDATE users SET username = '" + newName + "', password = '" + pass + "', usercode = '0000', rank='1', role='user' WHERE username ='" + oldName + "' and usercode = '" + usercode + "' ;");
             return new Response(200, "User added succesfully");
         }

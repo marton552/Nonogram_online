@@ -9,6 +9,7 @@ import com.nonogram_online.server.Response;
 import com.nonogram_online.server.SearchResponse;
 import com.nonogram_online.server.Server;
 import com.nonogram_online.server.SortResponse;
+import com.nonogram_online.buttons.SearchTextField;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -48,7 +49,7 @@ public class UserPanel extends JPanel {
     private JPanel sortSearchPanel;
     private SortButton sortByRankButton;
     private SortButton sortByNameButton;
-    private JTextField searchTextField;
+    private SearchTextField searchTextField;
     private SearchButton searchByUser;
     private SortResponse sortState;
     private SearchResponse searchState;
@@ -100,26 +101,7 @@ public class UserPanel extends JPanel {
 
         sortByNameButton = new SortButton(m, "Név", 2, 4);
         sortByRankButton = new SortButton(m, "Szint", 2, 4);
-        searchTextField = new JTextField("");
-        searchTextField = new JTextField("Keresés");
-        searchTextField.setForeground(Color.GRAY);
-        searchTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (searchTextField.getText().equals("Keresés")) {
-                    searchTextField.setText("");
-                    searchTextField.setForeground(Color.BLACK);
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (searchTextField.getText().isEmpty()) {
-                    searchTextField.setForeground(Color.GRAY);
-                    searchTextField.setText("Keresés");
-                }
-            }
-        });
+        searchTextField = new SearchTextField();
         searchByUser = new SearchButton(m, "Felhasználó keresés", 2, 4);
 
         this.addMouseListener(new MouseListener() {
