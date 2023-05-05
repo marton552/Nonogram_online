@@ -3,6 +3,14 @@ orbs:
   maven: circleci/maven@1.4.1
   qodana: jetbrains/qodana@2023.1
 jobs:
+  build:
+    docker:
+      - image: 'circleci/openjdk:11-jdk'
+    steps:
+      - checkout
+      - run:
+          name: Analyze on SonarCloud
+          command: mvn verify sonar:sonar -Dsonar.projectKey=marton552_Nonogram_online
   code-quality:
     machine:
       image: 'ubuntu-2004:current'
@@ -13,6 +21,7 @@ jobs:
 workflows:
   main:
     jobs:
+      - build
       - code-quality:
           context: qodana
       - maven/test
