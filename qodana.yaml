@@ -11,3 +11,7 @@ include:
   - name: RedundantTypeArguments
   - name: UnnecessaryQualifierForThis
   - name: KotlinUnusedImport
+  - name: UnnecessaryLocalVariable
+  - name: AccessStaticViaInstance
+  - name: ManualMinMaxCalculation
+  - name: FieldCanBeLocal
