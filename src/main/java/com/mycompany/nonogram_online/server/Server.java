@@ -26,15 +26,14 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-    String url = "jdbc:mysql://localhost:3306/nonogram_online";
-    String dbUsername = "root";
-    String dbPassword = "";
+    private static String url = "jdbc:mysql://localhost:3306/nonogram_online";
+    private static String dbUsername = "root";
+    private static String dbPassword = "";
 
     ArrayList<ArrayList<String>> data = new ArrayList<>();
-    Response response;
 
     public Server() {
-        response = new Response(0, "");
+        Response response = new Response(0, "");
         data = new ArrayList<ArrayList<String>>();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -230,7 +229,7 @@ public class Server {
                 return new Response(200, "Level exist");
             }
         }
-        response = new Response(404, "Level not exist");
+        Response response = new Response(404, "Level not exist");
         closeRequest();
         return response;
     }
@@ -254,7 +253,7 @@ public class Server {
                 return new Response(200, rank);
             }
         }
-        response = new Response(404, "User not exist");
+        Response response = new Response(404, "User not exist");
         closeRequest();
         return response;
     }
@@ -312,7 +311,7 @@ public class Server {
                 return new Response(200, "Real user exist");
             }
         }
-        response = new Response(404, "User not exist");
+        Response response = new Response(404, "User not exist");
         closeRequest();
         return response;
     }
@@ -326,7 +325,7 @@ public class Server {
                 return new Response(200, code);
             }
         }
-        response = new Response(404, "User not exist");
+        Response response = new Response(404, "User not exist");
         closeRequest();
         return response;
     }
@@ -339,7 +338,7 @@ public class Server {
                 return new Response(200, "User exist");
             }
         }
-        response = new Response(404, "User not exist");
+        Response response = new Response(404, "User not exist");
         closeRequest();
         return response;
     }
@@ -352,7 +351,7 @@ public class Server {
                 return new Response(200, "Succesful login");
             }
         }
-        response = new Response(403, "Wrong username or password");
+        Response response = new Response(403, "Wrong username or password");
         closeRequest();
         return response;
     }
@@ -366,13 +365,14 @@ public class Server {
                 return new Response(404, "Usercode is not OK");
             }
         }
-        response = new Response(200, "Usercode is OK");
+        Response response = new Response(200, "Usercode is OK");
         closeRequest();
         return response;
     }
     
     public Response getSPTop(int top){
         getSPTopList();
+        Response response;
         if(data.size() > top) response = new Response(Integer.parseInt(data.get(top).get(1)), data.get(top).get(0));
         else response = new Response(404, "Not found");
         closeRequest();
@@ -385,14 +385,14 @@ public class Server {
     
     public Response getSuperProjectisDone(int index){
         getSP();
-        response = new Response(200, data.get(index).get(3));
+        Response response = new Response(200, data.get(index).get(3));
         closeRequest();
         return response;
     }
     
     public Response getSuperProject(int index){
         getSP();
-        response = new Response(200, data.get(index).get(2));
+        Response response = new Response(200, data.get(index).get(2));
         closeRequest();
         return response;
     }

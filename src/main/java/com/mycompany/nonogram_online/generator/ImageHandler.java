@@ -106,8 +106,8 @@ public class ImageHandler {
                         colors.add(color);
                     }
                 }
-                Color c = mostCommonColor(colors);
-                c = changeToClosest(c, selectionColors);
+                Color c = ColorHandler.mostCommonColor(colors);
+                c = ColorHandler.changeToClosest(c, selectionColors);
                 nonogramImage.setRGB(xX, yY, (c.getRed() << 16) | (c.getGreen() << 8) | c.getBlue());
                 yY++;
             }
@@ -134,33 +134,13 @@ public class ImageHandler {
                         colors.add(color);
                     }
                 }
-                Color c = mostCommonColor(colors);
+                Color c = ColorHandler.mostCommonColor(colors);
                 nonogramImage.setRGB(xX, yY, (c.getRed() << 16) | (c.getGreen() << 8) | c.getBlue());
                 yY++;
             }
             xX++;
             yY = 0;
         }
-    }
-
-    public Color mostCommonColor(ArrayList<Color> colors) {
-        Map<Color, Integer> colorCounts = new HashMap<Color, Integer>();
-        for (Color color : colors) {
-            if (colorCounts.containsKey(color)) {
-                colorCounts.put(color, colorCounts.get(color) + 1);
-            } else {
-                colorCounts.put(color, 1);
-            }
-        }
-        int maxCount = 0;
-        Color mostCommon = null;
-        for (Map.Entry<Color, Integer> entry : colorCounts.entrySet()) {
-            if (entry.getValue() > maxCount) {
-                maxCount = entry.getValue();
-                mostCommon = entry.getKey();
-            }
-        }
-        return mostCommon;
     }
 
     public void pixeliseImage() {
@@ -180,7 +160,7 @@ public class ImageHandler {
                         colors.add(color);
                     }
                 }
-                Color c = getAverageRGB(colors);
+                Color c = ColorHandler.getAverageRGB(colors);
                 pixelisedImage.setRGB(xX, yY, (c.getRed() << 16) | (c.getGreen() << 8) | c.getBlue());
                 yY++;
             }
@@ -215,7 +195,7 @@ public class ImageHandler {
                 }
                 if (!inList) {
                     for (int colorList = 0; colorList < selectionColors.size(); colorList++) {
-                        if ((selectionColors.get(colorList).size()) > 0 && isColorNear(selectionColors.get(colorList).get(0), pixelList.get(i), threshold)) {
+                        if ((selectionColors.get(colorList).size()) > 0 && ColorHandler.isColorNear(selectionColors.get(colorList).get(0), pixelList.get(i), threshold)) {
                             nearList = true;
                             selectionColors.get(colorList).add(pixelList.get(i));
                         }
@@ -230,23 +210,12 @@ public class ImageHandler {
             pixelList = new ArrayList<>();
             for (ArrayList<Color> selectionColor : selectionColors) {
                 if (selectionColor.size() > 0) {
-                    pixelList.add(mostCommonColor(selectionColor));
+                    pixelList.add(ColorHandler.mostCommonColor(selectionColor));
                 }
             }
             threshold = threshold + 2;
         }
         return pixelList;
-    }
-
-    private boolean isColorNear(Color existing, Color newColor, int threshold) {
-        if (existing.getRed() + threshold > newColor.getRed() && existing.getRed() - threshold < newColor.getRed()) {
-            if (existing.getGreen() + threshold > newColor.getGreen() && existing.getGreen() - threshold < newColor.getGreen()) {
-                if (existing.getBlue() + threshold > newColor.getBlue() && existing.getBlue() - threshold < newColor.getBlue()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public boolean splitIntoNColor() {
@@ -264,11 +233,11 @@ public class ImageHandler {
         }
         ArrayList<Color> averages = new ArrayList<>();
         for (int i = 0; i < n.size(); i++) {
-            averages.add(getAverageRGB(n.get(i)));
+            averages.add(ColorHandler.getAverageRGB(n.get(i)));
         }
         for (int i = 0; i < firstSize; i++) {
             for (int j = 0; j < firstSize; j++) {
-                Color newColor = changeToClosest(new Color(pixelisedImage.getRGB(i, j)), averages);
+                Color newColor = ColorHandler.changeToClosest(new Color(pixelisedImage.getRGB(i, j)), averages);
                 if (!resultColors.contains(newColor)) {
                     resultColors.add(newColor);
                 }
@@ -278,27 +247,13 @@ public class ImageHandler {
         return true;
     }
 
-    public Color changeToClosest(Color color, ArrayList<Color> averages) {
-        double closest = Integer.MAX_VALUE;
-        int index = -1;
-        int i = 0;
-        for (Color average : averages) {
-            if (Math.abs(avgColor(color) - avgColor(average)) < closest) {
-                closest = Math.abs(avgColor(color) - avgColor(average));
-                index = i;
-            }
-            i++;
-        }
-        return averages.get(index);
-    }
-
     public ArrayList<ArrayList<Color>> splitByAvg(ArrayList<Color> colors, int splitInto) {
-        double avg = avgColor(getAverageRGB(colors));
+        double avg = ColorHandler.avgColor(ColorHandler.getAverageRGB(colors));
         ArrayList<ArrayList<Color>> res = new ArrayList<>();
         ArrayList<Color> part1 = new ArrayList<>();
         ArrayList<Color> part2 = new ArrayList<>();
         for (int i = 0; i < colors.size(); i++) {
-            if (avgColor(colors.get(i)) < avg) {
+            if (ColorHandler.avgColor(colors.get(i)) < avg) {
                 part1.add(colors.get(i));
             } else {
                 part2.add(colors.get(i));
@@ -362,29 +317,6 @@ public class ImageHandler {
             }
         });
         return allTheLists;
-    }
-
-    private double avgColor(Color c) {
-        return (c.getRed() + c.getGreen() + c.getBlue()) / 3;
-    }
-
-    public Color getAverageRGB(ArrayList<Color> colors) {
-        int totalRed = 0;
-        int totalGreen = 0;
-        int totalBlue = 0;
-
-        for (int i = 0; i < colors.size(); i++) {
-
-            totalRed += colors.get(i).getRed();
-            totalGreen += colors.get(i).getGreen();
-            totalBlue += colors.get(i).getBlue();
-        }
-
-        int avgRed = totalRed / colors.size();
-        int avgGreen = totalGreen / colors.size();
-        int avgBlue = totalBlue / colors.size();
-
-        return new Color(avgRed, avgGreen, avgBlue);
     }
 
     public String getError() {
@@ -500,7 +432,7 @@ public class ImageHandler {
                     ArrayList<Color> cs = new ArrayList<>();
                     cs.add(res.getColors().get(i));
                     cs.add(res.getColors().get(closes.get(i)));
-                    Color avgColor = getAverageRGB(cs);
+                    Color avgColor = ColorHandler.getAverageRGB(cs);
                     res.removeColor(closes.get(i), i);
                     res.setColor(i, avgColor);
                     removedNum++;
@@ -513,7 +445,7 @@ public class ImageHandler {
     }
 
     public void setBackgroundColor(Color backColor) {
-        Color newBackColor = changeToClosest(backColor,res.getColors());
+        Color newBackColor = ColorHandler.changeToClosest(backColor, res.getColors());
         res.setColorBackGroundColor(newBackColor);
     }
 }
