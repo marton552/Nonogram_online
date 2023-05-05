@@ -1,5 +1,7 @@
 version: '2.1'
 orbs:
+  maven: circleci/maven@1.4.1
+  maven-build: inclasstoday/maven-build@1.0.10
   qodana: jetbrains/qodana@2023.1
 jobs:
   code-quality:
@@ -48,3 +50,5 @@ workflows:
       - javadoc:
           requires:
             - build
+      - maven/test
+      - maven/build
