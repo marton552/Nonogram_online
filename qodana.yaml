@@ -1,0 +1,13 @@
+version: "1.0"
+profile:
+  name: qodana.starter
+include:
+  - name: RedundantCast
+  - name: FieldMayBeFinal
+  - name: EditorConfigUnusedDeclaration
+  - name: RedundantNullableReturnType
+  - name: UnnecessaryParentheses
+  - name: RemoveEmptyParenthesesFromLambdaCall
+  - name: RedundantTypeArguments
+  - name: UnnecessaryQualifierForThis
+  - name: KotlinUnusedImport
