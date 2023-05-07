@@ -21,7 +21,9 @@ jobs:
 workflows:
   main:
     jobs:
-      - build
       - code-quality:
           context: qodana
       - maven/test
+      - build:
+          requires:
+            - code-quality
