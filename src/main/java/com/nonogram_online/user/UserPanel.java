@@ -356,7 +356,7 @@ public class UserPanel extends JPanel {
                 g.drawString("A következő szint eléréséhez:", 10, (profpicSize * 2));
                 for (int i = 0; i < missions.size(); i++) {
                     g.setColor(Color.green);
-                    g.fillRect(0, (screenWidth / 2 + ((i + 1.5) * (screenHeight / 8))), (screenWidth * (missions.get(i).getCurrentCount() / (double) missions.get(i).getNeedCount())), screenHeight / 16);
+                    g.fillRect(0, (int) (screenWidth / 2 + ((i + 1.5) * (screenHeight / 8))), (int) (screenWidth * (missions.get(i).getCurrentCount() / (double) missions.get(i).getNeedCount())), screenHeight / 16);
                     g.setColor(Color.black);
                     g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + (isCompleted(i) ? "completed_border" : "border") + ".png")).getImage(), 0, screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenWidth, screenHeight / 8, null);
                     g.setFont(new Font("TimesRoman", Font.PLAIN, (screenWidth / 25)));
