@@ -16,7 +16,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
@@ -41,22 +40,22 @@ import javax.swing.Timer;
 public class UserPanel extends JPanel {
 
     private JPanel prevNextPanel;
-    private BasicButton prevButton;
-    private BasicButton nextButton;
+    private final BasicButton prevButton;
+    private final BasicButton nextButton;
     private JPanel sortSearchPanel;
-    private SortButton sortByRankButton;
-    private SortButton sortByNameButton;
-    private SearchTextField searchTextField;
-    private SearchButton searchByUser;
+    private final SortButton sortByRankButton;
+    private final SortButton sortByNameButton;
+    private final SearchTextField searchTextField;
+    private final SearchButton searchByUser;
     private SortResponse sortState;
     private SearchResponse searchState;
-    private int userPerPage = 6;
-    private int userStartNum = 0;
-    private BasicButton backButton;
+    private final int userPerPage = 6;
+    private final int userStartNum = 0;
+    private final BasicButton backButton;
 
-    private Menu m;
+    private final Menu m;
     private Server server;
-    private int screenWidth;
+    private final int screenWidth;
     private int screenHeight;
     private ArrayList<MissionIcon> missions;
     private String buttonTitle;
@@ -64,7 +63,7 @@ public class UserPanel extends JPanel {
     private int animationTimer = 1;
     private boolean deletedUsers = false;
     private boolean uploadedMissions = false;
-    private JPanel thisPanel;
+    private final JPanel thisPanel;
     private boolean isSeeingUsers = false;
 
     public UserPanel(Menu m) {
@@ -79,16 +78,13 @@ public class UserPanel extends JPanel {
         backButton = new BasicButton(m, "Vissza", 1, 4);
         setVisible(true);
         repaint();
-        timer = new Timer(200, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (animationTimer < 30) {
-                    repaint();
-                    animationTimer++;
-                } else {
-                    animationTimer = 1;
-                    repaint();
-                }
+        timer = new Timer(200, (ActionEvent e) -> {
+            if (animationTimer < 30) {
+                repaint();
+                animationTimer++;
+            } else {
+                animationTimer = 1;
+                repaint();
             }
         });
         timer.start();
@@ -192,7 +188,7 @@ public class UserPanel extends JPanel {
             } finally {
                 try {
                     input.close();
-                } catch (IOException ex) {
+                } catch (IOException | NullPointerException ex) {
                     Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -206,17 +202,14 @@ public class UserPanel extends JPanel {
         try {
             input = new BufferedReader(new FileReader("src/main/resources/updates/missions.txt"));
             String data = input.lines().collect(Collectors.joining("\n"));
-            ArrayList<String> missions = new ArrayList<String>(Arrays.asList(data.split("\n")));
-
-            for (int j = 0; j < missions.size(); j++) {
-                res.add(missions.get(j));
-            }
+            ArrayList<String> missions = new ArrayList<>(Arrays.asList(data.split("\n")));
+            res.addAll(missions);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 input.close();
-            } catch (IOException ex) {
+            } catch (IOException | NullPointerException ex) {
                 Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -244,7 +237,7 @@ public class UserPanel extends JPanel {
         try {
             input = new BufferedReader(new FileReader("src/main/resources/levels/saved_data.txt"));
             String data = input.lines().collect(Collectors.joining("\n"));
-            ArrayList<String> completed_levels = new ArrayList<String>(Arrays.asList(data.split("\n")));
+            ArrayList<String> completed_levels = new ArrayList<>(Arrays.asList(data.split("\n")));
 
             for (int j = 0; j < completed_levels.size(); j++) {
                 if (completed_levels.get(j).split(";")[0].equals(m.getUser().getFullUsername())) {
@@ -256,7 +249,7 @@ public class UserPanel extends JPanel {
         } finally {
             try {
                 input.close();
-            } catch (IOException ex) {
+            } catch (IOException | NullPointerException ex) {
                 Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -279,8 +272,7 @@ public class UserPanel extends JPanel {
         sortSearchPanel.add(searchByUser);
         thisPanel.add(sortSearchPanel);
 
-        ArrayList<User> users = new ArrayList<>();
-        users = server.getXUser(sortState, searchState, userStartNum, userStartNum + userPerPage + 1);
+        ArrayList<User> users = server.getXUser(sortState, searchState, userStartNum, userStartNum + userPerPage + 1);
         boolean fullFilled = (users.size() > userPerPage);
         int size = (fullFilled) ? userPerPage : users.size();
         for (int i = 0; i < size; i++) {
@@ -343,9 +335,9 @@ public class UserPanel extends JPanel {
 
             Font font;
             if (m.getUser().getUsername().length() > 10) {
-                font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 10));
+                font = new Font("TimesRoman", Font.PLAIN, (screenWidth / 10));
             } else {
-                font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 8));
+                font = new Font("TimesRoman", Font.PLAIN, (screenWidth / 8));
             }
             Rectangle2D r2D = font.getStringBounds(m.getUser().getUsername(), frc);
             int rWidth = (int) Math.round(r2D.getWidth());
@@ -360,16 +352,16 @@ public class UserPanel extends JPanel {
                 buttonTitle = "Vissza";
                 buttonNum = 4;
             } else {
-                g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 20)));
-                g.drawString("A következő szint eléréséhez:", 10, (int) (profpicSize * 2));
+                g.setFont(new Font("TimesRoman", Font.PLAIN, (screenWidth / 20)));
+                g.drawString("A következő szint eléréséhez:", 10, (profpicSize * 2));
                 for (int i = 0; i < missions.size(); i++) {
                     g.setColor(Color.green);
-                    g.fillRect(0, (int) (screenWidth / 2 + ((i + 1.5) * (screenHeight / 8))), (int) (screenWidth * (missions.get(i).getCurrentCount() / (double) missions.get(i).getNeedCount())), screenHeight / 16);
+                    g.fillRect(0, (screenWidth / 2 + ((i + 1.5) * (screenHeight / 8))), (screenWidth * (missions.get(i).getCurrentCount() / (double) missions.get(i).getNeedCount())), screenHeight / 16);
                     g.setColor(Color.black);
                     g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + (isCompleted(i) ? "completed_border" : "border") + ".png")).getImage(), 0, screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenWidth, screenHeight / 8, null);
-                    g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 25)));
+                    g.setFont(new Font("TimesRoman", Font.PLAIN, (screenWidth / 25)));
                     g.drawString(missions.get(i).getTitle(), 10, screenWidth / 2 + 30 + ((i + 1) * (screenHeight / 8)));
-                    g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 30)));
+                    g.setFont(new Font("TimesRoman", Font.PLAIN, (screenWidth / 30)));
                     g.drawString("Ebből kész: " + missions.get(i).getCurrentCount(), 10, screenWidth / 2 + 50 + ((i + 1) * (screenHeight / 8)));
                     g.drawImage(new ImageIcon(this.getClass().getResource("/images/missions/" + missions.get(i).getIcon() + ".png")).getImage(), screenWidth - (screenHeight / 7), screenWidth / 2 + ((i + 1) * (screenHeight / 8)), screenHeight / 8, screenHeight / 8, null);
 
@@ -383,12 +375,18 @@ public class UserPanel extends JPanel {
             }
 
             for (int i = 0; i < buttonNum; i++) {
-                if (i == 1) {
-                    buttonTitle = "Küldetések és Szuperprojekt frissítése";
-                } else if (i == 2) {
-                    buttonTitle = "Felhasználók kezelése";
-                } else if (i == 3) {
-                    buttonTitle = "Vendég profilok törlése";
+                switch (i) {
+                    case 1:
+                        buttonTitle = "Küldetések és Szuperprojekt frissítése";
+                        break;
+                    case 2:
+                        buttonTitle = "Felhasználók kezelése";
+                        break;
+                    case 3:
+                        buttonTitle = "Vendég profilok törlése";
+                        break;
+                    default:
+                        break;
                 }
                 g.setColor(Color.gray);
                 if ((i == 1 && uploadedMissions) || (i == 3 && deletedUsers)) {
@@ -398,15 +396,13 @@ public class UserPanel extends JPanel {
                 }
                 frc = new FontRenderContext(null, true, true);
 
-                font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 12));
+                font = new Font("TimesRoman", Font.PLAIN, (screenWidth / 12));
                 if (buttonTitle.length() > 30) {
-                    font = new Font("TimesRoman", Font.PLAIN, (int) (screenWidth / 20));
+                    font = new Font("TimesRoman", Font.PLAIN, (screenWidth / 20));
                 }
                 r2D = font.getStringBounds(buttonTitle, frc);
                 rWidth = (int) Math.round(r2D.getWidth());
-                int rHeight = (int) Math.round(r2D.getHeight());
                 rX = (int) Math.round(r2D.getX());
-                int rY = (int) Math.round(r2D.getY());
 
                 a = (screenWidth / 2) - (rWidth / 2) - rX;
 

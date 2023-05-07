@@ -7,7 +7,7 @@ package com.nonogram_online.level;
  */
 public class Point {
 
-    private int num;
+    private final int num;
     private int color;
     private boolean solved;
     private boolean failed;

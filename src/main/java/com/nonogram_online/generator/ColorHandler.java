@@ -33,11 +33,8 @@ public class ColorHandler {
 
     public static HashMap<Integer, Integer> findCloseColors(ArrayList<Color> colors, Color c) {
         ArrayList<Color> newColors = new ArrayList<>();
-        for (int i = 0; i < colors.size(); i++) {
-            newColors.add(colors.get(i));
-        }
+        newColors.addAll(colors);
         newColors.add(c);
-        System.out.println(newColors);
         return findCloseColors(newColors);
     }
 

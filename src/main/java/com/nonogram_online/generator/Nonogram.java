@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 public class Nonogram {
 
-    private int width;
-    private int height;
-    private int[][] matrix;
-    private ArrayList<Line> rows;
-    private ArrayList<Line> columns;
+    private final int width;
+    private final int height;
+    private final int[][] matrix;
+    private final ArrayList<Line> rows;
+    private final ArrayList<Line> columns;
     private boolean changed;
 
     public Nonogram(ArrayList<ArrayList<Integer>> groupsHor, ArrayList<ArrayList<Integer>> groupsVert) {

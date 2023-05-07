@@ -19,7 +19,7 @@ public class Level {
 
     public static java.util.logging.Level SEVERE;
 
-    private ArrayList<String> allData;
+    private final ArrayList<String> allData;
     protected ArrayList<LevelMatrix> matrix;
     protected ArrayList<Color> colors;
     protected String name;
@@ -42,7 +42,7 @@ public class Level {
 
     private boolean isEditing = false;
     private boolean isMultisized = false;
-    private ArrayList<Integer> completedParts;
+    private final ArrayList<Integer> completedParts;
 
     protected int selectedColor = 1;
 
@@ -217,14 +217,14 @@ public class Level {
     }
 
     public int getHeight() {
-        int r = matrixMostMostNumbers > matrixMostTopNumbers ? matrixMostMostNumbers : matrixMostTopNumbers;
+        int r = Math.max(matrixMostMostNumbers,matrixMostTopNumbers);
         return r + hanyszorhany;
     }
 
     public void setSquareSize(int width, int height, boolean zoomed) {
         int x = 2;
         if(zoomed) x = 1;
-        matrixMostMostNumbers = matrixMostLeftNumbers > matrixMostTopNumbers ? matrixMostLeftNumbers : matrixMostTopNumbers;
+        matrixMostMostNumbers = Math.max(matrixMostLeftNumbers, matrixMostTopNumbers);
         newSquareSize = width / (matrixMostMostNumbers * x + hanyszorhany);
     }
 
@@ -375,7 +375,7 @@ public class Level {
                 g.setColor(invertColor);
                 g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize / 1.5)));
                 char[] text = ("" + matrix.get(layer).getLeftNumbers().get(i).get(k).getNum()).toCharArray();
-                g.drawChars(text, 0, text.length, (text.length > 1 ? (int) (-1 * squareSize / 4) : 0) + shiftLeft + numbersStartPosX + (k * squareSize) + (squareSize / 3), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize) + (int) (squareSize / 1.3));
+                g.drawChars(text, 0, text.length, (text.length > 1 ? (-1 * squareSize / 4) : 0) + shiftLeft + numbersStartPosX + (k * squareSize) + (squareSize / 3), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize) + (int) (squareSize / 1.3));
                 if (matrix.get(layer).getLeftNumbers().get(i).get(k).getColor() == selectedColor) {
                     g.setColor(invertColor);
                     g.drawRect(shiftLeft + numbersStartPosX + (k * squareSize), numbersStartPosY + matrixMostMostNumbers * squareSize + (i * squareSize), squareSize, squareSize);
@@ -396,7 +396,7 @@ public class Level {
                 g.setColor(invertColor);
                 g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (squareSize / 1.5)));
                 char[] text = ("" + matrix.get(layer).getTopNumbers().get(i).get(k).getNum()).toCharArray();
-                g.drawChars(text, 0, text.length, (text.length > 1 ? (int) (-1 * squareSize / 4) : 0) + numbersStartPosX + matrixMostMostNumbers * squareSize + (i * squareSize) + (squareSize / 3), shiftTop + numbersStartPosY + (k * squareSize) + (int) (squareSize / 1.3));
+                g.drawChars(text, 0, text.length, (text.length > 1 ? (-1 * squareSize / 4) : 0) + numbersStartPosX + matrixMostMostNumbers * squareSize + (i * squareSize) + (squareSize / 3), shiftTop + numbersStartPosY + (k * squareSize) + (int) (squareSize / 1.3));
                 if (matrix.get(layer).getTopNumbers().get(i).get(k).getColor() == selectedColor) {
                     g.setColor(invertColor);
                     g.drawRect(numbersStartPosX + (i * squareSize) + matrixMostMostNumbers * squareSize, shiftTop + numbersStartPosY + (k * squareSize), squareSize, squareSize);

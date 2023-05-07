@@ -9,8 +9,8 @@ import java.util.List;
  * @author marton552
  */
 public class Line {
-    private ArrayList<Integer> groups;
-    private int gn;
+    private final ArrayList<Integer> groups;
+    private final int gn;
     private int[] restLength;
     private int length;
     public List<Integer> cells;
@@ -61,7 +61,7 @@ public class Line {
     public void setCells(int[] cells) {
         this.length = cells.length;
         for (int i = 0; i < cells.length; i++) {
-            this.cells.add((int)cells[i]);
+            this.cells.add(cells[i]);
         }
 
         this.sure = zero1D(this.length);

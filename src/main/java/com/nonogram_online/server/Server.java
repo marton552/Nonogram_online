@@ -21,16 +21,15 @@ import java.util.Date;
  */
 public class Server {
     
-    private static final String UserHastagString = "#0000";
+    private static final String USERHASTAGSTRING = "#0000";
 
-    private static String url = "jdbc:mysql://localhost:3306/nonogram_online";
-    private static String dbUsername = "root";
-    private static String dbPassword = "";
+    private static final String URL = "jdbc:mysql://localhost:3306/nonogram_online";
+    private static final String DBUSERNAME = "root";
+    private static final String DBPASSWORD = "";
 
-    ArrayList<ArrayList<String>> data = new ArrayList<>();
+    ArrayList<ArrayList<String>> data;
 
     public Server() {
-        Response response = new Response(0, "");
         data = new ArrayList<ArrayList<String>>();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -198,7 +197,7 @@ public class Server {
         getLevels(order, search);
         ArrayList<Level> levels = new ArrayList<>();
         for (int i = start; i < end && i < data.size(); i++) {
-            levels.add(new Level(new ArrayList<String>(Arrays.asList(data.get(i).get(4).split(";"))), data.get(i).get(2), data.get(i).get(3), data.get(i).get(5).equals("-1") ? false : true));
+            levels.add(new Level(new ArrayList<>(Arrays.asList(data.get(i).get(4).split(";"))), data.get(i).get(2), data.get(i).get(3), !data.get(i).get(5).equals("-1")));
         }
         closeRequest();
         return levels;
@@ -276,10 +275,10 @@ public class Server {
         if (isRealUserExist(newName).equalsStatusCode(200)) {
             return new Response(409, "This username already taken!");
         } else {
-            runQueryNoResponse("UPDATE completed_maps SET creator_name='"+(newName+UserHastagString)+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
-            runQueryNoResponse("UPDATE completed_maps SET player_name='"+(newName+UserHastagString)+"' WHERE player_name='"+(oldName+"#"+usercode)+"'");
-            runQueryNoResponse("UPDATE levels SET creator_name='"+(newName+UserHastagString)+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
-            runQueryNoResponse("UPDATE superproject SET completed_by='"+(newName+UserHastagString)+"' WHERE completed_by='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE completed_maps SET creator_name='"+(newName+USERHASTAGSTRING)+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE completed_maps SET player_name='"+(newName+USERHASTAGSTRING)+"' WHERE player_name='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE levels SET creator_name='"+(newName+USERHASTAGSTRING)+"' WHERE creator_name='"+(oldName+"#"+usercode)+"'");
+            runQueryNoResponse("UPDATE superproject SET completed_by='"+(newName+USERHASTAGSTRING)+"' WHERE completed_by='"+(oldName+"#"+usercode)+"'");
             runQueryNoResponse("UPDATE users SET username = '" + newName + "', password = '" + pass + "', usercode = '0000', rank='1', role='user' WHERE username ='" + oldName + "' and usercode = '" + usercode + "' ;");
             return new Response(200, "User added succesfully");
         }
@@ -441,7 +440,7 @@ public class Server {
     }
 
     private void runQuery(String sql) {
-        try ( Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);  PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try ( Connection connection = DriverManager.getConnection(URL, DBUSERNAME, DBPASSWORD);  PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             try ( ResultSet resultSet = preparedStatement.executeQuery()) {
                 int index = 0;
                 while (resultSet.next()) {
@@ -459,7 +458,7 @@ public class Server {
     }
 
     private void runQueryNoResponse(String sql) {
-        try ( Connection connection = DriverManager.getConnection(url, dbUsername, dbPassword);  PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try ( Connection connection = DriverManager.getConnection(URL, DBUSERNAME, DBPASSWORD);  PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);

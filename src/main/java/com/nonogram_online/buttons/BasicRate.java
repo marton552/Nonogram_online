@@ -8,7 +8,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
@@ -24,44 +23,37 @@ import javax.swing.Timer;
 public class BasicRate extends JPanel {
 
     private int screenWidth;
-    private int screenHeight;
+    private final int screenHeight;
     private int width;
     private int height;
-    private Menu m;
     private JPanel thisPanel;
     private int hgap = 0;
-    private int stars = 0;
+    private int stars;
     private int animationTimer = 0;
     private Timer timer;
     private Server server;
-    private Level lvl;
 
     public BasicRate(Menu m, Level lvl, int stars, int width, int height) {
-        this.m = m;
         this.stars = stars;
         this.screenWidth = m.getWidth();
         this.screenHeight = m.getHeight();
         this.width = width;
         this.height = height;
-        this.lvl = lvl;
         server = new Server();
         thisPanel = this;
         setVisible(true);
         setOrientation(width, height);
         
-        timer = new Timer(100, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (animationTimer > 0) {
-                    animationTimer--;
-                    thisPanel.repaint();
-                } else {
-                    animationTimer = 0;
-                    timer.stop();
-                    server.rateLevel(lvl.getName(), lvl.getCreator_name(), m.getUser().getFullUsername(),getStars());
-                    
-                    m.backToMenu(false);
-                }
+        timer = new Timer(100, (ActionEvent e) -> {
+            if (animationTimer > 0) {
+                animationTimer--;
+                thisPanel.repaint();
+            } else {
+                animationTimer = 0;
+                timer.stop();
+                server.rateLevel(lvl.getName(), lvl.getCreator_name(), m.getUser().getFullUsername(),getStars());
+                
+                m.backToMenu(false);
             }
         });
 

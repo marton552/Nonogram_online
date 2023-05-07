@@ -11,7 +11,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -28,46 +27,46 @@ import javax.swing.SwingConstants;
 public class ImageToLevel extends JPanel {
 
     private BufferedImage image;
-    private Menu m;
+    private final Menu m;
 
-    private JPanel topPanel;
-    private LevelPanel centerPanel;
-    private JPanel bottomPanel;
+    private final JPanel topPanel;
+    private final LevelPanel centerPanel;
+    private final JPanel bottomPanel;
 
-    private BasicButton backButton;
-    private ImageGeneratorButton generateButton;
-    private ImageGeneratorButton saveButton;
+    private final BasicButton backButton;
+    private final ImageGeneratorButton generateButton;
+    private final ImageGeneratorButton saveButton;
 
-    private JLabel sizeLabel;
-    private JSlider sizeSlider;
-    private JPanel colorPanel;
-    private JTextField colorNumField;
-    private JLabel colorLabel;
-    private SwitchButton colorButton;
-    private ImageGeneratorButton blackWhiteSwitch;
-    private JLabel layerLabel;
-    private JPanel layerPanel;
-    private SwitchButton layerButton;
-    private JTextField layerNumField;
+    private final JLabel sizeLabel;
+    private final JSlider sizeSlider;
+    private final JPanel colorPanel;
+    private final JTextField colorNumField;
+    private final JLabel colorLabel;
+    private final SwitchButton colorButton;
+    private final ImageGeneratorButton blackWhiteSwitch;
+    private final JLabel layerLabel;
+    private final JPanel layerPanel;
+    private final SwitchButton layerButton;
+    private final JTextField layerNumField;
     private JPanel leftMultisizedPanel;
     private JPanel rightMultisizedPanel;
-    private JLabel multiLabel;
-    private JButton grid1x1;
-    private JButton grid2x2;
-    private JButton grid3x3;
-    private JLabel convertAvrageLabel;
-    private JLabel convertSelectionLabel;
-    private ImageGeneratorButton convertAvrageButton;
-    private ImageGeneratorButton convertSelectionButton;
-    private JLabel compressLabel;
-    private JSlider compressSlider;
+    private final JLabel multiLabel;
+    private final JButton grid1x1;
+    private final JButton grid2x2;
+    private final JButton grid3x3;
+    private final JLabel convertAvrageLabel;
+    private final JLabel convertSelectionLabel;
+    private final ImageGeneratorButton convertAvrageButton;
+    private final ImageGeneratorButton convertSelectionButton;
+    private final JLabel compressLabel;
+    private final JSlider compressSlider;
 
     private int grid = 1;
     private boolean converter = false;
 
-    private int topHeight = 50;
-    private int bottomHeight = 350;
-    private int centerHeight = 0;
+    private final int topHeight = 50;
+    private final int bottomHeight = 350;
+    private final int centerHeight;
     private int blackAndWhiteState = 0;
 
     private Level lvl;
@@ -111,26 +110,20 @@ public class ImageToLevel extends JPanel {
         multiLabel = new JLabel("Felosztás:", SwingConstants.CENTER);
         grid1x1 = new JButton(new ImageIcon((new ImageIcon(this.getClass().getResource("/images/1x1.png")).getImage()).getScaledInstance(bottomHeight / 7, bottomHeight / 7, java.awt.Image.SCALE_SMOOTH)));
         grid1x1.setSize(bottomHeight / 7, bottomHeight / 7);
-        grid1x1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                changeEditorMenu("grid", 0);
-            }
+        grid1x1.addActionListener((ActionEvent e) -> {
+            changeEditorMenu("grid", 0);
         });
         grid1x1.setEnabled(false);
         grid2x2 = new JButton(new ImageIcon((new ImageIcon(this.getClass().getResource("/images/2x2.png")).getImage()).getScaledInstance(bottomHeight / 7, bottomHeight / 7, java.awt.Image.SCALE_SMOOTH)));
         grid2x2.setSize(bottomHeight / 7, bottomHeight / 7);
-        grid2x2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                changeEditorMenu("grid", 1);
-            }
+        grid2x2.addActionListener((ActionEvent e) -> {
+            changeEditorMenu("grid", 1);
         });
         grid2x2.setEnabled(true);
         grid3x3 = new JButton(new ImageIcon((new ImageIcon(this.getClass().getResource("/images/3x3.png")).getImage()).getScaledInstance(bottomHeight / 7, bottomHeight / 7, java.awt.Image.SCALE_SMOOTH)));
         grid3x3.setSize(bottomHeight / 7, bottomHeight / 7);
-        grid3x3.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                changeEditorMenu("grid", 2);
-            }
+        grid3x3.addActionListener((ActionEvent e) -> {
+            changeEditorMenu("grid", 2);
         });
         grid3x3.setEnabled(true);
 
@@ -286,9 +279,9 @@ public class ImageToLevel extends JPanel {
         if (!centerPanel.hasError()) {
             int grided = (int) Math.sqrt((grid == 1 ? 1 : grid * -1));
             ih = new ImageHandler(image, compressSlider.getValue(), sizeSlider.getValue() * grided, colorNum);
-            if (((pixelise) ? (converter ? ih.createSelectionImage() : ih.createAvgImage()) : true)) {
+            if (!pixelise || (converter ? ih.createSelectionImage() : ih.createAvgImage())) {
                 lvl = ih.getImageAsLevel(blackAndWhite, layerNum, 0, grid);
-                if (ih.getError() != "") {
+                if (!ih.getError().equals("")) {
                     centerPanel.setErrors(ih.getError());
                 } else {
                     centerPanel.addLevel(lvl);
@@ -347,67 +340,81 @@ public class ImageToLevel extends JPanel {
     }
 
     public void changeEditorMenu(String type, int num) {
-        if (type.equals("grid")) {
-            grid1x1.setEnabled(true);
-            grid2x2.setEnabled(true);
-            grid3x3.setEnabled(true);
-            if (num == 0) {
-                grid1x1.setEnabled(false);
-                grid = 1;
-            } else if (num == 1) {
-                grid2x2.setEnabled(false);
-                grid = -4;
-            } else if (num == 2) {
-                grid3x3.setEnabled(false);
-                grid = -9;
+        switch (type) {
+            case "grid":
+                grid1x1.setEnabled(true);
+                grid2x2.setEnabled(true);
+                grid3x3.setEnabled(true);
+            switch (num) {
+                case 0:
+                    grid1x1.setEnabled(false);
+                    grid = 1;
+                    break;
+                case 1:
+                    grid2x2.setEnabled(false);
+                    grid = -4;
+                    break;
+                case 2:
+                    grid3x3.setEnabled(false);
+                    grid = -9;
+                    break;
+                default:
+                    break;
             }
-        } else if (type.equals("&color")) {
-            colorButton.repaint();
-            if (colorButton.isState()) {
-                colorNumField.setVisible(true);
-                blackWhiteSwitch.setVisible(false);
-            } else {
-                colorNumField.setVisible(false);
-                blackWhiteSwitch.setVisible(true);
-            }
-        } else if (type.equals("&layer")) {
-            layerButton.repaint();
-            if (layerButton.isState()) {
-                layerNumField.setVisible(true);
+break;
 
-                leftMultisizedPanel.setVisible(false);
-                rightMultisizedPanel.setVisible(false);
-            } else {
-                layerNumField.setVisible(false);
-
-                leftMultisizedPanel.setVisible(true);
-                rightMultisizedPanel.setVisible(true);
-            }
-        } else if (type.equals("&")) {
-            convertSelectionButton.setEnabled(converter);
-            convertAvrageButton.setEnabled(!converter);
-            convertSelectionButton.repaint();
-            convertAvrageButton.repaint();
-            converter = !converter;
-            compressSlider.setValue(50);
-            if (converter) {
-                compressSlider.setMaximum(200);
-            } else {
-                compressSlider.setMaximum(Math.max(image.getHeight(), image.getWidth()));
-            }
-        } else if (type.equals("#")) {
-            generate(true);
-        } else if (type.equals("$")) {
-            if (blackAndWhiteState == 0) {
-                blackAndWhiteState = 1;
-            } else {
-                blackAndWhiteState = 0;
-            }
-            generate(true);
-        } else if (type.equals("+")) {
-            save();
-        } else if (type.equals("-")) {
-            colorSum();
+            case "&color":
+                colorButton.repaint();
+                if (colorButton.isState()) {
+                    colorNumField.setVisible(true);
+                    blackWhiteSwitch.setVisible(false);
+                } else {
+                    colorNumField.setVisible(false);
+                    blackWhiteSwitch.setVisible(true);
+                }   break;
+            case "&layer":
+                layerButton.repaint();
+                if (layerButton.isState()) {
+                    layerNumField.setVisible(true);
+                    
+                    leftMultisizedPanel.setVisible(false);
+                    rightMultisizedPanel.setVisible(false);
+                } else {
+                    layerNumField.setVisible(false);
+                    
+                    leftMultisizedPanel.setVisible(true);
+                    rightMultisizedPanel.setVisible(true);
+                }   break;
+            case "&":
+                convertSelectionButton.setEnabled(converter);
+                convertAvrageButton.setEnabled(!converter);
+                convertSelectionButton.repaint();
+                convertAvrageButton.repaint();
+                converter = !converter;
+                compressSlider.setValue(50);
+                if (converter) {
+                    compressSlider.setMaximum(200);
+                } else {
+                    compressSlider.setMaximum(Math.max(image.getHeight(), image.getWidth()));
+                }   break;
+            case "#":
+                generate(true);
+                break;
+            case "$":
+                if (blackAndWhiteState == 0) {
+                    blackAndWhiteState = 1;
+                } else {
+                    blackAndWhiteState = 0;
+                }   generate(true);
+                break;
+            case "+":
+                save();
+                break;
+            case "-":
+                colorSum();
+                break;
+            default:
+                break;
         }
     }
 

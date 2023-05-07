@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public class LevelPanel extends JPanel {
     
     private Level lvl;
-    private int widthHeight;
+    private final int widthHeight;
     private int choosenLayer = 0;
     private String error = "";
     private int choosenBackGroundColor = 0;
@@ -75,9 +75,7 @@ public class LevelPanel extends JPanel {
         } else {
             if (e.getX() > 390 && e.getX() < 435) {
                 int c = 0;
-                if (e.getY() >= 45 && e.getY() <= 65) {
-                    c = 0;
-                } else if (e.getY() >= 70 && e.getY() <= 90) {
+                if (e.getY() >= 70 && e.getY() <= 90) {
                     c = 1;
                 } else if (e.getY() >= 95 && e.getY() <= 115) {
                     c = 2;
@@ -114,7 +112,7 @@ public class LevelPanel extends JPanel {
     }
     
     public boolean hasError(){
-        return this.error != "";
+        return !"".equals(this.error);
     }
 
     @Override
@@ -141,7 +139,7 @@ public class LevelPanel extends JPanel {
             }
             if (lvl.getMatrix().size() > 1 && !lvl.isIsMultisized()) {
                 for (int i = 0; i < lvl.getMatrix().size(); i++) {
-                    Font font = new Font("TimesRoman", Font.PLAIN, (int) (20));
+                    Font font = new Font("TimesRoman", Font.PLAIN, (20));
                     g.setFont(font);
                     if (choosenLayer == i) {
                         g.drawString("Réteg " + (i + 1) + " <--", 0, 20 + (i * 30));
@@ -151,7 +149,7 @@ public class LevelPanel extends JPanel {
                 }
             }
             if (!blackAndWhite) {
-                Font font = new Font("TimesRoman", Font.PLAIN, (int) (20));
+                Font font = new Font("TimesRoman", Font.PLAIN, (20));
                 g.setFont(font);
                 g.drawString("Háttér: ", 99 + widthHeight + 5, 30);
                 for (int i = 2; i < lvl.getColors().size(); i++) {
@@ -167,8 +165,8 @@ public class LevelPanel extends JPanel {
                     }
                 }
             }
-            if (error != "") {
-                Font font = new Font("TimesRoman", Font.PLAIN, (int) (20));
+            if (!"".equals(error)) {
+                Font font = new Font("TimesRoman", Font.PLAIN, (20));
                 g.setFont(font);
                 g.setColor(Color.RED);
                 g.drawString(error,0,widthHeight-10);

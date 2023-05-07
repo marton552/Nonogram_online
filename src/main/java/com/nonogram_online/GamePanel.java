@@ -17,8 +17,8 @@ import javax.swing.Timer;
  */
 public class GamePanel extends JPanel {
 
-    private final int width;
-    private final int height;
+    private final int sWidth;
+    private final int sHeight;
     Game game;
     MainFrame mf;
     Timer timer;
@@ -27,8 +27,8 @@ public class GamePanel extends JPanel {
     public GamePanel(MainFrame mf, Game game, int width, int height) {
         this.mf = mf;
         this.game = game;
-        this.width = width;
-        this.height = height;
+        this.sWidth = width;
+        this.sHeight = height;
 
         timer = new Timer(3, (ActionEvent e) -> {
             if (animationTimer > 0) {
@@ -92,14 +92,14 @@ public class GamePanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        game.draw(g, width, height);
+        game.draw(g, sWidth, sHeight);
         if (game.lvl.isSquareSizeChanged()) {
             animationTimer = Math.abs(game.lvl.getNewSquareSize() - game.lvl.getSquareSize());
             timer.start();
         }
         if (!game.isIsEditing()) {
             g.setColor(Color.BLACK);
-            g.setFont(new Font("TimesRoman", Font.PLAIN, (width / 20)));
+            g.setFont(new Font("TimesRoman", Font.PLAIN, (sWidth / 20)));
             String title = "Hátralévő próbálkozások: " + game.getHp();
             g.drawChars(title.toCharArray(), 0, title.toCharArray().length, 10, mf.getMenu().getHeight()-170);
             

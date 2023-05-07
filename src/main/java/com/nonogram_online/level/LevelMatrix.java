@@ -9,15 +9,15 @@ import java.util.ArrayList;
  */
 public class LevelMatrix {
 
-    private ArrayList<Point> rowsColls;
+    private final ArrayList<Point> rowsColls;
     private ArrayList<ArrayList<Point>> leftNumbers;
     private ArrayList<ArrayList<Point>> topNumbers;
     private ArrayList<ArrayList<Point>> leftColorlessNumbers;
     private ArrayList<ArrayList<Point>> topColorlessNumbers;
-    private int hanyszorhany;
+    private final int hanyszorhany;
 
     public LevelMatrix(ArrayList<Integer> data, int hanyszorhany) {
-        rowsColls = new ArrayList<Point>();
+        rowsColls = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             rowsColls.add(new Point(-1, data.get(i), false));
         }
@@ -40,7 +40,7 @@ public class LevelMatrix {
                     solved = getTileByIsDone(i, k);
                 } else if (db > 0 && color == getTileBy(i, k)) {
                     db++;
-                    solved = solved ? getTileByIsDone(i, k) : solved;
+                    solved = solved ? getTileByIsDone(i, k) : false;
                 } else if (db > 0 && color != getTileBy(i, k) && getTileBy(i, k) != 0) {
                     leftNumbers.get(i).add(new Point(db, color, solved));
                     color = getTileBy(i, k);
@@ -73,7 +73,7 @@ public class LevelMatrix {
                     solved = getTileByIsDone(k, i);
                 } else if (db > 0 && color == getTileBy(k, i)) {
                     db++;
-                    solved = solved ? getTileByIsDone(k, i) : solved;
+                    solved = solved ? getTileByIsDone(k, i) : false;
                 } else if (db > 0 && color != getTileBy(k, i) && getTileBy(k, i) != 0) {
                     topNumbers.get(i).add(new Point(db, color, solved));
                     color = getTileBy(k, i);
@@ -106,7 +106,7 @@ public class LevelMatrix {
                     solved = getTileByIsDone(i, k);
                 } else if (db > 0 && getTileBy(i, k) != 0) {
                     db++;
-                    solved = solved ? getTileByIsDone(i, k) : solved;
+                    solved = solved ? getTileByIsDone(i, k) : false;
                 } else if (db > 0 && color != getTileBy(i, k) && getTileBy(i, k) == 0) {
                     leftColorlessNumbers.get(i).add(new Point(db, color, solved));
                     color = -1;
@@ -134,7 +134,7 @@ public class LevelMatrix {
                     solved = getTileByIsDone(k, i);
                 } else if (db > 0 && getTileBy(k, i) != 0) {
                     db++;
-                    solved = solved ? getTileByIsDone(k, i) : solved;
+                    solved = solved ? getTileByIsDone(k, i) : false;
                 }  else if (db > 0 && color != getTileBy(k, i) && getTileBy(k, i) == 0) {
                     topColorlessNumbers.get(i).add(new Point(db, color, solved));
                     color = -1;
@@ -196,7 +196,7 @@ public class LevelMatrix {
     public int mostTopNumber() {
         int res = 0;
         for (int i = 0; i < topNumbers.size(); i++) {
-            res = topNumbers.get(i).size() > res ? topNumbers.get(i).size() : res;
+            res = Math.max(topNumbers.get(i).size(), res);
         }
         return res;
     }
@@ -204,7 +204,7 @@ public class LevelMatrix {
     public int mostLeftNumber() {
         int res = 0;
         for (int i = 0; i < leftNumbers.size(); i++) {
-            res = leftNumbers.get(i).size() > res ? leftNumbers.get(i).size() : res;
+            res = Math.max(leftNumbers.get(i).size(), res);
         }
         return res;
     }

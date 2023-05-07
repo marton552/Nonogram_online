@@ -22,12 +22,12 @@ import javax.imageio.ImageIO;
  */
 public class ImageHandler {
 
-    private BufferedImage image;
-    private BufferedImage pixelisedImage;
-    private BufferedImage nonogramImage;
+    private final BufferedImage image;
+    private final BufferedImage pixelisedImage;
+    private final BufferedImage nonogramImage;
     private int firstSize;
-    private int secondSize;
-    private int colorNum;
+    private final int secondSize;
+    private final int colorNum;
     private ArrayList<Color> resultColors;
     private String error = "";
     private ArrayList<ArrayList<Color>> selectionColors;
@@ -43,7 +43,7 @@ public class ImageHandler {
             colorNum = 10;
         }
         if (colorNum < 2) {
-            colorNum = 1;
+            colorNum = 2;
         }
         resultColors = new ArrayList<>();
         selectionColors = new ArrayList<>();
@@ -91,8 +91,7 @@ public class ImageHandler {
         int yY = 0;
 
         for (int i = 0; xX < secondSize; i += stepX) {
-            int j = 0;
-            for (j = 0; yY < secondSize; j += stepY) {
+            for (int j = 0; yY < secondSize; j += stepY) {
                 ArrayList<Color> colors = new ArrayList<>();
                 for (int z = i; z < i + stepX; z++) {
                     for (int y = j; y < j + stepY; y++) {
@@ -119,8 +118,7 @@ public class ImageHandler {
         int yY = 0;
 
         for (int i = 0; xX < secondSize; i += stepX) {
-            int j = 0;
-            for (j = 0; yY < secondSize; j += stepY) {
+            for (int j = 0; yY < secondSize; j += stepY) {
                 ArrayList<Color> colors = new ArrayList<>();
                 for (int z = i; z < i + stepX; z++) {
                     for (int y = j; y < j + stepY; y++) {
@@ -347,9 +345,7 @@ public class ImageHandler {
         int gridSize = (grid == 1 ? 1 : grid * -1);
         int actualSize = (secondSize / (int) Math.sqrt(gridSize));
         int bw = 0;
-        if (blackAndWhite == -1) {
-            bw = 0;
-        } else {
+        if (blackAndWhite != -1) {
             makeNonogramBlackAndWhite(blackAndWhite);
         }
         String error = "";

@@ -136,7 +136,7 @@ public class BasicButton extends JPanel {
     }
 
     protected void setFontSize() {
-        fontSize = (int) (width / 12);
+        fontSize = (width / 12);
     }
 
     @Override

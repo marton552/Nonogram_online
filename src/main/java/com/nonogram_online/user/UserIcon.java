@@ -39,20 +39,6 @@ public class UserIcon extends JPanel {
     protected User user;
     protected Server server;
     protected UserPanel p;
-    
-    /*
-    Rendezés:
-    - Névsorrend
-    - Rank
-    + keresés/szűrés
-    
-    Megjelenített adat:
-    - username (mellette ha good for moderator)
-    - pályáinak száma / approveolt pályáinak a száma
-    + see all maps
-    + promote user
-    + bann user (set role = banned)
-    */
 
     public UserIcon(Menu m, UserPanel p, User user, int width, int height) {
         this.m = m;
@@ -122,7 +108,7 @@ public class UserIcon extends JPanel {
     }
 
     protected void setFontSize() {
-        fontSize = (int) (height / 5);
+        fontSize = (height / 5);
     }
     
     @Override
@@ -137,17 +123,17 @@ public class UserIcon extends JPanel {
 
         g.setColor(Color.BLACK);
         String name = user.getUsername()+" ("+user.getRole()+")";
-        if(name.toCharArray().length > 15) g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (height / 6)));
-        else if(name.toCharArray().length > 10) g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (height / 4)));
-        else g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (height / 3)));
+        if(name.toCharArray().length > 15) g.setFont(new Font("TimesRoman", Font.PLAIN, (height / 6)));
+        else if(name.toCharArray().length > 10) g.setFont(new Font("TimesRoman", Font.PLAIN, (height / 4)));
+        else g.setFont(new Font("TimesRoman", Font.PLAIN, (height / 3)));
         g.drawChars(name.toCharArray(), 0, name.toCharArray().length, height + offset, (height / 3) + offset);
 
         name = "Szint: : "+user.getRank();
-        g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (height / 6)));
+        g.setFont(new Font("TimesRoman", Font.PLAIN, (height / 6)));
         g.drawChars(name.toCharArray(), 0, name.toCharArray().length, height + offset, (height / 2) + offset);
         
         name = "Pályái: "+server.getUserCreatedOnlineMaps(user.getFullUsername()).getMessage()+" ebből elfogadott:"+server.getUserApprovedOnlineMaps(user.getFullUsername()).getMessage();
-        g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (height / 6)));
+        g.setFont(new Font("TimesRoman", Font.PLAIN, (height / 6)));
         g.drawChars(name.toCharArray(), 0, name.toCharArray().length, height + offset, (int)(height / 1.5) + offset);
         
         g.drawImage(new ImageIcon(this.getClass().getResource("/images/list_levels.png")).getImage(), screenWidth - (height * 3), offset * 2, (height - offset * 4), (height - offset * 4), null);

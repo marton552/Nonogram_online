@@ -552,7 +552,7 @@ public class Menu extends JFrame {
             prevNextPanel.add(nextButton);
             menupanel.add(prevNextPanel);
         } catch (IOException ex) {
-            System.out.println(ex);
+            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         menupanel.add(backButton);
         backButton.setOrientation(1, (levelPerPage + 2));
@@ -569,7 +569,7 @@ public class Menu extends JFrame {
                 filenames.add(resource);
             }
         } catch (NullPointerException e) {
-            System.out.println(e);
+            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
         }
 
         return filenames;

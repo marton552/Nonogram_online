@@ -45,8 +45,8 @@ public class MainFrame extends JPanel {
     private JPanel topPanel;
     private JPanel bottomPanel;
     private final Level lvl;
-    private final int width = 465;
-    private final int height = 690;
+    private final int sWidth = 465;
+    private final int sHeight = 690;
 
     private Game game;
     private final Menu m;
@@ -309,7 +309,7 @@ public class MainFrame extends JPanel {
         this.repaint();
         this.setLayout(new BorderLayout());
         if (!isChoosing) {
-            gamePanel = new GamePanel(this, game, width, height);
+            gamePanel = new GamePanel(this, game, sWidth, sHeight);
             if (isRating) {
                 this.add(ratePopUp, BorderLayout.CENTER);
             } else {
@@ -377,9 +377,9 @@ public class MainFrame extends JPanel {
 
     private void chooseMulti(int x, int y) {
         int size = (int) Math.sqrt(placeholder.getMatrix().size());
-        int pWidth = width / size;
+        int pWidth = sWidth / size;
         x = (x / pWidth);
-        y = y - (height / 2 - width / 2);
+        y = y - (sHeight / 2 - sWidth / 2);
         y = y / pWidth;
         isChoosing = false;
         game.setActualLayer(size * y + x);
@@ -387,7 +387,7 @@ public class MainFrame extends JPanel {
             game.setActualLayer(1);
             zeroLayer = true;
         }
-        gamePanel = new GamePanel(this, game, width, height);
+        gamePanel = new GamePanel(this, game, sWidth, sHeight);
         this.add(gamePanel, BorderLayout.CENTER);
         setPrevNextVisible();
         giveUpButton.setText(" Vissza ");
@@ -400,7 +400,7 @@ public class MainFrame extends JPanel {
         }
         if (isChoosing) {
             int size = (int) Math.sqrt(placeholder.getMatrix().size());
-            int pWidth = width / size;
+            int pWidth = sWidth / size;
             int x = 0;
             int y = 0;
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/questionmark.txt");
@@ -408,12 +408,12 @@ public class MainFrame extends JPanel {
             Level questionmark = new Level(new ArrayList<String>(Arrays.asList(result.split(";"))), "", "", true);
             for (int i = 0; i < placeholder.getMatrix().size(); i++) {
                 if (placeholder.isThisPartCompleted(i) || isEditing) {
-                    placeholder.setMatrixStartPos(x * pWidth, height / 2 - width / 2 + (y * pWidth));
+                    placeholder.setMatrixStartPos(x * pWidth, sHeight / 2 - sWidth / 2 + (y * pWidth));
                     placeholder.setMenuSquareSize(pWidth);
                     placeholder.finishGame();
                     placeholder.drawMatrix(g, i, false, true);
                 } else {
-                    questionmark.setMatrixStartPos(x * pWidth, height / 2 - width / 2 + (y * pWidth));
+                    questionmark.setMatrixStartPos(x * pWidth, sHeight / 2 - sWidth / 2 + (y * pWidth));
                     questionmark.setMenuSquareSize(pWidth);
                     questionmark.finishGame();
                     questionmark.drawMatrix(g, 0, false, true);

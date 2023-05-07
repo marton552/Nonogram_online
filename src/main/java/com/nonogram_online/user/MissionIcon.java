@@ -6,9 +6,9 @@ package com.nonogram_online.user;
  * @author marton552
  */
 public class MissionIcon {
-    private String title;
-    private String icon;
-    private int needCount;
+    private final String title;
+    private final String icon;
+    private final int needCount;
     private int currentCount;
 
     public MissionIcon(String title, String icon, int needCount, int currentCount) {

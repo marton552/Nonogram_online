@@ -17,15 +17,17 @@ import javax.swing.JTextField;
 public class SearchTextField extends JTextField
 {
     
+    private static final String SEARCH = "Keresés";
+    
     public SearchTextField() {
         super();
         
-        this.setText("Keresés");
+        this.setText(SEARCH);
         this.setForeground(Color.GRAY);
         this.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (getText().equals("Keresés")) {
+                if (getText().equals(SEARCH)) {
                     setText("");
                     setForeground(Color.BLACK);
                 }
@@ -35,7 +37,7 @@ public class SearchTextField extends JTextField
             public void focusLost(FocusEvent e) {
                 if (getText().isEmpty()) {
                     setForeground(Color.GRAY);
-                    setText("Keresés");
+                    setText(SEARCH);
                 }
             }
         });

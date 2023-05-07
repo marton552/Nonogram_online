@@ -18,14 +18,12 @@ import javax.swing.ImageIcon;
 public class SwitchButton extends BasicButton {
 
     private boolean state = false;
-    private String type = "";
     private boolean centerText = true;
 
     public SwitchButton(Menu m, String type, int width, int height) {
         super(m, "off", width, height);
         setOrientation(width, height);
         draw = false;
-        this.type = type;
 
         this.addMouseListener(new MouseListener() {
             @Override

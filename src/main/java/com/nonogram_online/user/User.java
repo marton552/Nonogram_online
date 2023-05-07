@@ -7,10 +7,10 @@ package com.nonogram_online.user;
  */
 public class User {
 
-    private String username;
-    private String usercode;
+    private final String username;
+    private final String usercode;
     private int rank;
-    private String role;
+    private final String role;
 
     public User(String username, String usercode, int rank, String role) {
         this.username = username;

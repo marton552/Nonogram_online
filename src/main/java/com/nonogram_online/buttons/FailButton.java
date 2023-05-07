@@ -78,7 +78,7 @@ public class FailButton extends JPanel {
     }
 
     protected void setFontSize() {
-        fontSize = (int) (height / 7);
+        fontSize = (height / 7);
     }
 
     @Override

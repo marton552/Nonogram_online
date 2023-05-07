@@ -6,8 +6,8 @@ package com.nonogram_online.server;
  * @author marton552
  */
 public class Response {
-    private int statusCode;
-    private String message;
+    private final int statusCode;
+    private final String message;
 
     public Response(int statusCode, String message) {
         this.statusCode = statusCode;

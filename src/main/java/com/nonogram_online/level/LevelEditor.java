@@ -14,7 +14,7 @@ public class LevelEditor extends Level {
 
     public static String[] templateData = {"new_level;",";2;rgb(255,255,255);rgb(0,0,0)",";2;rgb(0,0,0);rgb(255,255,255)"};
     
-    private Server server;
+    private final Server server;
 
     public LevelEditor(ArrayList<String> allData, int size, String creator_name, String created_date, boolean approved) {
         super(allData,creator_name,created_date,approved);

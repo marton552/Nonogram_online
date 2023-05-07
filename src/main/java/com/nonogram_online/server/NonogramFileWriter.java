@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class NonogramFileWriter {
 
-    private String data;
+    private final String data;
 
     public NonogramFileWriter(String data) {
         this.data = data;

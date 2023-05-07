@@ -26,13 +26,13 @@ import javax.swing.JPanel;
  */
 public class SuperProject extends JPanel {
 
-    private Menu m;
-    private ArrayList<Level> sp;
+    private final Menu m;
+    private final ArrayList<Level> sp;
     private ArrayList<String> toplist;
     private ArrayList<Integer> topnum;
-    private Level placeholder;
-    private int widthHeight;
-    private Server server;
+    private final Level placeholder;
+    private final int widthHeight;
+    private final Server server;
 
     public SuperProject(Menu m) {
         this.m = m;
@@ -41,7 +41,7 @@ public class SuperProject extends JPanel {
         sp = new ArrayList<>();
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("levels/questionmark.txt");
         String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-        placeholder = new Level(new ArrayList<String>(Arrays.asList(result.split(";"))), "", "", true);
+        placeholder = new Level(new ArrayList<>(Arrays.asList(result.split(";"))), "", "", true);
 
         this.addMouseListener(new MouseListener() {
             @Override
@@ -73,7 +73,7 @@ public class SuperProject extends JPanel {
 
     public void setup() {
         for (int i = 0; i < 100; i++) {
-            Level newLevel = new Level(new ArrayList<String>(Arrays.asList(server.getSuperProject(i).getMessage().split(";"))), "", "", true);
+            Level newLevel = new Level(new ArrayList<>(Arrays.asList(server.getSuperProject(i).getMessage().split(";"))), "", "", true);
             sp.add(newLevel);
         }
         toplist = new ArrayList<>();
@@ -110,20 +110,18 @@ public class SuperProject extends JPanel {
         int height = (widthHeight - 10) / 10;
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                boolean isDone = !server.getSuperProjectisDone(index).getMessage().equals("no");
-                if (isDone) {
+                if (!server.getSuperProjectisDone(index).getMessage().equals("no")) {
                     sp.get(index).setMatrixStartPos((height) * j, (height) * i);
                     sp.get(index).setMenuSquareSize(height);
                     sp.get(index).finishGame();
                     sp.get(index).drawSPMatrix(g, 20);
-                    index++;
                 } else {
                     placeholder.setMatrixStartPos((height) * j, (height) * i);
                     placeholder.setMenuSquareSize(height);
                     placeholder.finishGame();
                     placeholder.drawSPMatrix(g, 10);
-                    index++;
                 }
+                index++;
             }
         }
 
@@ -132,7 +130,7 @@ public class SuperProject extends JPanel {
 
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
-        Font font = new Font("TimesRoman", Font.PLAIN, (int) (widthHeight / 12));
+        Font font = new Font("TimesRoman", Font.PLAIN, (widthHeight / 12));
         Rectangle2D r2D = font.getStringBounds("Vissza", frc);
         int rWidth = (int) Math.round(r2D.getWidth());
         int rX = (int) Math.round(r2D.getX());
@@ -142,7 +140,7 @@ public class SuperProject extends JPanel {
         g.setFont(font);
         g.drawString("Vissza", a, m.getHeight() - 80);
 
-        font = new Font("TimesRoman", Font.PLAIN, (int) (widthHeight / 20));
+        font = new Font("TimesRoman", Font.PLAIN, (widthHeight / 20));
         g.setFont(font);
         g.setColor(Color.BLACK);
         g.drawString("Legtöbbet teljesítők:", 0, widthHeight + 10);
