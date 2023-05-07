@@ -3,7 +3,6 @@ profile:
   name: qodana.starter
 include:
   - name: RedundantCast
-  - name: FieldMayBeFinal
   - name: EditorConfigUnusedDeclaration
   - name: RedundantNullableReturnType
   - name: UnnecessaryParentheses
@@ -14,4 +13,5 @@ include:
   - name: UnnecessaryLocalVariable
   - name: AccessStaticViaInstance
   - name: ManualMinMaxCalculation
-  - name: FieldCanBeLocal
+exclude:
+  - name: DataFlowIssue

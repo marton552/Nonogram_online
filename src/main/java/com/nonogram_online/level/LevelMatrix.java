@@ -40,7 +40,7 @@ public class LevelMatrix {
                     solved = getTileByIsDone(i, k);
                 } else if (db > 0 && color == getTileBy(i, k)) {
                     db++;
-                    solved = solved ? getTileByIsDone(i, k) : false;
+                    solved = solved && getTileByIsDone(i, k);
                 } else if (db > 0 && color != getTileBy(i, k) && getTileBy(i, k) != 0) {
                     leftNumbers.get(i).add(new Point(db, color, solved));
                     color = getTileBy(i, k);
@@ -73,7 +73,7 @@ public class LevelMatrix {
                     solved = getTileByIsDone(k, i);
                 } else if (db > 0 && color == getTileBy(k, i)) {
                     db++;
-                    solved = solved ? getTileByIsDone(k, i) : false;
+                    solved = solved && getTileByIsDone(k, i);
                 } else if (db > 0 && color != getTileBy(k, i) && getTileBy(k, i) != 0) {
                     topNumbers.get(i).add(new Point(db, color, solved));
                     color = getTileBy(k, i);
@@ -106,7 +106,7 @@ public class LevelMatrix {
                     solved = getTileByIsDone(i, k);
                 } else if (db > 0 && getTileBy(i, k) != 0) {
                     db++;
-                    solved = solved ? getTileByIsDone(i, k) : false;
+                    solved = solved && getTileByIsDone(i, k);
                 } else if (db > 0 && color != getTileBy(i, k) && getTileBy(i, k) == 0) {
                     leftColorlessNumbers.get(i).add(new Point(db, color, solved));
                     color = -1;
@@ -134,7 +134,7 @@ public class LevelMatrix {
                     solved = getTileByIsDone(k, i);
                 } else if (db > 0 && getTileBy(k, i) != 0) {
                     db++;
-                    solved = solved ? getTileByIsDone(k, i) : false;
+                    solved = solved && getTileByIsDone(k, i);
                 }  else if (db > 0 && color != getTileBy(k, i) && getTileBy(k, i) == 0) {
                     topColorlessNumbers.get(i).add(new Point(db, color, solved));
                     color = -1;

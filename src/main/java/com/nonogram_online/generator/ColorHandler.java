@@ -71,7 +71,7 @@ public class ColorHandler {
     }
 
     public static double avgColor(Color c) {
-        return (c.getRed() + c.getGreen() + c.getBlue()) / 3;
+        return (c.getRed() + c.getGreen() + c.getBlue()) / (double)3;
     }
 
     public static Color changeToClosest(Color color, ArrayList<Color> averages) {

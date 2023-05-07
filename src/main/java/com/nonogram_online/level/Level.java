@@ -7,7 +7,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import static java.lang.Integer.parseInt;
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import javax.swing.ImageIcon;
 
@@ -63,13 +65,8 @@ public class Level {
         }
         int colorNum = parseInt(allData.get(3));
         for (int i = 4; i < 4 + colorNum; i++) {
-            String[] c = (allData.get(i).replace("rgb(", "").replace(")", "")).split(",");
-            ArrayList<String> cs = new ArrayList<>();
-            for (String url : c) {
-                cs.add(url);
-            }
+            List<String> cs = Arrays.asList((allData.get(i).replace("rgb(", "").replace(")", "")).split(","));
             colors.add(new Color(parseInt(cs.get(0)), parseInt(cs.get(1)), parseInt(cs.get(2))));
-            cs.clear();
         }
         for (int z = 0; z < layerNum; z++) {
             ArrayList<Integer> m = new ArrayList<>();
@@ -486,16 +483,16 @@ public class Level {
 
     public String export() {
         String saveData = getName();
-        saveData += ";" + hanyszorhany;
-        saveData += ";" + (isIsMultisized() ? matrix.size() * -1 : matrix.size());
-        saveData += ";" + colors.size();
+        saveData = saveData.concat(";" + hanyszorhany);
+        saveData = saveData.concat(";" + (isIsMultisized() ? matrix.size() * -1 : matrix.size()));
+        saveData = saveData.concat(";" + colors.size());
         for (int i = 0; i < colors.size(); i++) {
-            saveData += ";rgb(" + colors.get(i).getRed() + "," + colors.get(i).getGreen() + "," + colors.get(i).getBlue() + ")";
+            saveData = saveData.concat(";rgb(" + colors.get(i).getRed() + "," + colors.get(i).getGreen() + "," + colors.get(i).getBlue() + ")");
         }
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < hanyszorhany; j++) {
                 for (int k = 0; k < hanyszorhany; k++) {
-                    saveData += ";" + matrix.get(i).getTileBy(j, k);
+                    saveData = saveData.concat(";" + matrix.get(i).getTileBy(j, k));
                 }
             }
         }

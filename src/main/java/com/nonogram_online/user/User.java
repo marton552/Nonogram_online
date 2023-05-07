@@ -59,7 +59,7 @@ public class User {
         String scode = code + "";
         String res = "";
         for (int i = 0; i < 4 - scode.length(); i++) {
-            res += "0";
+            res = res.concat("0");
         }
         return (res + scode);
     }

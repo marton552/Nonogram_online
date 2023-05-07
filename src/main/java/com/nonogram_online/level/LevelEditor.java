@@ -53,17 +53,17 @@ public class LevelEditor extends Level {
     @Override
     public void save(User user){
         String saveData = getName();
-        saveData+=";"+hanyszorhany;
+        saveData = saveData.concat(";"+hanyszorhany);
         if(isIsMultisized())saveData+=";"+matrix.size()*-1;
         else saveData+=";"+matrix.size();
         saveData+=";"+colors.size();
         for (int i = 0; i < colors.size(); i++) {
-            saveData+=";rgb("+colors.get(i).getRed()+","+colors.get(i).getGreen()+","+colors.get(i).getBlue()+")";
+            saveData = saveData.concat(";rgb("+colors.get(i).getRed()+","+colors.get(i).getGreen()+","+colors.get(i).getBlue()+")");
         }
         for (int i = 0; i < matrix.size(); i++) {
             for (int j = 0; j < hanyszorhany; j++) {
                 for (int k = 0; k < hanyszorhany; k++) {
-                    saveData+=";"+matrix.get(i).getTileBy(j, k);
+                    saveData = saveData.concat(";"+matrix.get(i).getTileBy(j, k));
                 }
             }
         }

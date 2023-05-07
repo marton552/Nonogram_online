@@ -231,19 +231,14 @@ public class Menu extends JFrame {
         } else if (text.equals("Regisztráció")) {
             if (history.get(history.size() - 1).equals("main")) {
                 loginPanel = new LoginPanel(menuMe, " Vendég regisztrálása");
-                menupanel.removeAll();
-                menupanel.revalidate();
-                menupanel.repaint();
-                menupanel.setLayout(new BorderLayout());
-                menupanel.add(loginPanel, BorderLayout.CENTER);
             } else {
                 loginPanel = new LoginPanel(menuMe, " Regisztráció");
+            }
                 menupanel.removeAll();
                 menupanel.revalidate();
                 menupanel.repaint();
                 menupanel.setLayout(new BorderLayout());
                 menupanel.add(loginPanel, BorderLayout.CENTER);
-            }
         } else if (text.equals("Belépés vendégként")) {
             loginPanel = new LoginPanel(menuMe, " Belépés vendégként");
             menupanel.removeAll();
@@ -756,9 +751,9 @@ public class Menu extends JFrame {
                 gridEnable *= -1;
             }
             for (int i = 0; i < (gridEnable) * ((Integer) sizeSlider.getValue() * (Integer) sizeSlider.getValue()); i++) {
-                data += ";0";
+                data = data.concat(";0");
             }
-            game = new MainFrame("Új pálya", menuMe, new LevelEditor(new ArrayList<String>(Arrays.asList(data.split(";"))), sizeSlider.getValue(), "", "", true), true, layerButton.isState(), colorButton.isState(), gridEnable);
+            game = new MainFrame("Új pálya", menuMe, new LevelEditor(new ArrayList<>(Arrays.asList(data.split(";"))), sizeSlider.getValue(), "", "", true), true, layerButton.isState(), colorButton.isState(), gridEnable);
             menupanel.add(game, BorderLayout.CENTER);
             menupanel.repaint();
         });

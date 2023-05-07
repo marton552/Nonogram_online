@@ -131,7 +131,7 @@ public class BasicRate extends JPanel {
 
         FontRenderContext frc = new FontRenderContext(null, true, true);
 
-        Font font = new Font("TimesRoman", Font.PLAIN, (int) (height / 5));
+        Font font = new Font("TimesRoman", Font.PLAIN, (height / 5));
         Rectangle2D r2D = font.getStringBounds("Értékeld a grafilogikát:", frc);
         int rWidth = (int) Math.round(r2D.getWidth());
         int rX = (int) Math.round(r2D.getX());

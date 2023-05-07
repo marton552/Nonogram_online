@@ -27,7 +27,7 @@ public class ImageHandler {
     private final BufferedImage nonogramImage;
     private int firstSize;
     private final int secondSize;
-    private final int colorNum;
+    private int colorNum;
     private ArrayList<Color> resultColors;
     private String error = "";
     private ArrayList<ArrayList<Color>> selectionColors;
@@ -40,10 +40,10 @@ public class ImageHandler {
         this.secondSize = secondSize;
         this.colorNum = colorNum;
         if (colorNum > 10) {
-            colorNum = 10;
+            this.colorNum = 10;
         }
         if (colorNum < 2) {
-            colorNum = 2;
+            this.colorNum = 2;
         }
         resultColors = new ArrayList<>();
         selectionColors = new ArrayList<>();
@@ -352,9 +352,9 @@ public class ImageHandler {
         do {
             String data = LevelEditor.templateData[0] + actualSize + ";" + (layers > 1 ? layers : grid) + LevelEditor.templateData[bw + 1];
             for (int i = 0; i < ((layers > 1 ? layers : gridSize) * actualSize * actualSize); i++) {
-                data += ";0";
+                data = data.concat(";0");
             }
-            res = new LevelEditor(new ArrayList<String>(Arrays.asList(data.split(";"))), actualSize, "", "", true);
+            res = new LevelEditor(new ArrayList<>(Arrays.asList(data.split(";"))), actualSize, "", "", true);
             if (layers > 1 && blackAndWhite == -1) {
                 res.addColor(Color.WHITE);
             }
@@ -377,8 +377,7 @@ public class ImageHandler {
                             }
 
                             int low = 0;
-                            int high = layers;
-                            int result = r.nextInt(high - low) + low;
+                            int result = r.nextInt(layers - low) + low;
                             res.clickOnTileByExact(j, i, (res.isIsMultisized() ? gridLayer : result));
                         }
                     }

@@ -30,7 +30,7 @@ public class LoginPanel extends JPanel {
     
     private final String mode;
 
-    private final JLabel titleLabel;
+    private final JLabel titleLabel;    
     private final JLabel usernameLabel;
     private final JLabel passwordLabel;
     private final JLabel passwordAgainLabel;
@@ -166,7 +166,7 @@ public class LoginPanel extends JPanel {
                 } else {
                     String s = "<html>" + stringPart + "<div style='text-align:center'>Bejelentkezés ";
                     for (int i = 4 - time; i > 0; i--) {
-                        s += ". ";
+                        s = s.concat(". ");
                     }
                     s += "</div></html>";
                     errorLabel.setText(s);

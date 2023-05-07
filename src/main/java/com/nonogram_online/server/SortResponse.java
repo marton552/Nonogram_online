@@ -90,16 +90,16 @@ public class SortResponse {
         String res = "";
         for (int i = 0; i < 4; i++) {
             if (order[i] == id) {
-                res += " levels.id ASC";
+                res = res.concat(" levels.id ASC");
             } else if (order[i] == date) {
-                res += " levels.created_date " + dateAsc;
+                res = res.concat(" levels.created_date " + dateAsc);
             } else if (order[i] == name) {
-                res += " levels.level_name " + nameAsc;
+                res = res.concat(" levels.level_name " + nameAsc);
             } else if (order[i] == rate) {
-                res += " rate " + rateAsc;
+                res = res.concat(" rate " + rateAsc);
             }
             if (i < 3) {
-                res += ",";
+                res = res.concat(",");
             }
         }
         return res;
