@@ -25,7 +25,6 @@ public class Server {
 
     private static final String URL = "jdbc:mysql://localhost:3306/nonogram_online";
     private static final String DBUSERNAME = "root";
-    private static final String DBPASSWORD = "";
 
     ArrayList<ArrayList<String>> data;
 
@@ -440,7 +439,7 @@ public class Server {
     }
 
     private void runQuery(String sql) {
-        try ( Connection connection = DriverManager.getConnection(URL, DBUSERNAME, DBPASSWORD);  PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try ( Connection connection = DriverManager.getConnection(URL, DBUSERNAME, "");  PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             try ( ResultSet resultSet = preparedStatement.executeQuery()) {
                 int index = 0;
                 while (resultSet.next()) {
@@ -458,7 +457,7 @@ public class Server {
     }
 
     private void runQueryNoResponse(String sql) {
-        try ( Connection connection = DriverManager.getConnection(URL, DBUSERNAME, DBPASSWORD);  PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try ( Connection connection = DriverManager.getConnection(URL, DBUSERNAME, "");  PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
