@@ -1,4 +1,3 @@
-
 package com.nonogram_online;
 
 import com.nonogram_online.user.UserPanel;
@@ -17,13 +16,9 @@ import com.nonogram_online.server.Server;
 import com.nonogram_online.server.SortResponse;
 import com.nonogram_online.user.User;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -45,10 +40,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -59,35 +54,34 @@ public class Menu extends JFrame {
 
     private JPanel mainpanel;
     private JPanel menupanel;
-    private BasicButton newGameButton;
-    private BasicButton exitGameButton;
-    private BasicButton logoutGameButton;
-    private BasicButton login;
-    private BasicButton signin;
-    private BasicButton guestLogin;
-    private BasicButton offlineMaps;
-    private BasicButton onlineMaps;
-    private BasicButton onlineCollection;
-    private BasicButton superProjects;
-    private BasicButton levelCreator;
-    private BasicButton levelByHand;
-    private BasicButton levelByImage;
-    private BasicButton easyLevel;
-    private BasicButton mediumLevel;
-    private BasicButton hardLevel;
-    private BasicButton backButton;
-    private BasicButton userButton;
+    private final BasicButton exitGameButton;
+    private final BasicButton logoutGameButton;
+    private final BasicButton login;
+    private final BasicButton signin;
+    private final BasicButton guestLogin;
+    private final BasicButton offlineMaps;
+    private final BasicButton onlineMaps;
+    private final BasicButton onlineCollection;
+    private final BasicButton superProjects;
+    private final BasicButton levelCreator;
+    private final BasicButton levelByHand;
+    private final BasicButton levelByImage;
+    private final BasicButton easyLevel;
+    private final BasicButton mediumLevel;
+    private final BasicButton hardLevel;
+    private final BasicButton backButton;
+    private final BasicButton userButton;
 
     private JPanel prevNextPanel;
-    private BasicButton prevButton;
-    private BasicButton nextButton;
+    private final BasicButton prevButton;
+    private final BasicButton nextButton;
     private JPanel sortSearchPanel;
-    private SortButton sortByDateButton;
-    private SortButton sortByNameButton;
-    private SortButton sortByRateButton;
-    private SearchTextField searchTextField;
-    private SearchButton searchByLevel;
-    private SearchButton searchByUser;
+    private final SortButton sortByDateButton;
+    private final SortButton sortByNameButton;
+    private final SortButton sortByRateButton;
+    private final SearchTextField searchTextField;
+    private final SearchButton searchByLevel;
+    private final SearchButton searchByUser;
     private SortResponse sortState;
     private SearchResponse searchState;
 
@@ -134,19 +128,13 @@ public class Menu extends JFrame {
 
     public Menu(String title) {
         super(title + " menü");
-        this.setDefaultCloseOperation(this.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setPreferredSize(new Dimension(width, height));
         this.setLocation(100, 100);
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
@@ -273,6 +261,8 @@ public class Menu extends JFrame {
             history.add("online");
             setupOnlineChooser();
         } else if (text.equals("Online pályatár")) {
+            sortState = new SortResponse();
+            searchState = new SearchResponse("");
             history.add("online_maps");
             levelStartNum = 0;
             setupOnlineLevelsMenu();
@@ -340,6 +330,8 @@ public class Menu extends JFrame {
             searchState.setUserName();
             setupOnlineLevelsMenu();
         } else if (text.startsWith("listusermaps")) {
+            sortState = new SortResponse();
+            searchState = new SearchResponse("");
             searchState.setSearch(text.split(":")[1]);
             searchState.setUserName();
             setupOnlineLevelsMenu();
@@ -365,26 +357,39 @@ public class Menu extends JFrame {
         if (backButtonPressed) {
             history.remove(history.size() - 1);
         }
-        if (history.get(history.size() - 1).equals("start")) {
-            setupFirstMenu();
-        } else if (history.get(history.size() - 1).equals("main")) {
-            setupMainMenu();
-        } else if (history.get(history.size() - 1).equals("diff")) {
-            setupDifficultyMenu();
-        } else if (history.get(history.size() - 1).equals("offline")) {
-            setupOfflineLevelsMenu();
-        } else if (history.get(history.size() - 1).equals("online")) {
-            setupOnlineChooser();
-        } else if (history.get(history.size() - 1).equals("online_maps")) {
-            setupOnlineLevelsMenu();
-        } else if (history.get(history.size() - 1).equals("user")) {
-            setupUserProfile();
-        } else if (history.get(history.size() - 1).equals("editor")) {
-            setupMakeLevelMenu();
-        } else if (history.get(history.size() - 1).equals("uploadImage")) {
-            setupImageLoad(false);
-        } else if (history.get(history.size() - 1).equals("super")) {
-            setupSuperProject();
+        switch (history.get(history.size() - 1)) {
+            case "start":
+                setupFirstMenu();
+                break;
+            case "main":
+                setupMainMenu();
+                break;
+            case "diff":
+                setupDifficultyMenu();
+                break;
+            case "offline":
+                setupOfflineLevelsMenu();
+                break;
+            case "online":
+                setupOnlineChooser();
+                break;
+            case "online_maps":
+                setupOnlineLevelsMenu();
+                break;
+            case "user":
+                setupUserProfile();
+                break;
+            case "editor":
+                setupMakeLevelMenu();
+                break;
+            case "uploadImage":
+                setupImageLoad(false);
+                break;
+            case "super":
+                setupSuperProject();
+                break;
+            default:
+                break;
         }
     }
 
@@ -547,7 +552,7 @@ public class Menu extends JFrame {
             prevNextPanel.add(nextButton);
             menupanel.add(prevNextPanel);
         } catch (IOException ex) {
-            System.out.println(ex);;
+            System.out.println(ex);
         }
         menupanel.add(backButton);
         backButton.setOrientation(1, (levelPerPage + 2));
@@ -629,7 +634,7 @@ public class Menu extends JFrame {
         sortSearchPanel.add(searchByUser);
         menupanel.add(sortSearchPanel);
 
-        ArrayList<Level> levels = new ArrayList<>();
+        ArrayList<Level> levels;
         levels = server.getXLevels(sortState, searchState, levelStartNum, levelStartNum + levelPerPage + 1);
         boolean fullFilled = (levels.size() > levelPerPage);
         int size = (fullFilled) ? levelPerPage : levels.size();
@@ -719,25 +724,19 @@ public class Menu extends JFrame {
         gridPanel.setLayout(new GridLayout(1, 4));
         gridLabel = new JLabel(" Felosztás:", SwingConstants.CENTER);
         grid1x1 = new JButton(new ImageIcon((new ImageIcon(this.getClass().getResource("/images/1x1.png")).getImage()).getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
-        grid1x1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                gridEnable = 1;
-                changeEditorMenu("grid", 0);
-            }
+        grid1x1.addActionListener((ActionEvent e) -> {
+            gridEnable = 1;
+            changeEditorMenu("grid", 0);
         });
         grid2x2 = new JButton(new ImageIcon((new ImageIcon(this.getClass().getResource("/images/2x2.png")).getImage()).getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
-        grid2x2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                gridEnable = -4;
-                changeEditorMenu("grid", 1);
-            }
+        grid2x2.addActionListener((ActionEvent e) -> {
+            gridEnable = -4;
+            changeEditorMenu("grid", 1);
         });
         grid3x3 = new JButton(new ImageIcon((new ImageIcon(this.getClass().getResource("/images/3x3.png")).getImage()).getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
-        grid3x3.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                gridEnable = -9;
-                changeEditorMenu("grid", 2);
-            }
+        grid3x3.addActionListener((ActionEvent e) -> {
+            gridEnable = -9;
+            changeEditorMenu("grid", 2);
         });
         gridPanel.add(gridLabel);
         gridPanel.add(grid1x1);
@@ -747,49 +746,58 @@ public class Menu extends JFrame {
         menupanel.add(gridPanel);
 
         startEdit = new JButton("Szerkesztés megkezdése");
-        startEdit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                menupanel.removeAll();
-                menupanel.revalidate();
-                menupanel.repaint();
-                menupanel.setLayout(new BorderLayout());
-                String data = LevelEditor.templateData[0] + sizeSlider.getValue() + ";" + gridEnable + LevelEditor.templateData[1];
-                if (gridEnable < 0) {
-                    gridEnable *= -1;
-                }
-                for (int i = 0; i < (gridEnable) * ((Integer) sizeSlider.getValue() * (Integer) sizeSlider.getValue()); i++) {
-                    data += ";0";
-                }
-                game = new MainFrame("Új pálya", menuMe, new LevelEditor(new ArrayList<String>(Arrays.asList(data.split(";"))), (Integer) sizeSlider.getValue(), "", "", true), true, layerButton.isState(), colorButton.isState(), gridEnable);
-                menupanel.add(game, BorderLayout.CENTER);
-                menupanel.repaint();
+        startEdit.addActionListener((ActionEvent e) -> {
+            menupanel.removeAll();
+            menupanel.revalidate();
+            menupanel.repaint();
+            menupanel.setLayout(new BorderLayout());
+            String data = LevelEditor.templateData[0] + sizeSlider.getValue() + ";" + gridEnable + LevelEditor.templateData[1];
+            if (gridEnable < 0) {
+                gridEnable *= -1;
             }
+            for (int i = 0; i < (gridEnable) * ((Integer) sizeSlider.getValue() * (Integer) sizeSlider.getValue()); i++) {
+                data += ";0";
+            }
+            game = new MainFrame("Új pálya", menuMe, new LevelEditor(new ArrayList<String>(Arrays.asList(data.split(";"))), sizeSlider.getValue(), "", "", true), true, layerButton.isState(), colorButton.isState(), gridEnable);
+            menupanel.add(game, BorderLayout.CENTER);
+            menupanel.repaint();
         });
         menupanel.add(startEdit);
     }
 
     public void changeEditorMenu(String option, int button) {
-        if (option.equals("grid")) {
-            grid1x1.setEnabled(true);
-            grid2x2.setEnabled(true);
-            grid3x3.setEnabled(true);
-            if (button == 0) {
-                grid1x1.setEnabled(false);
-            } else if (button == 1) {
-                grid2x2.setEnabled(false);
-            } else {
-                grid3x3.setEnabled(false);
+        switch (option) {
+            case "grid":
+                grid1x1.setEnabled(true);
+                grid2x2.setEnabled(true);
+                grid3x3.setEnabled(true);
+            switch (button) {
+                case 0:
+                    grid1x1.setEnabled(false);
+                    break;
+                case 1:
+                    grid2x2.setEnabled(false);
+                    break;
+                default:
+                    grid3x3.setEnabled(false);
+                    break;
             }
-        } else if (option.equals("layer")) {
-            if (layerButton.isState()) {
-                gridPanel.setVisible(false);
-            } else {
-                gridPanel.setVisible(true);
-            }
-        } else if (option.equals("&color")) {
-            itl.changeEditorMenu(option, button);
-        } else if (option.equals("&layer")) {
-            itl.changeEditorMenu(option, button);
+break;
+
+            case "layer":
+                if (layerButton.isState()) {
+                    gridPanel.setVisible(false);
+                } else {
+                    gridPanel.setVisible(true);
+                }   break;
+            case "&color":
+                itl.changeEditorMenu(option, button);
+                break;
+            case "&layer":
+                itl.changeEditorMenu(option, button);
+                break;
+            default:
+                break;
         }
 
     }
@@ -870,10 +878,12 @@ public class Menu extends JFrame {
         });
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }

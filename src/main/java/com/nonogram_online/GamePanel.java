@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
@@ -18,8 +17,8 @@ import javax.swing.Timer;
  */
 public class GamePanel extends JPanel {
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
     Game game;
     MainFrame mf;
     Timer timer;
@@ -31,20 +30,17 @@ public class GamePanel extends JPanel {
         this.width = width;
         this.height = height;
 
-        timer = new Timer(3, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (animationTimer > 0) {
-                    animationTimer--;
-                    if(game.lvl.getNewSquareSize() > game.lvl.getSquareSize()) game.lvl.setTrueSquareSize(game.lvl.getSquareSize() + 1);
-                    else game.lvl.setTrueSquareSize(game.lvl.getSquareSize() - 1);
-                    repaint();
-                } else {
-                    animationTimer = 0;
-                    game.lvl.setTrueSquareSize(game.lvl.getNewSquareSize());
-                    repaint();
-                    timer.stop();
-                }
+        timer = new Timer(3, (ActionEvent e) -> {
+            if (animationTimer > 0) {
+                animationTimer--;
+                if(game.lvl.getNewSquareSize() > game.lvl.getSquareSize()) game.lvl.setTrueSquareSize(game.lvl.getSquareSize() + 1);
+                else game.lvl.setTrueSquareSize(game.lvl.getSquareSize() - 1);
+                repaint();
+            } else {
+                animationTimer = 0;
+                game.lvl.setTrueSquareSize(game.lvl.getNewSquareSize());
+                repaint();
+                timer.stop();
             }
         });
 
@@ -103,7 +99,7 @@ public class GamePanel extends JPanel {
         }
         if (!game.isIsEditing()) {
             g.setColor(Color.BLACK);
-            g.setFont(new Font("TimesRoman", Font.PLAIN, (int) (width / 20)));
+            g.setFont(new Font("TimesRoman", Font.PLAIN, (width / 20)));
             String title = "Hátralévő próbálkozások: " + game.getHp();
             g.drawChars(title.toCharArray(), 0, title.toCharArray().length, 10, mf.getMenu().getHeight()-170);
             

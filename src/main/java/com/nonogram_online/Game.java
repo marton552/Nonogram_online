@@ -16,7 +16,7 @@ public class Game {
     private int hp = 3;
     private boolean isZoomed = false;
 
-    private boolean isEditing = false;
+    private boolean isEditing;
 
     public Game(Level lvl, boolean isEditing) {
         this.lvl = lvl;

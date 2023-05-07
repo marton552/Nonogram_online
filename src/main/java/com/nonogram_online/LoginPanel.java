@@ -8,7 +8,6 @@ import com.nonogram_online.user.User;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,24 +24,24 @@ import javax.swing.event.DocumentListener;
  */
 public class LoginPanel extends JPanel {
 
-    private static final String GuestRegistString = " Vendég regisztrálása";
-    private static final String RegistString = " Regisztráció";
-    private static final String GuestLoginString = " Belépés vendégként";
+    private static final String GUESTREGISTSTRING = " Vendég regisztrálása";
+    private static final String REGISTSTRING = " Regisztráció";
+    private static final String GUESTLOGINSTRING = " Belépés vendégként";
     
-    private String mode;
+    private final String mode;
 
-    private JLabel titleLabel;
-    private JLabel usernameLabel;
-    private JLabel passwordLabel;
-    private JLabel passwordAgainLabel;
+    private final JLabel titleLabel;
+    private final JLabel usernameLabel;
+    private final JLabel passwordLabel;
+    private final JLabel passwordAgainLabel;
     private JLabel errorLabel;
     private JTextField usernameInput;
-    private JPasswordField passwordInput;
-    private JPasswordField passwordAgainInput;
-    private JLabel usercodeLabel;
-    private BasicButton usercodeButton;
-    private BasicButton backButton;
-    private BasicButton okButton;
+    private final JPasswordField passwordInput;
+    private final JPasswordField passwordAgainInput;
+    private final JLabel usercodeLabel;
+    private final BasicButton usercodeButton;
+    private final BasicButton backButton;
+    private final BasicButton okButton;
     private int userCode = 0;
 
     private JPanel usernamePanel;
@@ -89,16 +88,19 @@ public class LoginPanel extends JPanel {
 
         usernameInput = new JTextField("");
         usernameInput.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void changedUpdate(DocumentEvent e) {
                 checkUsername();
                 checkPassword();
             }
 
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 checkUsername();
                 checkPassword();
             }
 
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 checkUsername();
                 checkPassword();
@@ -107,16 +109,19 @@ public class LoginPanel extends JPanel {
 
         passwordInput = new JPasswordField("");
         passwordInput.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void changedUpdate(DocumentEvent e) {
                 checkPassword();
                 checkUsername();
             }
 
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 checkPassword();
                 checkUsername();
             }
 
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 checkPassword();
                 checkUsername();
@@ -125,16 +130,19 @@ public class LoginPanel extends JPanel {
 
         passwordAgainInput = new JPasswordField("");
         passwordAgainInput.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void changedUpdate(DocumentEvent e) {
                 checkPassword();
                 checkUsername();
             }
 
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 checkPassword();
                 checkUsername();
             }
 
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 checkPassword();
                 checkUsername();
@@ -147,48 +155,45 @@ public class LoginPanel extends JPanel {
         okButton.setEnabled(false);
         setupButtons(5);
         
-        timer = new Timer(250, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (time > 0) {
-                    String stringPart = "";
-                    if (mode.equals(RegistString) || mode.equals(GuestRegistString)) {
-                        stringPart = "Felhasználó sikeresen létrehozva!<br>";
-                    }
-                    if (time == 4) {
-                        errorLabel.setText("<html>" + stringPart + "<div style='text-align:center'>Bejelentkezés </div></html>");
-                    } else {
-                        String s = "<html>" + stringPart + "<div style='text-align:center'>Bejelentkezés ";
-                        for (int i = 4 - time; i > 0; i--) {
-                            s += ". ";
-                        }
-                        s += "</div></html>";
-                        errorLabel.setText(s);
-                    }
-
-                    mainPanel.revalidate();
-                    mainPanel.repaint();
-                    time--;
-                } else if (time == 0) {
-                    time--;
-                    timer.stop();
-                    Response rank = server.getUserRank(usernameInput.getText(), User.fullCode(userCode));
-                    Response role = server.getUserRole(usernameInput.getText(), User.fullCode(userCode));
-                    m.setUser(usernameInput.getText(), User.fullCode(userCode),(rank.getStatusCode() == 200 ? Integer.parseInt(rank.getMessage()) : 0),(role.equalsStatusCode(200) ? role.getMessage() : "user"));
-                    m.login();
+        timer = new Timer(250, (ActionEvent e) -> {
+            if (time > 0) {
+                String stringPart = "";
+                if (mode.equals(REGISTSTRING) || mode.equals(GUESTREGISTSTRING)) {
+                    stringPart = "Felhasználó sikeresen létrehozva!<br>";
                 }
+                if (time == 4) {
+                    errorLabel.setText("<html>" + stringPart + "<div style='text-align:center'>Bejelentkezés </div></html>");
+                } else {
+                    String s = "<html>" + stringPart + "<div style='text-align:center'>Bejelentkezés ";
+                    for (int i = 4 - time; i > 0; i--) {
+                        s += ". ";
+                    }
+                    s += "</div></html>";
+                    errorLabel.setText(s);
+                }
+                
+                mainPanel.revalidate();
+                mainPanel.repaint();
+                time--;
+            } else if (time == 0) {
+                time--;
+                timer.stop();
+                Response rank = server.getUserRank(usernameInput.getText(), User.fullCode(userCode));
+                Response role = server.getUserRole(usernameInput.getText(), User.fullCode(userCode));
+                m.setUser(usernameInput.getText(), User.fullCode(userCode),(rank.getStatusCode() == 200 ? Integer.parseInt(rank.getMessage()) : 0),(role.equalsStatusCode(200) ? role.getMessage() : "user"));
+                m.login();
             }
         });
 
         errorServer = false;
 
-        if (mode.equals(RegistString)) {
+        if (mode.equals(REGISTSTRING)) {
             setupRegistry();
         } else if (mode.equals(" Bejelentkezés")) {
             setupLogin();
-        } else if (mode.equals(GuestLoginString)) {
+        } else if (mode.equals(GUESTLOGINSTRING)) {
             setupGuest();
-        } else if (mode.equals(GuestRegistString)) {
+        } else if (mode.equals(GUESTREGISTSTRING)) {
             setupRegistryGuest();
         }
 
@@ -225,7 +230,7 @@ public class LoginPanel extends JPanel {
         if (text.equals("Új kód generálása")) {
             randomUserNumber();
         }
-        else if (mode.equals(RegistString) && mode.equals(text)) {
+        else if (mode.equals(REGISTSTRING) && mode.equals(text)) {
             response = server.isRealUserExist(usernameInput.getText());
             if (response.equalsStatusCode(404)) {
                 response = server.addNewUser(usernameInput.getText(), new String(passwordInput.getPassword()));
@@ -263,7 +268,7 @@ public class LoginPanel extends JPanel {
                     timer.start();
                 }
             }
-        } else if (mode.equals(GuestLoginString) && mode.equals(text)) {
+        } else if (mode.equals(GUESTLOGINSTRING) && mode.equals(text)) {
             response = server.addGuest(usernameInput.getText(), userCode);
             if (response.equalsStatusCode(409)) {
                 errorServer = true;
@@ -279,7 +284,7 @@ public class LoginPanel extends JPanel {
                 timer.start();
 
             }
-        } else if (mode.equals(GuestRegistString) && mode.equals(text)) {
+        } else if (mode.equals(GUESTREGISTSTRING) && mode.equals(text)) {
             response = server.isRealUserExist(usernameInput.getText());
             if (response.equalsStatusCode(404)) {
                 response = server.registerGuestUser(m.getUser().getUsername(), usernameInput.getText(), new String(passwordInput.getPassword()), m.getUser().getUsercode());
@@ -313,7 +318,7 @@ public class LoginPanel extends JPanel {
     }
 
     private void checkPassword() {
-        if (mode.equals(RegistString) || mode.equals(GuestRegistString)) {
+        if (mode.equals(REGISTSTRING) || mode.equals(GUESTREGISTSTRING)) {
             errorPassword = true;
             if (new String(passwordInput.getPassword()).length() < 4) {
                 errorLabel.setText("A jelszónak legalább 4 karakterből kell állnia!");
@@ -333,7 +338,7 @@ public class LoginPanel extends JPanel {
     }
 
     private void checkUsername() {
-        if (mode.equals(RegistString) || mode.equals(GuestLoginString) || mode.equals(GuestRegistString)) {
+        if (mode.equals(REGISTSTRING) || mode.equals(GUESTLOGINSTRING) || mode.equals(GUESTREGISTSTRING)) {
             errorUsername = true;
             if (usernameInput.getText().length() < 4) {
                 errorLabel.setText("A felhasználónévnek legalább 4 karakterből kell állnia!");

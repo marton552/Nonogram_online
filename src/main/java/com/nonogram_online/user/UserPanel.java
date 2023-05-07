@@ -17,8 +17,6 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.font.FontRenderContext;
@@ -34,7 +32,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 
 /**

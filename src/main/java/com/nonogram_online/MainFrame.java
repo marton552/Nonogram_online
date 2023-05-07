@@ -39,58 +39,54 @@ import javax.swing.event.DocumentListener;
  */
 public class MainFrame extends JPanel {
     
-    private static final String FinishString = "Befejezés";
+    private static final String FINISHSTRING = "Befejezés";
 
     private GamePanel gamePanel;
     private JPanel topPanel;
     private JPanel bottomPanel;
-    private JPanel thisPanel;
-    private Level lvl;
-    private int width = 465;
-    private int height = 690;
+    private final Level lvl;
+    private final int width = 465;
+    private final int height = 690;
 
     private Game game;
-    private Menu m;
+    private final Menu m;
 
-    private JButton prevLayerButton;
-    private JButton nextLayerButton;
+    private final JButton prevLayerButton;
+    private final JButton nextLayerButton;
     private JButton hintButton;
 
     private JPanel titlePanel;
     private JTextField titleEdit;
-    private JLabel titleLabel;
+    private final JLabel titleLabel;
     private JButton giveUpButton;
 
-    private JButton addLayer;
-    private JButton[] colorButtons;
-    private JButton addColor;
-    private JLabel selectedColor;
-    private String error;
-    private JLabel colorError;
-    private JButton deleteColor;
+    private final JButton addLayer;
+    private final JButton[] colorButtons;
+    private final JLabel selectedColor;
+    private final JLabel colorError;
+    private final JButton deleteColor;
     private int currentColor = 0;
     private JPanel colorPanel;
-    private BasicRate ratePopUp;
+    private final BasicRate ratePopUp;
 
-    private JButton isSolvableButton;
+    private final JButton isSolvableButton;
     private JLabel solvableLabel;
     private JButton saveButton;
 
-    private FailButton failButton;
+    private final FailButton failButton;
     private Server server;
 
-    private boolean isEditing = false;
-    private boolean isLayered = false;
-    private boolean isColored = false;
+    private final boolean isEditing;
+    private final boolean isLayered;
+    private final boolean isColored;
 
     private boolean isRating = false;
-    private boolean isMultisized = false;
-    private boolean isChoosing = false;
+    private boolean isMultisized;
+    private boolean isChoosing;
     private Level placeholder;
     private boolean zeroLayer = false;
 
     public MainFrame(String title, Menu m, Level lvl, boolean isEditing, boolean isLayered, boolean isColored, int isGrided) {
-        thisPanel = this;
         this.lvl = lvl;
         this.m = m;
         placeholder = new Level(lvl.getAllData(), lvl.getCreator_name(), lvl.getCreated_date(), lvl.isApproved());
@@ -158,9 +154,9 @@ public class MainFrame extends JPanel {
         giveUpButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                if (giveUpButton.getText().equals(FinishString)) {
+                if (giveUpButton.getText().equals(FINISHSTRING)) {
                     Response res;
-                    if (lvl.getCreator_name() != "") {
+                    if (!lvl.getCreator_name().equals("")) {
                         res = server.finishLevel(lvl.getName(), lvl.getCreator_name(), m.getUser().getFullUsername());
                         if (res.equalsStatusCode(200)) {
                             isRating = true;
@@ -479,8 +475,7 @@ public class MainFrame extends JPanel {
     }
 
     private void addColor() {
-        JColorChooser c = new JColorChooser();
-        Color color = c.showDialog(null, "Válassz színt!", Color.BLACK);
+        Color color = JColorChooser.showDialog(null, "Válassz színt!", Color.BLACK);
         if(color != null && !ColorHandler.findCloseColors(lvl.getColors(),color).isEmpty()){
             colorError.setText("Ez a szín túl hasonló egy másikhoz!");
         }
@@ -504,7 +499,7 @@ public class MainFrame extends JPanel {
 
     private void deleteColor() {
         if (currentColor == 0) {
-            error = "Az alap színt nem lehet törölni!";
+            colorError.setText("Az alap színt nem lehet törölni!");
         } else {
             Color curr = colorButtons[currentColor].getBackground();
             for (int i = currentColor; i < lvl.getColors().size(); i++) {
@@ -544,14 +539,14 @@ public class MainFrame extends JPanel {
     }
 
     public void finishLevel() {
-        giveUpButton.setText(FinishString);
+        giveUpButton.setText(FINISHSTRING);
         this.repaint();
     }
 
     public void finishLayer() {
         if (isMultisized) {
             giveUpButton.setText(" Befejezés ");
-            placeholder.addCompletedPart((Integer) game.getActualLayer());
+            placeholder.addCompletedPart(game.getActualLayer());
             boolean finish = true;
             for (int i = 0; i < placeholder.getMatrix().size(); i++) {
                 if (!placeholder.isThisPartCompleted(i)) {
@@ -561,7 +556,7 @@ public class MainFrame extends JPanel {
             if (finish) {
                 placeholder.finishGame();
                 isChoosing = true;
-                giveUpButton.setText(FinishString);
+                giveUpButton.setText(FINISHSTRING);
                 setup();
             }
         }
