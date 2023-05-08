@@ -212,7 +212,7 @@ public class Server {
             DateFormat df = new SimpleDateFormat("yyyy.MM.dd HH:mm");
             runQueryNoResponse("INSERT INTO levels (id, level_name, creator_name, created_date, data, approved) VALUES ('" + id + "', '" + lvlName + "', '" + userName + "', '" + df.format(d) + "', '" + lvlData + "', '-1')");
             closeRequest();
-            return new Response(200, "User added succesfully");
+            return new Response(200, "Level added succesfully");
         }
     }
 

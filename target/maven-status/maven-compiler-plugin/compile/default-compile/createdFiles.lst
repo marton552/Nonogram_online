@@ -10,7 +10,6 @@ com\nonogram_online\MainFrame.class
 com\nonogram_online\buttons\BasicButton.class
 com\nonogram_online\MainFrame$1.class
 com\nonogram_online\generator\ImageHandler.class
-com\nonogram_online\level\ImageToLevel$1.class
 com\nonogram_online\buttons\SearchButton.class
 com\nonogram_online\MainFrame$7.class
 com\nonogram_online\MainFrame$15.class
@@ -21,7 +20,6 @@ com\nonogram_online\user\UserIcon$1.class
 com\nonogram_online\buttons\SearchTextField.class
 com\nonogram_online\server\Response.class
 com\nonogram_online\level\LevelMatrix.class
-com\nonogram_online\level\ImageToLevel$2.class
 com\nonogram_online\Main.class
 com\nonogram_online\buttons\SearchTextField$1.class
 com\nonogram_online\MainFrame$10.class
@@ -33,11 +31,9 @@ com\nonogram_online\GamePanel.class
 com\nonogram_online\MainFrame$12.class
 com\nonogram_online\Menu$1.class
 com\nonogram_online\level\Point.class
-com\nonogram_online\level\LevelIcon$1.class
 com\nonogram_online\buttons\FailButton$1.class
 com\nonogram_online\user\User.class
 com\nonogram_online\buttons\SortButton.class
-com\nonogram_online\level\ImageToLevel$3.class
 com\nonogram_online\MainFrame$11.class
 com\nonogram_online\level\LevelEditor.class
 com\nonogram_online\user\MissionIcon.class
@@ -50,7 +46,6 @@ com\nonogram_online\LoginPanel.class
 com\nonogram_online\generator\Nonogram.class
 com\nonogram_online\MainFrame$8.class
 com\nonogram_online\user\UserIcon.class
-com\nonogram_online\buttons\BasicRate$2.class
 com\nonogram_online\generator\Line.class
 com\nonogram_online\level\LevelIcon.class
 com\nonogram_online\Game.class
@@ -60,7 +55,6 @@ com\nonogram_online\buttons\BasicRate.class
 com\nonogram_online\level\LevelPanel.class
 com\nonogram_online\buttons\BasicButton$1.class
 com\nonogram_online\buttons\BasicRate$1.class
-com\nonogram_online\user\UserPanel$2.class
 com\nonogram_online\MainFrame$2.class
 com\nonogram_online\buttons\ImageGeneratorButton.class
 com\nonogram_online\MainFrame$5.class

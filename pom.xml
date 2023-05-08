@@ -37,7 +37,7 @@
 
     </dependencies>
     <build>
-        <finalName>maven-unit-test</finalName>
+        <finalName>Nonogram online</finalName>
         <plugins>
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
