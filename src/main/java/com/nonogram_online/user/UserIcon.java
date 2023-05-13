@@ -1,24 +1,15 @@
 
 package com.nonogram_online.user;
 
-import com.nonogram_online.MainFrame;
 import com.nonogram_online.Menu;
-import com.nonogram_online.level.Level;
 import com.nonogram_online.server.Server;
-import com.nonogram_online.user.User;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
 /**
  *

@@ -252,8 +252,6 @@ public class Level {
 
     public boolean isSolvable() {
         for (int i = 0; i < matrix.size(); i++) {
-            System.out.println(matrix.get(i).getTopOnlyNumbers());
-            System.out.println(matrix.get(i).getLeftOnlyNumbers());
             Nonogram n = new Nonogram(matrix.get(i).getTopOnlyNumbers(), matrix.get(i).getLeftOnlyNumbers());
             if (!n.solveAndCheck()) {
                 return false;

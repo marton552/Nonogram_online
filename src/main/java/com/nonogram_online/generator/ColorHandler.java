@@ -47,7 +47,6 @@ public class ColorHandler {
                 }
             }
         }
-        System.out.println(closePairs);
         return closePairs;
     }
 
