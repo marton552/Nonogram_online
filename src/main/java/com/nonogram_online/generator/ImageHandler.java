@@ -411,8 +411,8 @@ public class ImageHandler {
     }
 
     public void colorSum() {
+        ArrayList<Integer> removes = new ArrayList<>();
         HashMap<Integer, Integer> closes;
-        int removedNum = 0;
         do {
             closes = ColorHandler.findCloseColors(res.getColors());
             boolean happenedRemove = false;
@@ -424,13 +424,13 @@ public class ImageHandler {
                     Color avgColor = ColorHandler.getAverageRGB(cs);
                     res.removeColor(closes.get(i), i);
                     res.setColor(i, avgColor);
-                    removedNum++;
+                    removes.add(i);
                     happenedRemove = true;
                 }
             }
 
         } while (!closes.isEmpty());
-        res.afterAllRemoved(removedNum);
+        res.afterAllRemoved(removes);
     }
 
     public void setBackgroundColor(Color backColor) {

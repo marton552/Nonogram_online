@@ -128,7 +128,7 @@ public class LevelIcon extends JPanel {
                 int sizeM = height - 20;
                 int XY = (int)sqrt(lvl.getMatrix().size());
                 for (int i = 0; i < lvl.getMatrix().size(); i++) {
-                    lvl.setMatrixStartPos(offset+(x*(sizeM/XY)), offset+(y*(sizeM/XY)));
+                    lvl.setMatrixStartPos(offset+(y*(sizeM/XY)),offset+(x*(sizeM/XY)));
                     lvl.setMenuSquareSize(sizeM/XY);
                     lvl.finishGame();
                     lvl.drawMatrix(g, i, false, true);

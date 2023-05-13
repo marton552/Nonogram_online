@@ -382,8 +382,8 @@ public class MainFrame extends JPanel {
         y = y - (sHeight / 2 - sWidth / 2);
         y = y / pWidth;
         isChoosing = false;
-        game.setActualLayer(size * y + x);
-        if (size * y + x == 0) {
+        game.setActualLayer(size * x + y);
+        if (size * x + y == 0) {
             game.setActualLayer(1);
             zeroLayer = true;
         }
@@ -418,10 +418,10 @@ public class MainFrame extends JPanel {
                     questionmark.finishGame();
                     questionmark.drawMatrix(g, 0, false, true);
                 }
-                x++;
-                if (x == size) {
-                    x = 0;
-                    y++;
+                y++;
+                if (y == size) {
+                    y = 0;
+                    x++;
                 }
             }
         }

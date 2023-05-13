@@ -1,4 +1,3 @@
-
 package com.nonogram_online.level;
 
 import com.nonogram_online.generator.Nonogram;
@@ -162,12 +161,14 @@ public class Level {
         }
     }
 
-    public void afterAllRemoved(int removedNum) {
-        for (int i = 0; i < matrix.size(); i++) {
-            for (int j = 0; j < hanyszorhany; j++) {
-                for (int k = 0; k < hanyszorhany; k++) {
-                    if (matrix.get(i).getTileBy(j, k) >= colors.size()) {
-                        matrix.get(i).addTileBy(j, k, matrix.get(i).getTileBy(j, k) - removedNum);
+    public void afterAllRemoved(ArrayList<Integer> removedNum) {
+        for (int removed = 0; removed < removedNum.size(); removed++) {
+            for (int i = 0; i < matrix.size(); i++) {
+                for (int j = 0; j < hanyszorhany; j++) {
+                    for (int k = 0; k < hanyszorhany; k++) {
+                        if (matrix.get(i).getTileBy(j, k) > removed) {
+                            matrix.get(i).addTileBy(j, k, matrix.get(i).getTileBy(j, k) - 1);
+                        }
                     }
                 }
             }
@@ -214,13 +215,15 @@ public class Level {
     }
 
     public int getHeight() {
-        int r = Math.max(matrixMostMostNumbers,matrixMostTopNumbers);
+        int r = Math.max(matrixMostMostNumbers, matrixMostTopNumbers);
         return r + hanyszorhany;
     }
 
     public void setSquareSize(int width, int height, boolean zoomed) {
         int x = 2;
-        if(zoomed) x = 1;
+        if (zoomed) {
+            x = 1;
+        }
         matrixMostMostNumbers = Math.max(matrixMostLeftNumbers, matrixMostTopNumbers);
         newSquareSize = width / (matrixMostMostNumbers * x + hanyszorhany);
     }
@@ -440,12 +443,12 @@ public class Level {
     public void newLvl(boolean isEditing) {
         this.isEditing = isEditing;
         for (int i = 0; i < matrix.size(); i++) {
-                for (int j = 0; j < hanyszorhany; j++) {
-                    for (int k = 0; k < hanyszorhany; k++) {
-                        matrix.get(i).clearTileBy(j, k);
-                    }
+            for (int j = 0; j < hanyszorhany; j++) {
+                for (int k = 0; k < hanyszorhany; k++) {
+                    matrix.get(i).clearTileBy(j, k);
                 }
             }
+        }
         if (isEditing) {
             for (int l = 0; l < matrix.size(); l++) {
                 for (int i = 0; i < hanyszorhany; i++) {
