@@ -24,6 +24,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -230,30 +232,10 @@ public class UserPanel extends JPanel {
         Response res = server.getUserCompletedOnlineMaps(m.getUser().getFullUsername());
         return Integer.parseInt(res.getMessage());
     }
-
+    
     private int collectOfflineLevels() {
-        BufferedReader input = null;
-        int completed = 0;
-        try {
-            input = new BufferedReader(new FileReader("src/main/resources/levels/saved_data.txt"));
-            String data = input.lines().collect(Collectors.joining("\n"));
-            ArrayList<String> completed_levels = new ArrayList<>(Arrays.asList(data.split("\n")));
-
-            for (int j = 0; j < completed_levels.size(); j++) {
-                if (completed_levels.get(j).split(";")[0].equals(m.getUser().getFullUsername())) {
-                    completed++;
-                }
-            }
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                input.close();
-            } catch (IOException | NullPointerException ex) {
-                Logger.getLogger(UserPanel.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return completed;
+        Response res = server.getUserCompletedOfflineMaps(m.getUser().getFullUsername());
+        return Integer.parseInt(res.getMessage());
     }
 
     public void setupUsers() {

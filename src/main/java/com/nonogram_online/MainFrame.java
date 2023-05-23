@@ -5,7 +5,6 @@ import com.nonogram_online.buttons.BasicRate;
 import com.nonogram_online.buttons.FailButton;
 import com.nonogram_online.generator.ColorHandler;
 import com.nonogram_online.level.Level;
-import com.nonogram_online.server.NonogramFileWriter;
 import com.nonogram_online.server.Response;
 import com.nonogram_online.server.Server;
 import java.awt.BorderLayout;
@@ -168,8 +167,7 @@ public class MainFrame extends JPanel {
                         if(lvl.getName().length() < 4){
                             server.completeSuperProject(Integer.parseInt(lvl.getName()), m.getUser().getFullUsername());
                         }
-                        NonogramFileWriter fw = new NonogramFileWriter("");
-                        fw.saveLocalData(m.getUser().getFullUsername(), lvl.getName());
+                        server.finishLevel(lvl.getName(),"offline",m.getUser().getFullUsername());
                         m.backToMenu(true);
                     }
                 }

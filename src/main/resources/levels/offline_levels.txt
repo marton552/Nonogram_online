@@ -1,0 +1,6 @@
+/levels/easy/bear.txt
+/levels/easy/elif.txt
+/levels/easy/elso.txt
+/levels/easy/smile.txt
+/levels/easy/teki.txt
+/levels/easy/gretanak.txt

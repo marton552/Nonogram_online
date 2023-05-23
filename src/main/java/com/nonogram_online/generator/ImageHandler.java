@@ -69,12 +69,6 @@ public class ImageHandler {
     public boolean createAvgImage() {
         pixeliseImage();
         if (splitIntoNColor()) {
-            File outputfile = new File("image.jpg");
-            try {
-                ImageIO.write(pixelisedImage, "jpg", outputfile);
-            } catch (IOException ex) {
-                Logger.getLogger(ImageHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-            }
             compressPixelImage();
             return true;
         } else {

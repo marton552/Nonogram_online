@@ -26,9 +26,9 @@ public class Line {
         
         if (this.gn > 0) {
             this.restLength = zero1D(this.gn);
-            groups.set(this.gn - 1, groups.get(this.gn - 1));
+            this.groups.set(this.gn - 1, this.groups.get(this.gn - 1));
             for (int i = this.gn - 2; i >= 0; i--) {
-                this.restLength[i] = groups.get(i) + 1 + this.restLength[i + 1];
+                this.restLength[i] = this.groups.get(i) + 1 + this.restLength[i + 1];
             }
         }
     }

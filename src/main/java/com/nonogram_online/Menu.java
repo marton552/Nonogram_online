@@ -478,7 +478,6 @@ public class Menu extends JFrame {
         menupanel.add(onlineMaps);
         menupanel.add(levelCreator);
         if (user.isGuest()) {
-            signin.setText("Megkezdett fiók regisztrálása");
             menupanel.add(signin);
         } else {
             menupanel.add(userButton);
@@ -487,7 +486,7 @@ public class Menu extends JFrame {
     }
 
     private void setupDifficultyMenu() {
-        filePath = "levels/";
+        filePath = "/levels/";
         menupanel.removeAll();
         menupanel.revalidate();
         menupanel.repaint();
@@ -507,74 +506,44 @@ public class Menu extends JFrame {
         menupanel.revalidate();
         menupanel.repaint();
         menupanel.setLayout(new GridLayout((levelPerPage + 2), 1));
-        try {
-            ArrayList<String> filenames = getResourceFiles(filePath);
-            for (int i = levelStartNum; i < levelStartNum + levelPerPage; i++) {
-                if (filenames.size() > i) {
-                    InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath + filenames.get(i));
-                    String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-                    lvl = new Level(new ArrayList<String>(Arrays.asList(result.split(";"))), "", "", true);
-
-                    BufferedReader input = new BufferedReader(new FileReader("src/main/resources/levels/saved_data.txt"));
-                    String data1 = input.lines().collect(Collectors.joining("\n"));
-                    ArrayList<String> completed_levels = new ArrayList<String>(Arrays.asList(data1.split("\n")));
-                    boolean completed = false;
-                    for (int j = 0; j < completed_levels.size(); j++) {
-                        if (completed_levels.get(j).equals(user.getFullUsername() + ";" + lvl.getName())) {
-                            completed = true;
-                        }
-                    }
-                    LevelIcon icon = new LevelIcon(menuMe, lvl, levelPerPage + 2, 0, completed);
-                    setupIcon(icon);
-                    menupanel.add(icon);
-                    icon.repaint();
-                }
-            }
-            prevNextPanel = new JPanel(new GridLayout(1, 2));
-            prevButton.setOrientation(2, (levelPerPage + 2));
-            if (levelStartNum == 0) {
-                prevButton.setEnabled(false);
-            } else {
-                prevButton.setEnabled(true);
-            }
-            prevNextPanel.add(prevButton);
-            nextButton.setOrientation(2, (levelPerPage + 2));
-            if (levelStartNum + levelPerPage > filenames.size()) {
-                nextButton.setEnabled(false);
-            } else {
-                nextButton.setEnabled(true);
-            }
-            prevNextPanel.add(nextButton);
-            menupanel.add(prevNextPanel);
-        } catch (IOException ex) {
-            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        InputStream ins = this.getClass().getResourceAsStream("/levels/offline_levels.txt");
+        String res = new BufferedReader(new InputStreamReader(ins)).lines().collect(Collectors.joining(";"));
+        ArrayList<String> files = new ArrayList<String>(Arrays.asList(res.split(";")));
+        ArrayList<String> filenames = new ArrayList<>();
+        for (String file : files) {
+            if(file.startsWith(filePath)) filenames.add(file);
         }
+        for (int i = levelStartNum; i < levelStartNum + levelPerPage; i++) {
+            if (filenames.size() > i) {
+                InputStream is = this.getClass().getResourceAsStream(filenames.get(i));
+                String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
+                lvl = new Level(new ArrayList<String>(Arrays.asList(result.split(";"))), "", "", true);
+                
+                boolean completed = server.isLevelFinishedByUser(lvl.getName(), "offline", user.getFullUsername()).getStatusCode() == 200;
+                LevelIcon icon = new LevelIcon(menuMe, lvl, levelPerPage + 2, 0, completed);
+                setupIcon(icon);
+                menupanel.add(icon);
+                icon.repaint();
+            }
+        }
+        prevNextPanel = new JPanel(new GridLayout(1, 2));
+        prevButton.setOrientation(2, (levelPerPage + 2));
+        if (levelStartNum == 0) {
+            prevButton.setEnabled(false);
+        } else {
+            prevButton.setEnabled(true);
+        }
+        prevNextPanel.add(prevButton);
+        nextButton.setOrientation(2, (levelPerPage + 2));
+        if (levelStartNum + levelPerPage > filenames.size()) {
+            nextButton.setEnabled(false);
+        } else {
+            nextButton.setEnabled(true);
+        }
+        prevNextPanel.add(nextButton);
+        menupanel.add(prevNextPanel);
         menupanel.add(backButton);
         backButton.setOrientation(1, (levelPerPage + 2));
-    }
-
-    public ArrayList<String> getResourceFiles(String path) throws IOException {
-        ArrayList<String> filenames = new ArrayList<>();
-
-        try (
-                 InputStream in = getResourceAsStream(path);  BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-            String resource;
-
-            while ((resource = br.readLine()) != null) {
-                filenames.add(resource);
-            }
-        } catch (NullPointerException e) {
-            Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, e);
-        }
-
-        return filenames;
-    }
-
-    private InputStream getResourceAsStream(String resource) {
-        final InputStream in
-                = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
-
-        return in == null ? getClass().getResourceAsStream(resource) : in;
     }
 
     private void setupOnlineChooser() {

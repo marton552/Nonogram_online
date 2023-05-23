@@ -150,7 +150,19 @@ public class Server {
         getCompletedLevels();
         int counter = 0;
         for (int i = 0; i < data.size(); i++) {
-            if (data.get(i).get(2).equals(fullUsername)) {
+            if (!data.get(i).get(1).equals("offline") && data.get(i).get(2).equals(fullUsername)) {
+                counter++;
+            }
+        }
+        closeRequest();
+        return new Response(200, counter + "");
+    }
+    
+    public Response getUserCompletedOfflineMaps(String fullUsername) {
+        getCompletedLevels();
+        int counter = 0;
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).get(1).equals("offline") && data.get(i).get(2).equals(fullUsername)) {
                 counter++;
             }
         }

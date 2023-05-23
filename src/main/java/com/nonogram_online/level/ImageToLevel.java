@@ -315,12 +315,6 @@ public class ImageToLevel extends JPanel {
         return grid;
     }
 
-    private void publishLevel() {
-        ih.setBackgroundColor(backColor);
-        lvl = ih.getFullLevel();
-        m.menuActions("imageEdit");
-    }
-
     public void save() {
         backColor = ih.getFullLevel().getColors().get(centerPanel.getChoosenBackGroundColor());
         if (ih.save()) {
@@ -330,6 +324,12 @@ public class ImageToLevel extends JPanel {
             saveButton.repaint();
             centerPanel.setErrors("Vannak színek amik túl hasonlóak!");
         }
+    }
+    
+    private void publishLevel() {
+        ih.setBackgroundColor(backColor);
+        lvl = ih.getFullLevel();
+        m.menuActions("imageEdit");
     }
 
     private void colorSum() {

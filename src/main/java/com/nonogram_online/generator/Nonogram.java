@@ -97,11 +97,7 @@ public class Nonogram {
                 return false;
             }
 
-            if (!this.isComplete()) {
-                return false;
-            } else {
-                return true;
-            }
+            return this.isComplete();
         }catch(IndexOutOfBoundsException e){
             return true;
         }

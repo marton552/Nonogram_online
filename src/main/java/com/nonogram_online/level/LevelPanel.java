@@ -67,7 +67,6 @@ public class LevelPanel extends JPanel {
         if (e.getX() < 100) {
             int y = e.getY();
             y = y / 30;
-            System.out.println(y);
             if (lvl.getMatrix().size() > y) {
                 choosenLayer = y;
                 repaint();
@@ -120,6 +119,7 @@ public class LevelPanel extends JPanel {
         super.paintComponent(g);
         if (lvl != null) {
             if (!lvl.isIsMultisized()) {
+                if(choosenLayer > lvl.getMatrix().size()) choosenLayer = 0;
                 lvl.setMatrixStartPos(100, 0);
                 lvl.setMenuSquareSize(widthHeight - 20);
                 lvl.finishGame();

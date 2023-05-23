@@ -372,6 +372,7 @@ public class LoginPanel extends JPanel {
         this.add(usernamePanel);
         this.add(passPanel);
         this.add(passAgainPanel);
+        errorLabel = new JLabel("<html>Disclaimer: Ez egy szakdolgozat projekt,<br>a jelszó semmiféle titkosítást nem alkalmaz,<br>ne adj meg olyan jelszót amit máshol használnál.</html>", SwingConstants.CENTER);
         this.add(errorLabel);
         this.add(buttonsPanel);
         errorUsername = true;
@@ -414,6 +415,7 @@ public class LoginPanel extends JPanel {
         this.add(usernamePanel);
         this.add(passPanel);
         this.add(passAgainPanel);
+        errorLabel = new JLabel("<html>Disclaimer: Ez egy szakdolgozat projekt,<br>a jelszó semmiféle titkosítást nem alkalmaz,<br>ne adj meg olyan jelszót amit máshol használnál.</html>", SwingConstants.CENTER);
         this.add(errorLabel);
         this.add(buttonsPanel);
         errorUsername = true;
