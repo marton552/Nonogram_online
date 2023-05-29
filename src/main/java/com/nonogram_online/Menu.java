@@ -24,7 +24,6 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -330,6 +329,10 @@ public class Menu extends JFrame {
             searchState.setSearch(text.split(":")[1]);
             searchState.setUserName();
             setupOnlineLevelsMenu();
+        } else if(text.equals("/Előző/")){
+            userPanel.prevPressed();
+        } else if(text.equals("/Következő/")){
+            userPanel.nextPressed();
         } else {
             loginPanel.menuActions(text);
         }

@@ -241,7 +241,7 @@ public class Server {
         return response;
     }
     
-    public ArrayList<User> getXUser(SortResponse order, SearchResponse search, int start, int end) {
+    public ArrayList<User> getXUser(int start, int end) {
         getUsers();
         ArrayList<User> users = new ArrayList<>();
         for (int i = start; i < end && i < data.size(); i++) {

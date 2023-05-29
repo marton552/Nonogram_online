@@ -24,8 +24,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -44,15 +42,8 @@ public class UserPanel extends JPanel {
     private JPanel prevNextPanel;
     private final BasicButton prevButton;
     private final BasicButton nextButton;
-    private JPanel sortSearchPanel;
-    private final SortButton sortByRankButton;
-    private final SortButton sortByNameButton;
-    private final SearchTextField searchTextField;
-    private final SearchButton searchByUser;
-    private SortResponse sortState;
-    private SearchResponse searchState;
-    private final int userPerPage = 6;
-    private final int userStartNum = 0;
+    private final int userPerPage = 7;
+    private int userStartNum = 0;
     private final BasicButton backButton;
 
     private final Menu m;
@@ -91,13 +82,8 @@ public class UserPanel extends JPanel {
         });
         timer.start();
 
-        prevButton = new BasicButton(m, "Előző", 2, 4);
-        nextButton = new BasicButton(m, "Következő", 2, 4);
-
-        sortByNameButton = new SortButton(m, "Név", 2, 4);
-        sortByRankButton = new SortButton(m, "Szint", 2, 4);
-        searchTextField = new SearchTextField();
-        searchByUser = new SearchButton(m, "Felhasználó keresés", 2, 4);
+        prevButton = new BasicButton(m, "/Előző/", 2, 4);
+        nextButton = new BasicButton(m, "/Következő/", 2, 4);
 
         this.addMouseListener(new MouseListener() {
             @Override
@@ -154,6 +140,16 @@ public class UserPanel extends JPanel {
 
             }
         });
+    }
+    
+    public void prevPressed(){
+        userStartNum -=userPerPage;
+        setupUsers();
+    }
+    
+    public void nextPressed(){
+        userStartNum +=userPerPage;
+        setupUsers();
     }
 
     public void refreshMissions() {
@@ -243,36 +239,27 @@ public class UserPanel extends JPanel {
         thisPanel.removeAll();
         thisPanel.revalidate();
         thisPanel.repaint();
-        thisPanel.setLayout(new GridLayout((userPerPage + 2 + 1), 1));
-        sortSearchPanel = new JPanel(new GridLayout(2, 2));
-        sortByNameButton.setOrientation(2, (userPerPage + 2 + 1) * 2);
-        sortSearchPanel.add(sortByNameButton);
-        sortByRankButton.setOrientation(2, (userPerPage + 2 + 1) * 2);
-        sortSearchPanel.add(sortByRankButton);
-        sortSearchPanel.add(searchTextField);
-        searchByUser.setOrientation(2, (userPerPage + 2 + 1) * 2);
-        sortSearchPanel.add(searchByUser);
-        thisPanel.add(sortSearchPanel);
+        thisPanel.setLayout(new GridLayout((userPerPage + 2), 1));
 
-        ArrayList<User> users = server.getXUser(sortState, searchState, userStartNum, userStartNum + userPerPage + 1);
+        ArrayList<User> users = server.getXUser(userStartNum, userStartNum + userPerPage + 1);
         boolean fullFilled = (users.size() > userPerPage);
         int size = (fullFilled) ? userPerPage : users.size();
         for (int i = 0; i < size; i++) {
             UserIcon icon;
-            icon = new UserIcon(m, this, users.get(i), 1, userPerPage + 3);
+            icon = new UserIcon(m, this, users.get(i), 1, userPerPage + 2);
             icon.setOrientation(1, userPerPage + 3);
             thisPanel.add(icon);
             icon.repaint();
         }
         prevNextPanel = new JPanel(new GridLayout(1, 2));
-        prevButton.setOrientation(2, (userPerPage + 3));
+        prevButton.setOrientation(2, (userPerPage + 2));
         if (userStartNum == 0) {
             prevButton.setEnabled(false);
         } else {
             prevButton.setEnabled(true);
         }
         prevNextPanel.add(prevButton);
-        nextButton.setOrientation(2, (userPerPage + 3));
+        nextButton.setOrientation(2, (userPerPage + 2));
         if (fullFilled) {
             nextButton.setEnabled(true);
         } else {
@@ -281,7 +268,7 @@ public class UserPanel extends JPanel {
         prevNextPanel.add(nextButton);
         thisPanel.add(prevNextPanel);
         thisPanel.add(backButton);
-        backButton.setOrientation(1, (userPerPage + 3));
+        backButton.setOrientation(1, (userPerPage + 2));
     }
 
     private boolean isAllMissionsCompleted() {
